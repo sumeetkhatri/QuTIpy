@@ -72,9 +72,9 @@ takes the partial trace of ```R_AB``` over system ```A```. In general, ```TrX(R,
 
 ## FAQ
 
-[comment]**1. How is this package different from qutip?**
+**1. How is this package different from qutip?**
 
-[comment]**2. Does the package support symbolic computations?**
+**2. Does the package support symbolic computations?**
 
 ## Acknowledgements
 
