@@ -3,8 +3,14 @@ This code is part of QuTIPy.
 
 (c) Copyright Sumeet Khatri, 2020
 
+This code is licensed under the Apache License, Version 2.0. You may
+obtain a copy of this license in the LICENSE.txt file in the root directory
+of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
 
-[license information?]
+Any modifications or derivative works of this code must retain this
+copyright notice, and modified files need to carry a notice indicating
+that they have been altered from the originals.
+
 '''
 
 
@@ -89,7 +95,6 @@ def Pauli_channel_coeffs(K,n,as_dict=False):
         c=[]
 
     S=list(itertools.product(*[range(0,2)]*n))
-
     #print(S)
 
     for a in S:
@@ -173,15 +178,27 @@ def depolarizing_channel_n_uses(p,n,rho,m):
 
 def bit_flip_channel(p):
 
+    '''
+    Generates the channel rho-->(1-p)*rho+p*X*rho*X. 
+    '''
+
     return Pauli_channel(p,0,0)
 
 
 def dephasing_channel(p):
 
+    '''
+    Generates the channel rho--> (1-p)*rho+p*Z*rho*Z.
+    '''
+
     return Pauli_channel(0,0,p)
 
 
 def phase_damping_channel(p):
+
+    '''
+    Generates the phase damping channel.
+    '''
 
     K1=np.matrix([[1,0],[0,np.sqrt(p)]])
     K2=np.matrix([[0,0],[0,np.sqrt(1-p)]])
@@ -192,12 +209,12 @@ def phase_damping_channel(p):
 def BB84_channel(Q):
 
     '''
-    Computes the channel corresponding to the BB84 protocol with
+    Generates the channel corresponding to the BB84 protocol with
     equal X and Z errors, given by the QBER Q. The definition of this
     channel can be found in:
 
-        "Additive extension of a quantum channel", by
-            Graeme Smith and John Smolin.
+        "Additive extensions of a quantum channel", by
+            Graeme Smith and John Smolin. (arXiv:0712.2471)
 
     '''
 
@@ -207,6 +224,10 @@ def BB84_channel(Q):
 
 def amplitude_damping_channel(gamma):
 
+    '''
+    Generates the amplitude damping channel.
+    '''
+
     A1=np.matrix([[1,0],[0,np.sqrt(1-gamma)]])
     A2=np.matrix([[0,np.sqrt(gamma)],[0,0]])
 
@@ -214,6 +235,10 @@ def amplitude_damping_channel(gamma):
 
 
 def generalized_amplitude_damping_channel(gamma,N):
+
+    '''
+    Generates the generalized amplitude damping channel.
+    '''
 
     if N==0:
         return amplitude_damping_channel(gamma)
@@ -261,8 +286,8 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
 
     '''
     Applies the channel with Kraus operators in K to the state rho on
-    systems specified by sys. The dimensions of the
-    systems of rho are given by dim.
+    systems specified by sys. The dimensions of the subsystems on which rho
+    acts are given by dim.
 
     If adjoint is True, then this function applies the adjoint of the given
     channel.
@@ -274,7 +299,7 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
         K=[K_tmp[i].H for i in range(len(K_tmp))]
 
     if sys==None:
-        if type(rho)==cvxpy.expressions.variable.Variable:
+        if type(rho)==cvx.expressions.variable.Variable:
             return np.sum([K[i]*rho*K[i].H for i in range(len(K))],0)
         else:
             return np.matrix(np.sum([K[i]*rho*K[i].H for i in range(len(K))],0))
@@ -288,7 +313,7 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
                 else:
                     X=tensor(X,eye(dim[j]))
             A.append(X)
-        if type(rho)==cvxpy.expressions.variable.Variable:
+        if type(rho)==cvx.expressions.variable.Variable:
             return np.sum([A[i]*rho*A[i].H for i in range(len(A))],0)
         else:
             return np.matrix(np.sum([A[i]*rho*A[i].H for i in range(len(A))],0))
@@ -306,9 +331,10 @@ def Choi_representation(K,dimA):
     '''
 
 
-    Bell=np.sqrt(dimA)*MaxEnt_state(dimA)
+    #Gamma=np.sqrt(dimA)*MaxEnt_state(dimA)
+    Gamma=MaxEnt_state(dimA,normalized=False)
 
-    return np.matrix(apply_channel(K,Bell*Bell.H,2,[dimA,dimA]),dtype=np.complex)
+    return np.matrix(apply_channel(K,Gamma*Gamma.H,2,[dimA,dimA]),dtype=np.complex)
 
 
 def Kraus_representation(P,dimA,dimB):
@@ -334,6 +360,7 @@ def Kraus_representation(P,dimA,dimB):
 
     if check1 and check2:
         U=np.array(U)
+    
     # If U is not unitary, use Gram-Schmidt to make it unitary (i.e., make the columns of U orthonormal)
     else:
         C=gram_schmidt([U[:,i] for i in range(U_cols)],dimA*dimB)
@@ -353,6 +380,13 @@ def Choi_to_Natural(C_AB,dimA,dimB):
 
     '''
     Takes the Choi representation of a map and outputs its natural representation.
+
+    The Choi represenatation Q of the channel acts as:
+    
+        vec(N(rho))=Q*vec(rho),
+    
+    where N is the channel in question. It can be obtained from the Choi representation
+    with a simple reshuffling of indices.
     '''
 
     C_AB=np.array(C_AB)
@@ -605,13 +639,6 @@ def avg_fidelity_qubit(K):
         F+=np.real(np.trace((state*state.H)*apply_channel(K,state*state.H)))
 
     return (1./6.)*F
-
-
-
-
-
-
-
 
 
 

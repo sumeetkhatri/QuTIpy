@@ -3,15 +3,18 @@ This code is part of QuTIPy.
 
 (c) Copyright Sumeet Khatri, 2020
 
+This code is licensed under the Apache License, Version 2.0. You may
+obtain a copy of this license in the LICENSE.txt file in the root directory
+of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
 
-[license information?]
+Any modifications or derivative works of this code must retain this
+copyright notice, and modified files need to carry a notice indicating
+that they have been altered from the originals.
 '''
 
 
 from .base import *
 from .channels import apply_channel
-
-
 
 
 
@@ -23,7 +26,7 @@ from .channels import apply_channel
 
 def bin_entropy(p):
 
-    '''CURRENTLY NOT FUNCTIONING PROPERLY
+    '''
     Returns the binary entropy for 0<=p<=1.
     '''
 
@@ -233,11 +236,6 @@ def hypo_testing_rel_ent_dual(rho,sigma,eps,display=True):
     prob.solve(solver=cvx.CVXOPT,eps=1e-9,verbose=display)
 
     return -np.log2(prob.value)
-
-
-
-
-
 
 
 
