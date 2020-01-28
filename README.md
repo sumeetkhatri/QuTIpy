@@ -9,6 +9,8 @@ The code requires Python 3, and apart from the standard numpy and scipy packages
 
 ## Examples
 
+Here are some simple examples. More detailed usage information can be found in the Documentation.
+
 We start by importing the package:
 
 ```python
