@@ -4,7 +4,7 @@ Quantum Theory of Information for Python; pronounced "cutie pie". A package for 
 
 ## Requirements
 
-The code requires Python 3, and apart from the standard numpy and scipy packages, it requires cvxpy if you want to run SDPs (e.g., for the diamond norm).
+The code requires Python 3, and apart from the standard numpy and scipy packages, it requires cvxpy if you want to run SDPs (e.g., for the diamond norm). It requires sympy for symbolic computations.
 
 
 ## Examples
