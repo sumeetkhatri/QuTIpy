@@ -897,7 +897,33 @@ def Clifford_group_one_qubit():
     return C
 
 
-def generate_Clifford_group(G,n,display=True):
+def Clifford_group_generators(n):
+
+    '''
+    Outputs the generators of the n-qubit Clifford group.
+    '''
+
+    G=[]
+
+    if n==1:
+        G=[H_i(1,1),S_i(1,1)]
+    else:
+        for i in range(1,n+1):
+            G.append(H_i(i,n))
+            G.append(S_i(i,n))
+            for j in range(1,n+1):
+                if i<j:
+                    G.append(CNOT_ij(i,j,n))
+                else:
+                    continue
+    
+    return G
+
+
+
+
+
+def generate_Clifford_group(n,display=True):
     
     '''
     Generates the n-qubit Clifford group using the generators given in G.
