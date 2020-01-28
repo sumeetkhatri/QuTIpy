@@ -8,15 +8,13 @@ This code is part of QuTIPy.
 '''
 
 
-
 import numpy as np
 from numpy.linalg import norm, qr
 from scipy.linalg import sqrtm,eig,fractional_matrix_power,logm,expm
 from scipy.stats import unitary_group
 from scipy.optimize import minimize
 import itertools
-#from optimize_unitarySD import unitarySD_selftuning,unitarySD_proj
-import cvxpy 
+#from optimize_unitarySD import unitarySD_selftuning,unitarySD_proj 
 import cvxpy as cvx
 
 
@@ -26,25 +24,42 @@ import cvxpy as cvx
 ####################################################################
 
 
-def ket(dims,*args):
+def ket(dim,*args):
+
+    '''
+    Generates a standard basis vector in dimension dim.
+
+    For example, ket(2,0)=|0>=[1,0] and ket(2,1)=|1>=[0,1].
+
+    In general, ket(d,j), for j between 0 and d-1, generates a column vector
+    (as a numpy matrix) in which the jth element is equal to 1 and the rest
+    are equal to zero.
+
+    ket(d,[j_1,j_2,...,j_n]) generates the tensor product |j_1>|j_2>...|j_n> of
+    d-dimensional basis vectors.
+    '''
 
     args=np.array(args)
 
     if args.size==1:
         num=args[0]
-        out=np.zeros([dims,1])
+        out=np.zeros([dim,1])
         out[num]=1
     else:
         args=args[0]
-        out=ket(dims,args[0])
+        out=ket(dim,args[0])
         for j in range(1,len(args)):
-            out=np.kron(out,ket(dims,args[j]))
+            out=np.kron(out,ket(dim,args[j]))
     
     return np.matrix(out)
 
 
 
 def tensor(*args):
+
+    '''
+    Takes the tensor product of an arbitrary number of matrices/vectors.
+    '''
 
     M=1
 
@@ -61,8 +76,11 @@ def tensor(*args):
 def Tr(A):
 
     '''
-    Takes the trace of the matrix A.
+    Takes the trace of the matrix A. The object A should be a numpy matrix.
     '''
+
+    if type(A)!=np.matrix:
+        A=np.matrix(A)
 
     return np.trace(A)
     
@@ -196,7 +214,11 @@ def Tx(state,sys,dim):
 def syspermute(p,perm,dim):
 
     '''
-    Permutes order of subsystems in a multipartite state.
+    Permutes order of subsystems in the multipartite operator p.
+    
+    perm is a list
+    containing the desired order, and dim is a list of the dimensions of all
+    subsystems.
     '''
 
     # If p is defined using np.matrix(), then it must first be converted
@@ -273,44 +295,67 @@ def get_subblock(X,sys,indices,dim):
 
 def eye(n):
 
+    '''
+    Generates the nxn identity matrix.
+    '''
+
     return np.matrix(np.identity(n,dtype=int))
 
 
-def MaxEnt_state(dim):
+def MaxEnt_state(dim,normalized=True):
 
-    return (1./np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+    '''
+    Generates the dim-dimensional maximally entangled state, which is defined as
 
+    (1/sqrt(dim))*(|0>|0>+|1>|1>+...+|d-1>|d-1>).
+
+    If normalized=False, then the function returns the unnormalized maximally entangled
+    vector.
+    '''
+
+    if normalized:
+        return (1./np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+    else:
+        return np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+   
 
 def MaxMix_state(dim):
+
+    '''
+    Generates the dim-dimensional maximally mixed state.
+    '''
 
     return eye(dim)/dim
 
 
-def isotropic_state(p,d):
-
-    # Last modified: 13 December 2018
+def isotropic_state(p,d,fidelity=False):
 
     '''
-    Generates the isotropic state with parameter p on d dimensions. The state
-    is defined as
+    Generates the isotropic state with parameter p on two d-dimensional systems.
+    The state is defined as
 
         rho_Iso = p*|Bell><Bell|+(1-p)*eye(d^2)/d^2,
 
     where -1/(d^2-1)<=p<=1.
+
+    If fidelity=True, then the function returns a different parameterization of
+    the isotropic state in which the parameter p is the fidelity of the state
+    with respect to the maximally entangled state.
     '''
 
     Bell=MaxEnt_state(d)
 
-    return p*Bell*Bell.H+(1-p)*eye(d**2)/d**2
+    if fidelity:
+        return p*Bell*Bell.H+((1-p)/3)*(eye(d**2)-Bell*Bell.H)
+    else:
+        return p*Bell*Bell.H+(1-p)*eye(d**2)/d**2
 
 
 def Werner_state(p,d):
 
-    # Last modified: 13 December 2018
-
     '''
-    Generates the Werner state with parameter p on d dimensions. The state
-    is defined as
+    Generates the Werner state with parameter p on two d-dimensional systems.
+    The state is defined as
 
         rho_W=(1/(d^2-dp))*(eye(d^2)-p*SWAP),
 
@@ -394,6 +439,7 @@ def CNOT_ij(i,j,n):
 	out=syspermute(out_temp,perm_rearrange,dims)
 
 	return out
+
 
 def Rx(t):
 
@@ -529,6 +575,37 @@ def H_i(i,n):
     return np.matrix(out)
 
 
+def S_i(i,n):
+
+    '''
+    Generates the matrix for the S gate applied to the ith qubit.
+    n is the total number of qubits. The S gate is defined as:
+
+        S:=[[1 0],
+            [0 1j]]
+
+    It is one of the generators of the Clifford group.
+    '''
+
+    dims=2*np.ones(n)
+    dims=dims.astype(int)
+    indices=np.linspace(1,n,n)
+    indices_diff=np.setdiff1d(indices,i)
+    perm_arrange=np.append(np.array([i]),indices_diff)
+    perm_rearrange=np.zeros(n)
+
+    for i in range(n):
+        perm_rearrange[i]=np.argwhere(perm_arrange==i+1)[0][0]+1
+
+    perm_rearrange=perm_rearrange.astype(int)
+    S=np.matrix([[1,0],[0,1j]])
+    out_temp=tensor(S,[eye(2),n-1])
+    out=syspermute(out_temp,perm_rearrange,dims)
+
+    return np.matrix(out)
+
+
+
 
 ####################################################################
 ## DISTANCE MEASURES AND NORMS
@@ -556,13 +633,11 @@ def unitary_distance(U,V):
 
 def trace_distance_pure_states(psi,phi):
 
-    # Last modified: 28 June 2019
-
     '''
     Computes the squared trace distance between two pure states psi and phi,
     i.e.,
 
-    || |psi><psi|-|phi><phi| ||_1
+    || |psi><psi|-|phi><phi| ||_1^2
 
     '''
 
@@ -579,8 +654,6 @@ def trace_norm(X):
 
 
 def fidelity(rho,sigma):
-
-    # Last modified: 30 June 2018
 
     '''
     Returns the fidelity between the states rho and sigma.
@@ -601,7 +674,6 @@ def ent_fidelity(sigma,d):
     return np.real(np.trace((Bell*Bell.H)*sigma))
 
 
-
 def spectral_norm(X):
 
     '''
@@ -610,8 +682,6 @@ def spectral_norm(X):
     '''
 
     return norm(X,ord=2)
-
-
 
 
 
@@ -634,7 +704,9 @@ def RandomDensityMatrix(dim,comp=True,*args):
 
     '''
     Generates a random density matrix.
+    
     Optional argument is for the rank r of the state.
+    
     Optional argument comp is for whether the state should have
     complex entries
     '''
@@ -655,18 +727,21 @@ def RandomDensityMatrix(dim,comp=True,*args):
 
     return rho/np.trace(rho)
 
+
 def RandomPureState(dim,rank=None):
 
     '''
     Generates a random pure state.
 
-    For bipartite states, dim should be a list of dimensions for each
-    subsystem. In this case, the rank variable is for the Schmidt rank.
+    For multipartite states, dim should be a list of dimensions for each
+    subsystem. In this case, the rank variable is for the Schmidt rank. To specify
+    the Schmidt rank, there has to be a bipartition of the systems, so that dim
+    has only two elements.
     '''
     
     if rank==None:
         if type(dim)==list:
-            dim=dim[0]*dim[1]
+            dim=np.prod(dim)
 
         psi=np.matrix(np.random.randn(dim)).H+1j*np.matrix(np.random.randn(dim)).H
 
@@ -776,7 +851,8 @@ def Pauli_coeff_to_matrix(coeffs,n):
     Takes the coefficients of a matrix in the n-qubit Pauli basis and outputs it
     as a matrix.
 
-    coeffs should be specified as a list or array.
+    coeffs should be specified as a one-dimensional list or array in standard
+    lexicographical ordering.
     '''
 
     all_indices=list(itertools.product(*[range(0,4)]*n))
@@ -797,6 +873,7 @@ def nQubit_Pauli_coeff(X,n):
 
     X=(1/2^n)\sum_{alpha} c_alpha \sigma_alpha
 
+    The coefficients are returned in lexicographical ordering.
     '''
 
     X=np.matrix(X)
@@ -814,6 +891,28 @@ def nQubit_Pauli_coeff(X,n):
 
 
 def nQubit_quadratures(n):
+
+    '''
+    Returns the list of n-qubit "quadrature" operators, which are defined as
+    (for two qubits)
+
+        S[0]=Sx \otimes Id
+        S[1]=Sz \otimes Id
+        S[2]=Id \otimes Sx
+        S[3]=Id \otimes Sz
+
+    In general, for n qubits:
+
+        S[0]=Sx \otimes Id \otimes ... \otimes Id
+        S[1]=Sz \otimes Id \otimes ... \otimes Id
+        S[2]=Id \otimes Sx \otimes ... \otimes Id
+        S[3]=Id \otimes Sz \otimes ... \otimes Id
+        .
+        .
+        .
+        S[2n-2]=Id \otimes Id \otimes ... \otimes Sx
+        S[2n-1]=Id\otimes Id \otimes ... \otimes Sz
+    '''
 
     S={}
 
@@ -833,22 +932,40 @@ def nQubit_quadratures(n):
 
 def nQubit_cov_matrix(X,n):
 
+    '''
+    Using the n-qubit quadrature operators, we define the n-qubit "covariance matrix"
+    as follows:
+
+    V_{i,j}=Tr[X*S_i*S_j]
+    '''
+
+
     S=nQubit_quadratures(n)
 
     V=np.matrix(np.zeros((2*n,2*n)),dtype=np.complex128)
+    #V=np.matrix(np.zeros((2*n,2*n)),dtype=object)
 
     for i in range(2*n):
         for j in range(2*n):
             V[i,j]=np.trace(X*S[i+1]*S[j+1])
     
-
     return V
 
+
 def nQubit_mean_vector(X,n):
+
+    '''
+    Using the n-qubit quadrature operators, we define the n-qubit "mean vector" as
+    follows:
+
+        r_i=Tr[X*S_i]
+    '''
+
 
     S=nQubit_quadratures(n)
 
     r=np.matrix(np.zeros((2*n,1)),dtype=np.complex128)
+    #r=np.matrix(np.zeros((2*n,1)),dtype=object)
 
     for i in range(2*n):
         r[i,0]=np.trace(X*S[i+1])
@@ -920,14 +1037,17 @@ def Clifford_group_generators(n):
     return G
 
 
-
-
-
-def generate_Clifford_group(n,display=True):
+def generate_Clifford_group(n,display=False):
     
     '''
-    Generates the n-qubit Clifford group using the generators given in G.
+    Generates the n-qubit Clifford group. The display variable is for testing
+    purposes, and to see the progress through the code.
+
+    Note that even for n=2, this code will take a long time to run! There are 
+    11520 elements of the two-qubit Clifford group!
     '''
+
+    G=Clifford_group_generators(n)
     
     def in_list(L,elem):
     
@@ -986,8 +1106,6 @@ def generate_Clifford_group(n,display=True):
 
 
 def generate_state_2design(C,n,display=True):
-
-    # Last modified: 28 June 2019
 
     '''
     Takes the n-qubit Clifford gates provided in C and returns a
@@ -1074,7 +1192,8 @@ def su_generators(d):
 def su_structure_constants(d):
 
     '''
-    Generates the structure constants corresponding to the su(d) basis elements. They are defined as follows:
+    Generates the structure constants corresponding to the su(d)
+    basis elements. They are defined as follows:
 
         f_{i,j,k}=(1/(1j*d^2))*Tr[l_k*[l_i,l_j]]
 
@@ -1103,6 +1222,12 @@ def su_generators_products(d):
     '''
     Generates a dictionary containing the span of the pairwise products of the 
     su(d) generators.
+
+    P[(i,j)] gives a list of the indices of the su(d) generators such that
+
+    L[i]*L[j]=\sum_k c_k L_k,
+
+    where the sum is over the elements in P[(i,j)].
     '''
 
     L=su_generators(d)
@@ -1150,8 +1275,6 @@ def state_from_coherence_vector(n,d,state=True):
 
 def coherence_vector_star_product(n1,n2,d):
 
-    # Last modified: 27 June 2019
-
     '''
     Computes the star product between two coherence vectors corresponding to states, so that
     n1 and n2 (the coherence vectors) have length d^2-1 each.
@@ -1163,9 +1286,7 @@ def coherence_vector_star_product(n1,n2,d):
         PHYSICAL REVIEW A 68, 062322 (2003)
     '''
 
-
     #L=su_generators(d)
-
     g=su_structure_constants(d)[1]
 
     p=[]
@@ -1189,6 +1310,10 @@ def coherence_vector_star_product(n1,n2,d):
 
 def discrete_Weyl_X(d):
 
+    '''
+    Generates the X shift operators.
+    '''
+
     X=ket(d,1)*ket(d,0).H
 
     for i in range(1,d):
@@ -1197,6 +1322,10 @@ def discrete_Weyl_X(d):
     return X
 
 def discrete_Weyl_Z(d):
+
+    '''
+    Generates the Z phase operators.
+    '''
 
     w=np.exp(2*np.pi*1j/d)
 
@@ -1275,6 +1404,28 @@ def generate_nQudit_Z(d,indices):
 
 def nQudit_quadratures(d,n):
 
+    '''
+    Returns the list of n-qudit "quadrature" operators, which are defined as
+    (for two qudits)
+
+        S[0]=X(0) \otimes Id
+        S[1]=Z(0) \otimes Id
+        S[2]=Id \otimes X(0)
+        S[3]=Id \otimes Z(0)
+
+    In general, for n qubits:
+
+        S[0]=X(0) \otimes Id \otimes ... \otimes Id
+        S[1]=Z(0) \otimes Id \otimes ... \otimes Id
+        S[2]=Id \otimes X(0) \otimes ... \otimes Id
+        S[3]=Id \otimes Z(0) \otimes ... \otimes Id
+        .
+        .
+        .
+        S[2n-2]=Id \otimes Id \otimes ... \otimes X(0)
+        S[2n-1]=Id\otimes Id \otimes ... \otimes Z(0)
+    '''
+
     S={}
 
     count=0
@@ -1293,8 +1444,6 @@ def nQudit_cov_matrix(X,d,n):
     '''
     Generates the matrix of second moments (aka covariance matrix) of an
     n-qudit operator X.
-
-    [NEEDS TO BE CHECKED!!!!]
     '''
 
 
@@ -1331,7 +1480,7 @@ def base_number_to_int(string,base):
 def proj(u,v):
 
     '''
-    Calculates the projection of v onto u.
+    Calculates the projection of vector v onto vector u.
     '''
 
     return (complex(u.H*v)/float(norm(u)**2))*u
@@ -1339,8 +1488,8 @@ def proj(u,v):
 def gram_schmidt(states,dim,normalize=True):
 
     '''
-    Performs the Gram-Schmidt orthogonalization procedure on the given states (or simply vectors).
-    dim is the dimension of the vectors.
+    Performs the Gram-Schmidt orthogonalization procedure on the given states
+    (or simply vectors). dim is the dimension of the vectors.
     '''
 
     e=[]
