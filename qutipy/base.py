@@ -749,6 +749,9 @@ def RandomPureState(dim,rank=None):
         if type(dim)==list:
             dim=np.prod(dim)
 
+        # Generate the real and imaginary parts of the components using numbers
+        # sampled from the standard normal distribution (normal distribution with
+        # mean zero and variance 1).
         psi=np.matrix(np.random.randn(dim)).H+1j*np.matrix(np.random.randn(dim)).H
 
         psi=psi/norm(psi)
