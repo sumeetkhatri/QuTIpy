@@ -71,13 +71,6 @@ Here, ```dimA``` is the dimension of system ```A``` and ```dimB``` is the dimens
 takes the partial trace of ```R_AB``` over system ```A```. In general, ```TrX(R,sys,dim)``` traces over the systems in the list ```sys```, and ```dim``` is a list of the dimensions of all of the subsystems on which the operator ```R``` acts.
 
 
-
-## FAQ
-
-**1. How is this package different from qutip?**
-
-**2. Does the package support symbolic computations?**
-
 ## Acknowledgements
 
 Thanks to Mark Wilde for suggesting the name for the package.
