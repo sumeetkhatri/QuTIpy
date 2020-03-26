@@ -342,7 +342,8 @@ def isotropic_state(p,d,fidelity=False):
 
         rho_Iso = p*|Bell><Bell|+(1-p)*eye(d^2)/d^2,
 
-    where -1/(d^2-1)<=p<=1.
+    where -1/(d^2-1)<=p<=1. Isotropic states are invariant under U ⊗ conj(U)
+    for any unitary U, where conj(U) is the complex conjugate of U.
 
     If fidelity=True, then the function returns a different parameterization of
     the isotropic state in which the parameter p is the fidelity of the state
@@ -352,7 +353,7 @@ def isotropic_state(p,d,fidelity=False):
     Bell=MaxEnt_state(d)
 
     if fidelity:
-        return p*Bell*Bell.H+((1-p)/3)*(eye(d**2)-Bell*Bell.H)
+        return p*Bell*Bell.H+((1-p)/(d**2-1))*(eye(d**2)-Bell*Bell.H)
     else:
         return p*Bell*Bell.H+(1-p)*eye(d**2)/d**2
 
@@ -366,7 +367,8 @@ def Werner_state(p,d):
         rho_W=(1/(d^2-dp))*(eye(d^2)-p*SWAP),
 
     where SWAP is the swap operator between two d-dimensional systems and 
-    p is between -1 and 1.
+    p is between -1 and 1. Werner states are invariant under U ⊗ U for any
+    unitary U.
     '''
 
     return (1/(d**2-d*p))*(eye(d**2)-p*SWAP([1,2],[d,d]))
@@ -1271,7 +1273,6 @@ def state_from_coherence_vector(n,d,state=True):
     if state:
         rho=np.matrix((1/d)*eye(d),dtype=np.complex128)
         for i in range(1,len(L)):
-            #print(rho)
             rho+=(1/d)*n[i-1]*L[i]
         return rho
     
