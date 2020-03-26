@@ -1,4 +1,4 @@
-# QuTIPy
+# QuTIpy
 Quantum Theory of Information for Python; pronounced "cutie pie". A package for performing calculations with quantum states and channels. It is comparable to the [QETLAB package](http://www.qetlab.com/Main_Page) for MATLAB/Octave.
 
 
