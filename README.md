@@ -1,5 +1,5 @@
-# QuTIPy
-Quantum Theory of Information for Python; pronounced "cutie pie". A package for performing calculations with quantum states and channels. It it similar to the [QETLAB package](http://www.qetlab.com/Main_Page) for MATLAB/Octave.
+# QuTIpy
+Quantum Theory of Information for Python; pronounced "cutie pie". A package for performing calculations with quantum states and channels. It is comparable to the [QETLAB package](http://www.qetlab.com/Main_Page) for MATLAB/Octave.
 
 
 ## Requirements
@@ -9,7 +9,7 @@ The code requires Python 3, and apart from the standard numpy and scipy packages
 
 ## Examples
 
-Here are some simple examples. More detailed usage information can be found in the Documentation.
+Here are some simple examples.
 
 We start by importing the package:
 
@@ -70,13 +70,78 @@ Here, ```dimA``` is the dimension of system ```A``` and ```dimB``` is the dimens
 
 takes the partial trace of ```R_AB``` over system ```A```. In general, ```TrX(R,sys,dim)``` traces over the systems in the list ```sys```, and ```dim``` is a list of the dimensions of all of the subsystems on which the operator ```R``` acts.
 
+### Quantum states
+
+We can generate a random quantum state (i.e., density matrix) in ```d``` dimensions as follows:
+
+```python
+>>> RandomDensityMatrix(d)
+```
+To generate a random pure state (i.e., state vector) in ```d``` dimensions:
+
+```python
+>>> RandomPureState(d)
+```
+
+To generate an isotropic state in ```d``` dimensions:
+
+```python
+>>> isotropic_state(p,d)
+```
+
+where ```p``` is the fidelity to the maximally entangled state.
+
+Another special class of states is the Werner states:
+
+```python
+>>> Werner_state(p,d)
+```
+
+### Quantum channels
+
+The package comes with functions for commonly-used channels such as the depolarizing channel and the amplitude damping channel. One can also create an arbitrary qubit Pauli channel as follows:
+
+```python
+>>> Pauli_channel(px,py,pz)
+```
+
+where ```px,py,pz``` are the probabilities of the individual pauli matrices.
+
+In order to apply a quantum channel to a quantum state ```rho```, we can use the function ```apply_channel```. First, let us define the following amplitude damping channel:
+
+```python
+>>> K=amplitude_damping_channel(0.2)
+```
+
+The variable ```K``` contains the Kraus operators of the channel. Then,
+
+```python
+>>>rho_out=apply_channel(K,rho)
+```
+
+gives the state at the output of the channel when the input state is ```rho```.
+
+Other functions include:
+
+- Getting the Choi and natural representation of a channel from its Kraus representation
+- Converting between the Choi, natural, and Kraus representations of a channel
 
 
-## FAQ
+### Summary of other features
 
-**1. How is this package different from qutip?**
+The package also contains functions for:
+- Trace norm
+- Fidelity and entanglement fidelity
+- Random unitaries
+- Clifford unitaries
+- Generators of the su(d) Lie algebra (for d=2, this is the set of Pauli matrices)
+- Discrete Weyl operators
+- von Neumann entropy and relative entropy
+- Renyi entropies
+- Coherent information and Holevo information for states and channels
 
-**2. Does the package support symbolic computations?**
+
+
 
 ## Acknowledgements
 
