@@ -300,10 +300,10 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
         K=[K_tmp[i].H for i in range(len(K_tmp))]
 
     if sys==None:
-        if type(rho)==cvx.expressions.variable.Variable:
-            return np.sum([K[i]*rho*K[i].H for i in range(len(K))],0)
-        else:
-            return np.matrix(np.sum([K[i]*rho*K[i].H for i in range(len(K))],0))
+        #if type(rho)==cvx.expressions.variable.Variable:
+        #    return np.sum([K[i]*rho*K[i].H for i in range(len(K))],0)
+        #else:
+        return np.matrix(np.sum([K[i]*rho*K[i].H for i in range(len(K))],0))
     else:
         A=[]
         for i in range(len(K)):
@@ -314,10 +314,10 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
                 else:
                     X=tensor(X,eye(dim[j]))
             A.append(X)
-        if type(rho)==cvx.expressions.variable.Variable:
-            return np.sum([A[i]*rho*A[i].H for i in range(len(A))],0)
-        else:
-            return np.matrix(np.sum([A[i]*rho*A[i].H for i in range(len(A))],0))
+        #if type(rho)==cvx.expressions.variable.Variable:
+        #    return np.sum([A[i]*rho*A[i].H for i in range(len(A))],0)
+        #else:
+        return np.matrix(np.sum([A[i]*rho*A[i].H for i in range(len(A))],0))
 
 
 
