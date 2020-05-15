@@ -21,7 +21,7 @@ from scipy.stats import unitary_group
 from scipy.optimize import minimize
 import itertools
 #from optimize_unitarySD import unitarySD_selftuning,unitarySD_proj 
-import cvxpy as cvx
+#import cvxpy as cvx
 
 
 
