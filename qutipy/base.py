@@ -358,20 +358,34 @@ def isotropic_state(p,d,fidelity=False):
         return p*Bell*Bell.H+(1-p)*eye(d**2)/d**2
 
 
-def Werner_state(p,d):
+def Werner_state(p,d,fidelity=False):
 
     '''
     Generates the Werner state with parameter p on two d-dimensional systems.
     The state is defined as
 
-        rho_W=(1/(d^2-dp))*(eye(d^2)-p*SWAP),
+        rho_W=(1/(d^2-dp))*(eye(d^2)+p*SWAP),
 
     where SWAP is the swap operator between two d-dimensional systems and 
     p is between -1 and 1. Werner states are invariant under U ⊗ U for any
     unitary U.
+
+    If fidelity=True, then the function returns a different parameterization of 
+    the Werner state in which the parameter p is the fidelity of the state with
+    respect to the d-dimensional singlet state, defined as
+
+        |Psi^-><Psi^-|=(1/(d^2-d))*(eye(d^2)-SWAP)
+
     '''
 
-    return (1/(d**2-d*p))*(eye(d**2)-p*SWAP([1,2],[d,d]))
+    F=SWAP([1,2],[d,d])
+
+    Singlet=(1/(d**2-d))*(eye(d**2)-F)
+
+    if fidelity:
+        return p*Singlet+((1-p)/(d**2-1))*(eye(d**2)-Singlet)
+    else:
+        return (1/(d**2-d*p))*(eye(d**2)+p*F)
 
 
 def SWAP(sys,dim):
@@ -989,40 +1003,40 @@ def nQubit_mean_vector(X,n):
 ####################################################################
 
 
-def Clifford_group_one_qubit():
-    '''
-    Returns the 24 one-qubit Clifford gates.
-    '''
+#def Clifford_group_one_qubit():
+#    '''
+#    Returns the 24 one-qubit Clifford gates.
+#    '''
 
-    C1=eye(2)                                                                                                                                          
-    C2=Rx(np.pi)                                                                                                                                 
-    C3=Rx(np.pi/2.)                                                                                                                              
-    C4=Rx(-np.pi/2.)                                                                                                                             
-    C5=Rz(np.pi)                                                                                                                                 
-    C6=Rx(np.pi)*Rx(np.pi)                                                                                                                 
-    C7=Rx(np.pi/2.)*Rz(np.pi)                                                                                                              
-    C6=Rx(np.pi)*Rz(np.pi)                                                                                                                 
-    C8=Rx(-np.pi/2.)*Rz(np.pi)
-    C9=Rz(np.pi/2.)                                                                                                                              
-    C10=Ry(np.pi)*Rz(np.pi/2.)                                                                                                             
-    C11=Ry(-np.pi/2.)*Rz(np.pi/2.)                                                                                                         
-    C12=Ry(np.pi/2.)*Rz(np.pi/2.)                                                                                                          
-    C13=Rz(-np.pi/2.)                                                                                                                            
-    C14=Ry(np.pi)*Rz(-np.pi/2.)                                                                                                            
-    C15=Ry(-np.pi/2.)*Rz(-np.pi/2.)                                                                                                        
-    C16=Ry(np.pi/2.)*Rz(-np.pi/2.)                                                                                                         
-    C17=Rz(-np.pi/2.)*Rx(np.pi/2.)*Rz(np.pi/2.)
-    C18=Rz(np.pi/2.)*Rx(np.pi/2.)*Rz(np.pi/2.)                                                                                       
-    C19=Rz(np.pi)*Rx(np.pi/2.)*Rz(np.pi/2.)                                                                                          
-    C20=Rx(np.pi/2.)*Rz(np.pi/2.)                                                                                                          
-    C21=Rz(np.pi/2.)*Rx(-np.pi/2.)*Rz(np.pi/2.)                                                                                      
-    C22=Rz(-np.pi/2.)*Rx(-np.pi/2.)*Rz(np.pi/2.)                                                                                     
-    C23=Rx(-np.pi/2.)*Rz(np.pi/2.)                                                                                                         
-    C24=Rx(np.pi)*Rx(-np.pi/2.)*Rz(np.pi/2.)
+#    C1=eye(2)                                                                                                                                          
+#    C2=Rx(np.pi)                                                                                                                                 
+#    C3=Rx(np.pi/2.)                                                                                                                              
+#    C4=Rx(-np.pi/2.)                                                                                                                             
+#    C5=Rz(np.pi)                                                                                                                                 
+#    C6=Rx(np.pi)*Rz(np.pi)                                                                                                                 
+#    C7=Rx(np.pi/2.)*Rz(np.pi)                                                                                                              
+#    C6=Rx(np.pi)*Rz(np.pi)                                                                                                                 
+#    C8=Rx(-np.pi/2.)*Rz(np.pi)
+#    C9=Rz(np.pi/2.)                                                                                                                              
+#    C10=Ry(np.pi)*Rz(np.pi/2.)                                                                                                             
+#    C11=Ry(-np.pi/2.)*Rz(np.pi/2.)                                                                                                         
+#    C12=Ry(np.pi/2.)*Rz(np.pi/2.)                                                                                                          
+#    C13=Rz(-np.pi/2.)                                                                                                                            
+#    C14=Ry(np.pi)*Rz(-np.pi/2.)                                                                                                            
+#    C15=Ry(-np.pi/2.)*Rz(-np.pi/2.)                                                                                                        
+#    C16=Ry(np.pi/2.)*Rz(-np.pi/2.)                                                                                                         
+#    C17=Rz(-np.pi/2.)*Rx(np.pi/2.)*Rz(np.pi/2.)
+#    C18=Rz(np.pi/2.)*Rx(np.pi/2.)*Rz(np.pi/2.)                                                                                       
+#    C19=Rz(np.pi)*Rx(np.pi/2.)*Rz(np.pi/2.)                                                                                          
+#    C20=Rx(np.pi/2.)*Rz(np.pi/2.)                                                                                                          
+#    C21=Rz(np.pi/2.)*Rx(-np.pi/2.)*Rz(np.pi/2.)                                                                                      
+#    C22=Rz(-np.pi/2.)*Rx(-np.pi/2.)*Rz(np.pi/2.)                                                                                     
+#    C23=Rx(-np.pi/2.)*Rz(np.pi/2.)                                                                                                         
+#    C24=Rx(np.pi)*Rx(-np.pi/2.)*Rz(np.pi/2.)
 
-    C=[C1,C2,C3,C4,C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15,C16,C17,C18,C19,C20,C21,C22,C23,C24]
+#    C=[C1,C2,C3,C4,C5,C6,C7,C8,C9,C10,C11,C12,C13,C14,C15,C16,C17,C18,C19,C20,C21,C22,C23,C24]
 
-    return C
+#    return C
 
 
 def Clifford_group_generators(n):
@@ -1116,7 +1130,7 @@ def generate_Clifford_group(n,display=False):
     return C
 
 
-def generate_state_2design(C,n,display=True):
+def generate_state_2design(C,n,display=False):
 
     '''
     Takes the n-qubit Clifford gates provided in C and returns a

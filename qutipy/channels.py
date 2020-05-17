@@ -525,7 +525,7 @@ def Clifford_twirl_one_qubit(K,rho,sys=1,dim=[2]):
     C3=Rx_i(sys,np.pi/2.,n)                                                                                                                              
     C4=Rx_i(sys,-np.pi/2.,n)                                                                                                                             
     C5=Rz_i(sys,np.pi,n)                                                                                                                                 
-    C6=Rx_i(sys,np.pi,n)*Rx_i(sys,np.pi,n)                                                                                                                 
+    C6=Rx_i(sys,np.pi,n)*Rz_i(sys,np.pi,n)                                                                                                                 
     C7=Rx_i(sys,np.pi/2.,n)*Rz_i(sys,np.pi,n)                                                                                                              
     C6=Rx_i(sys,np.pi,n)*Rz_i(sys,np.pi,n)                                                                                                                 
     C8=Rx_i(sys,-np.pi/2.,n)*Rz_i(sys,np.pi,n)
