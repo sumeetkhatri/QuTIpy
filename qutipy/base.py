@@ -323,7 +323,24 @@ def MaxEnt_state(dim,normalized=True):
         return (1./np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
     else:
         return np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
-   
+
+
+def singlet_state(d):
+
+    '''
+    Generates the singlet state acting on two d-dimensional systems, which is defined
+    as
+
+        |Psi^-><Psi^-|=(1/(d^2-d))(eye(d^2)-F),
+
+    where F is the swap operator given by SWAP([1,2],[d,d]) (see below).
+    '''
+
+    F=SWAP([1,2],[d,d])
+    singlet=(1/(d**2-d))*(eye(d**2)-F)
+
+    return singlet
+
 
 def MaxMix_state(dim):
 
@@ -377,15 +394,63 @@ def Werner_state(p,d,fidelity=False):
         |Psi^-><Psi^-|=(1/(d^2-d))*(eye(d^2)-SWAP)
 
     '''
-
-    F=SWAP([1,2],[d,d])
-
-    Singlet=(1/(d**2-d))*(eye(d**2)-F)
-
+    
     if fidelity:
-        return p*Singlet+((1-p)/(d**2-1))*(eye(d**2)-Singlet)
+        singlet=singlet_state(d)
+        return p*singlet+((1-p)/(d**2-1))*(eye(d**2)-singlet)
     else:
+        F=SWAP([1,2],[d,d])
         return (1/(d**2-d*p))*(eye(d**2)+p*F)
+
+
+def isotopic_twirl_state(rho,d):
+
+    '''
+    Applies the twirling channel
+
+        rho -> ∫ (U ⊗ conj(U))*rho*(U ⊗ conj(U)).H dU
+
+    to the input state rho acting on two d-dimensional systems.
+
+    For d=2, this is equivalent to
+
+        rho -> (1/24)*sum_i (c_i ⊗ conj(c_i))*rho*(c_i ⊗ conj(c_i)).H
+
+    where the unitaries c_i form the one-qubit Clifford group (because the Clifford
+    unitaries constitute a unitary 2-design).
+
+    This channel takes any state rho and converts it to an isotropic state with
+    the same fidelity to the maximally entangled state as rho.
+    '''
+
+    f=fidelity(rho,MaxEnt_state(d)*MaxEnt_state(d).H)
+
+    return isotropic_state(f,d,fidelity=True)
+
+
+def Werner_twirl_state(rho,d):
+
+    '''
+    Applies the twirling channel
+
+        rho -> ∫ (U ⊗ U)*rho*(U ⊗ U).H dU
+
+    to the input state rho acting on two d-dimensional systems.
+
+    For d=2, this is equivalent to
+
+        rho -> (1/24)*sum_i (c_i ⊗ c_i)*rho*(c_i ⊗ c_i).H
+
+    where the unitaries c_i form the one-qubit Clifford group (because the Clifford
+    unitaries constitute a unitary 2-design).
+
+    This channel takes any state rho and converts it to a Werner state with
+    the same fidelity to the singlet state as rho.
+    '''
+
+    f=fidelity(rho,singlet_state(d))
+
+    return Werner_state(f,d,fidelity=True)
 
 
 def SWAP(sys,dim):

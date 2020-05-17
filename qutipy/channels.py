@@ -511,7 +511,7 @@ def generate_channel_isometry(K,dimA,dimB):
         return V
 
 
-def Clifford_twirl_one_qubit(K,rho,sys=1,dim=[2]):
+def Clifford_twirl_channel_one_qubit(K,rho,sys=1,dim=[2]):
 
     '''
     Twirls the given channel with Kraus operators in K by the one-qubit 
