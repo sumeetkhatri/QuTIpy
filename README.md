@@ -105,7 +105,7 @@ The package comes with functions for commonly-used channels such as the depolari
 >>> Pauli_channel(px,py,pz)
 ```
 
-where ```px,py,pz``` are the probabilities of the individual pauli matrices.
+where ```px,py,pz``` are the probabilities of the individual pauli matrices. The output of this function contains the Kraus operators of the channel as well as an isometric extension of the channel.
 
 In order to apply a quantum channel to a quantum state ```rho```, we can use the function ```apply_channel```. First, let us define the following amplitude damping channel:
 
@@ -116,7 +116,7 @@ In order to apply a quantum channel to a quantum state ```rho```, we can use the
 The variable ```K``` contains the Kraus operators of the channel. Then,
 
 ```python
->>>rho_out=apply_channel(K,rho)
+>>> rho_out=apply_channel(K,rho)
 ```
 
 gives the state at the output of the channel when the input state is ```rho```.
