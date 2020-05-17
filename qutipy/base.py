@@ -308,7 +308,7 @@ def eye(n):
     return np.matrix(np.identity(n,dtype=int))
 
 
-def MaxEnt_state(dim,normalized=True):
+def MaxEnt_state(dim,normalized=True,density_matrix=True):
 
     '''
     Generates the dim-dimensional maximally entangled state, which is defined as
@@ -317,12 +317,22 @@ def MaxEnt_state(dim,normalized=True):
 
     If normalized=False, then the function returns the unnormalized maximally entangled
     vector.
+
+    If density_matrix=True, then the function returns the state as a density matrix.
     '''
 
     if normalized:
-        return (1./np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+        Bell=(1./np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+        if density_matrix:
+            return Bell*Bell.H
+        else:
+            return Bell
     else:
-        return np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+        Gamma=np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+        if density_matrix:
+            return Gamma*Gamma.H
+        else:
+            return Gamma
 
 
 def singlet_state(d):
@@ -403,7 +413,7 @@ def Werner_state(p,d,fidelity=False):
         return (1/(d**2-d*p))*(eye(d**2)+p*F)
 
 
-def isotopic_twirl_state(rho,d):
+def isotropic_twirl_state(rho,d):
 
     '''
     Applies the twirling channel
@@ -423,9 +433,12 @@ def isotopic_twirl_state(rho,d):
     the same fidelity to the maximally entangled state as rho.
     '''
 
-    f=fidelity(rho,MaxEnt_state(d)*MaxEnt_state(d).H)
+    #f=fidelity(rho,MaxEnt_state(d)*MaxEnt_state(d).H)
+    #return isotropic_state(f,d,fidelity=True)
 
-    return isotropic_state(f,d,fidelity=True)
+    G=MaxEnt_state(d,normalized=False,density_matrix=True)
+
+    return (np.trace(rho)/(d**2-1)-np.trace(G*rho)/(d*(d**2-1)))*eye(d**2)+(np.trace(G*rho)/(d**2-1)-np.trace(rho)/(d*(d**2-1)))*G
 
 
 def Werner_twirl_state(rho,d):
@@ -448,9 +461,12 @@ def Werner_twirl_state(rho,d):
     the same fidelity to the singlet state as rho.
     '''
 
-    f=fidelity(rho,singlet_state(d))
+    F=SWAP([1,2],[d,d])
 
-    return Werner_state(f,d,fidelity=True)
+    #f=fidelity(rho,singlet_state(d))
+    #return Werner_state(f,d,fidelity=True)
+
+    return (np.trace(rho)/(d**2-1)-np.trace(F*rho)/(d*(d**2-1)))*eye(d**2)+(np.trace(F*rho)/(d**2-1)-np.trace(rho)/(d*(d**2-1)))*F
 
 
 def SWAP(sys,dim):
