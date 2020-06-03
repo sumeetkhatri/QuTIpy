@@ -191,27 +191,23 @@ def dephasing_channel(p,d=2):
     '''
     Generates the channel rho -> (1-p)*rho+p*Z*rho*Z. (In the case d=2.)
 
-    For d>=2, we let p be a list of d probabilities, and we use the su(d) generators
-    (specifically, the last d-1 of them) to define the channel.
+    For d>=2, we let p be a list of d probabilities, and we use the discrete Weyl-Z
+    operators to define the channel.
 
     For p=1/d, we get the completely dephasing channel.
     '''
+
     if d==2:
         return Pauli_channel(0,0,p)
     else:
-        S=su_generators(d)[d**2-(d-1):d**2]
-        K=[]
-        K.append(np.sqrt(p[0]*eye(d)))
-        for k in range(1,d):
-            K.append(np.sqrt(p[k])*S[k-1])
-        
+        K=[np.sqrt(p[k])*discrete_Weyl_Z(d)**k for k in range(d)]
         return K
 
 
 def completely_dephasing_channel(d):
 
     '''
-    Generates the completely dephasing channel in d dimensions. This channels
+    Generates the completely dephasing channel in d dimensions. This channel
     eliminates the off-diagonal elements (in the standard basis) of the input operator.
     '''
     
