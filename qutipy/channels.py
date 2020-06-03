@@ -186,13 +186,41 @@ def bit_flip_channel(p):
     return Pauli_channel(p,0,0)
 
 
-def dephasing_channel(p):
+def dephasing_channel(p,d=2):
 
     '''
-    Generates the channel rho -> (1-p)*rho+p*Z*rho*Z.
-    '''
+    Generates the channel rho -> (1-p)*rho+p*Z*rho*Z. (In the case d=2.)
 
-    return Pauli_channel(0,0,p)
+    For d>=2, we let p be a list of d probabilities, and we use the su(d) generators
+    (specifically, the last d-1 of them) to define the channel.
+
+    For p=1/d, we get the completely dephasing channel.
+    '''
+    if d==2:
+        return Pauli_channel(0,0,p)
+    else:
+        S=su_generators(d)[d**2-(d-1):d**2]
+        K=[]
+        K.append(np.sqrt(p[0]*eye(d)))
+        for k in range(1,d):
+            K.append(np.sqrt(p[k])*S[k-1])
+        
+        return K
+
+
+def completely_dephasing_channel(d):
+
+    '''
+    Generates the completely dephasing channel in d dimensions. This channels
+    eliminates the off-diagonal elements (in the standard basis) of the input operator.
+    '''
+    
+    if d==2:
+        p=1/2
+        return dephasing_channel(p,d=d)[0]
+    else:
+        p=(1/d)*np.ones(d)
+        return dephasing_channel(p,d=d)
 
 
 def phase_damping_channel(p):
