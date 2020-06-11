@@ -1513,22 +1513,22 @@ def nQudit_quadratures(d,n):
     Returns the list of n-qudit "quadrature" operators, which are defined as
     (for two qudits)
 
-        S[0]=X(0) \otimes Id
-        S[1]=Z(0) \otimes Id
-        S[2]=Id \otimes X(0)
-        S[3]=Id \otimes Z(0)
+        S[0]=X(0) ⊗ Id
+        S[1]=Z(0) ⊗ Id
+        S[2]=Id ⊗ X(0)
+        S[3]=Id ⊗ Z(0)
 
     In general, for n qubits:
 
-        S[0]=X(0) \otimes Id \otimes ... \otimes Id
-        S[1]=Z(0) \otimes Id \otimes ... \otimes Id
-        S[2]=Id \otimes X(0) \otimes ... \otimes Id
-        S[3]=Id \otimes Z(0) \otimes ... \otimes Id
+        S[0]=X(0) ⊗ Id ⊗ ... ⊗ Id
+        S[1]=Z(0) ⊗ Id ⊗ ... ⊗ Id
+        S[2]=Id ⊗ X(0) ⊗ ... ⊗ Id
+        S[3]=Id ⊗ Z(0) ⊗ ... ⊗ Id
         .
         .
         .
-        S[2n-2]=Id \otimes Id \otimes ... \otimes X(0)
-        S[2n-1]=Id\otimes Id \otimes ... \otimes Z(0)
+        S[2n-2]=Id ⊗ Id ⊗ ... ⊗ X(0)
+        S[2n-1]=Id ⊗ Id ⊗ ... ⊗ Z(0)
     '''
 
     S={}
@@ -1560,10 +1560,30 @@ def nQudit_cov_matrix(X,d,n):
         for j in range(2*n):
             #V[i,j]=np.trace(X*(S[i+1]*S[j+1].H+S[j+1].H*S[i+1]))
             V[i,j]=np.trace(X*S[i+1]*S[j+1].H)  # Use this instead to be consistent with the qubit case above.
-    
+    letting
 
     return V
 
+
+def Bell_state(d,z,x,density_matrix=False):
+
+    '''
+    Generates a d-dimensional Bell state with 0 <= z,x <= d-1. These are defined as
+
+    |Phi_{z,x}> = (Z(z)X(x) ⊗ I)|Phi^+>
+
+    '''
+
+    Bell=MaxEnt_state(d,density_matrix=density_matrix)
+
+    W_zx=discrete_Weyl_Z(d)**z*discrete_Weyl_X(d)**x
+
+    if density_matrix:
+        out=tensor(W_zx,eye(d))*Bell*tensor(W_zx.H,eye(d))
+        return out
+    else:
+        out=tensor(W_zx,eye(d))*Bell
+        return out 
 
 
 ####################################################################

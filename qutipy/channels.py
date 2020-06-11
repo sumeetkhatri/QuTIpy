@@ -280,6 +280,126 @@ def generalized_amplitude_damping_channel(gamma,N):
         return [A1,A2,A3,A4]
 
 
+def apply_teleportation_channel(rho,dA=2,dR1=2,dR2=2,dB=2):
+
+    '''
+    Applies the d-dimensional teleportation channel to the four-qubit state rho_{AR1R2B}.
+    The channel measures R1 and R2 in the d-dimensional Bell basis and, based on the
+    outcome, applies a 'correction operation' to B. So the output of the channel consists
+    only of the systems A and B.
+
+    We obtain quantum teleportation by letting
+
+        rho_{AR1R2B} = psi_{R1} ⊗ Phi_{R2B}^+,
+
+    so that dA=1. This simulates teleportation of the state psi in the system R1 to
+    the system B. 
+
+    We obtain entanglement swapping by letting
+
+        rho_{AR1R2B} = Phi_{AR1}^+ ⊗ Phi_{R2B}^+.
+    
+    The result of the channel is then Phi_{AB}^+
+    '''
+
+    X=[discrete_Weyl_X(dB)**x for x in range(dB)]
+    Z=[discrete_Weyl_Z(dB)**z for z in range(dB)]
+    
+    rho_out=np.matrix(np.sum([tensor(eye(dA),Bell_state(dR1,z,x).H,Z[z]*X[x])*rho*tensor(eye(dA),Bell_state(dR1,z,x),X[x].H*Z[z].H) for z in range(dB) for x in range(dB)],0))
+
+    return rho_out
+
+
+def post_teleportation_fidelity(rho,dA=2):
+
+    '''
+    Calculates the fidelity of the output state of the teleportation channel with
+    respect to the maximally entangled state on AB. The input state rho is of the
+    form rho_{AR1R2B}. We assume that A, R1, R2, B all have the same dimension.
+    '''
+
+    return sum([fidelity(rho,tensor(Bell_state(dA,z,x,density_matrix=True),Bell_state(dA,z,x,density_matrix=True))) for z in range(dA) for x in range(dA)])
+
+
+
+def apply_teleportation_chain_channel(rho,n,dA=2,dR=2,dB=2):
+
+    '''
+    Applies the teleportation chain channel to the state rho, which is of the form
+
+        rho_{A R11 R12 R21 R22 ... Rn1 Rn2 B}.
+    
+    The channel is defined by performing a d-dimensional Bell basis measurement
+    independently on the system pairs Ri1 and Ri2, for 1 <= i <= n; based on the
+    outcome, a 'correction operation' is applied to B. The system pairs Ri1 and Ri2
+    can be thought of as 'repeaters'. Note that n>=1. For n=1, we get the same channel
+    as in apply_teleportation_channel().
+
+    We obtain teleportation by letting dA=1 and letting
+
+        rho_{A R11 R12 R21 R22 ... Rn1 Rn2 B} = psi_{R11} ⊗ Phi_{R12 R21}^+ ⊗ ... ⊗ Phi_{Rn2 B}^+,
+    
+    so that we have teleportation of the state psi in the system R11 to the system B. 
+
+    We obtain a chain of entanglement swaps by letting
+
+        rho_{A R11 R12 R21 R22 ... Rn1 Rn2 B} = Phi_{A R11}^+ ⊗ Phi_{R12 R21}^+ ⊗ ... ⊗ Phi_{Rn2 B}^+.
+    '''
+
+    indices=list(itertools.product(*[range(dB)]*n))
+
+    rho_out=np.matrix(np.zeros((dA*dB,dA*dB),dtype=complex))
+
+    for z_indices in indices:
+        for x_indices in indices:
+
+            Bell_zx=Bell_state(dB,z_indices[0],x_indices[0])
+            for j in range(1,n):
+                Bell_zx=tensor(Bell_zx,Bell_state(dB,z_indices[j],x_indices[j]))
+            
+            z_sum=np.mod(sum(z_indices),dB)
+            x_sum=np.mod(sum(x_indices),dB)
+
+            W_zx=(discrete_Weyl_Z(dB)**z_sum)*(discrete_Weyl_X(dB)**x_sum)
+
+            rho_out=rho_out+tensor(eye(dA),Bell_zx.H,W_zx)*rho*tensor(eye(dA),Bell_zx,W_zx.H)
+
+    return rho_out
+
+
+def post_teleportation_chain_fidelity(rho,n,dA=2):
+
+    '''
+    Calculates the fidelity of the output state of the teleportation chain channel with
+    respect to the maximally entangled state on AB. The input state rho is of the
+    form
+
+        rho_{A R11 R12 R21 R22 ... Rn1 Rn2 B}.
+
+    We assume that A, B, and all R systems have the same dimension.
+    '''
+
+    f=0
+
+    indices=list(itertools.product(*[range(dA)]*n))
+
+    for z_indices in indices:
+        for x_indices in indices:
+
+            z_sum=np.mod(sum(z_indices),dA)
+            x_sum=np.mod(sum(x_indices),dA)
+
+            Bell_tot=Bell_state(dA,z_sum,x_sum,density_matrix=True)
+
+            for j in range(n):
+                Bell_tot=tensor(Bell_tot,Bell_state(dA,z_indices[j],x_indices[j],density_matrix=True))
+
+            f+=fidelity(rho,Bell_tot)
+
+    return f
+
+
+
 def compose_channels(C):
 
     '''
