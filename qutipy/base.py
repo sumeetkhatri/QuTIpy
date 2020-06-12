@@ -1560,7 +1560,6 @@ def nQudit_cov_matrix(X,d,n):
         for j in range(2*n):
             #V[i,j]=np.trace(X*(S[i+1]*S[j+1].H+S[j+1].H*S[i+1]))
             V[i,j]=np.trace(X*S[i+1]*S[j+1].H)  # Use this instead to be consistent with the qubit case above.
-    letting
 
     return V
 
@@ -1584,6 +1583,29 @@ def Bell_state(d,z,x,density_matrix=False):
     else:
         out=tensor(W_zx,eye(d))*Bell
         return out 
+
+
+####################################################################
+## ENTANGLEMENT MEASURES
+####################################################################
+
+
+def log_negativity(rhoAB,dimA,dimB):
+
+    '''
+    Returns the log-negativity of the bipartite state rhoAB, which is defined as
+
+        E_N(rhoAB) = log_2 || rhoAB^{T_B} ||_1.
+
+    This is a faithful entanglement measure if both A and B are qubits or if one of
+    then is a qubit and the other a qutrit. Such states are entangled if and only if
+    the log-negativity is positive.
+
+    See "Computable measure of entanglement", Phys. Rev. A 65, 032314 (2002).
+    '''
+
+    return np.log2(trace_norm(Tx(rhoAB,[2],[dimA,dimB])))
+
 
 
 ####################################################################
