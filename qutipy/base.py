@@ -335,6 +335,26 @@ def MaxEnt_state(dim,normalized=True,density_matrix=True):
             return Gamma
 
 
+def GHZ_state(dim,n,density_matrix=True):
+
+    # Last modified: 15 June 2020
+
+    '''
+    Generates the n-party GHZ state in dim-dimensions for each party, which is defined as
+
+        |GHZ_n> = (1/sqrt(dim))*(|0,0,...,0> + |1,1,...,1> + ... + |d-1,d-1,...,d-1>)
+
+    If density_matrix=True, then the function returns the state as a density matrix.
+    '''
+
+    GHZ=(1/np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i]*n) for i in range(dim)],0))
+
+    if density_matrix:
+        return GHZ*GHZ.H
+    else:
+        return GHZ
+
+
 def singlet_state(d):
 
     '''

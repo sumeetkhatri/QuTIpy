@@ -283,7 +283,7 @@ def generalized_amplitude_damping_channel(gamma,N):
 def apply_teleportation_channel(rho,dA=2,dR1=2,dR2=2,dB=2):
 
     '''
-    Applies the d-dimensional teleportation channel to the four-qubit state rho_{AR1R2B}.
+    Applies the d-dimensional teleportation channel to the four-qudit state rho_{AR1R2B}.
     The channel measures R1 and R2 in the d-dimensional Bell basis and, based on the
     outcome, applies a 'correction operation' to B. So the output of the channel consists
     only of the systems A and B.
@@ -395,6 +395,124 @@ def post_teleportation_chain_fidelity(rho,n,dA=2):
                 Bell_tot=tensor(Bell_tot,Bell_state(dA,z_indices[j],x_indices[j],density_matrix=True))
 
             f+=fidelity(rho,Bell_tot)
+
+    return f
+
+
+def apply_ent_swap_GHZ_channel(rho):
+
+    # Last modified: 15 June 2020
+
+    '''
+    Applies the channel that takes two copies of a maximally entangled state and outputs
+    a three-party GHZ state. The input state rho is of the form
+
+        rho_{A R1 R2 B}.
+
+    A CNOT is applied to R1 and R2, followed by a measurement in the standard basis on
+    R2, followed by a correction operation on B based on the outcome of the measurement.
+
+    Currently only works for qubits.
+    '''
+
+    C=CNOT_ij(2,3,4)
+
+    X=[discrete_Weyl_X(2)**x for x in range(2)]
+    
+    rho_out=np.matrix(np.sum([tensor(eye(4),ket(2,x).H,eye(2))*C*tensor(eye(8),X[x])*rho*tensor(eye(8),X[x])*C.H*tensor(eye(4),ket(2,x),eye(2)) for x in range(2)],0))
+
+    return rho_out
+
+
+def post_ent_swap_GHZ_fidelity(rho):
+
+    # Last modified: 15 June 2020
+
+    '''
+    Finds the fidelity of the output state of the apply_ent_swap_GHZ_channel() function
+    with respect to the three-party GHZ state.
+    '''
+
+    Phi=[Bell_state(2,z,0,density_matrix=True) for z in range(2)]
+
+    return sum([fidelity(tensor(Phi[z].H,Phi[z].H),rho) for z in range(2)])
+
+
+
+def apply_ent_swap_GHZ_chain_channel(rho,n):
+
+    # Last modified: 16 June 2020
+
+    '''
+    Applies the channel that takes n+1 copies of a maximally entangled state and outputs
+    a (n+2)-party GHZ state. The input state rho is of the form
+
+        rho_{A R11 R12 R21 R22 ... Rn1 Rn2 B}
+
+    A CNOT is applies to each pair Rj1 Rj2. Then, the qubits Rj2 are measured in the
+    standard basis. Conditioned on these outcomes, a correction operation is applied
+    at B.
+
+    Currently only works for qubits. For n=1, we get the same thing as apply_ent_swap_GHZ_channel().
+    '''
+
+
+    def K(j,x):
+
+        # j is between 1 and n, denoting the pair of R systems. x is either 0 or 1.
+        # For each j, the qubit indices are 2*j and 2*j+1 for the pair Rj1 and Rj2
+
+        Mx=tensor(eye(2),eye(2**(2*j-2)),eye(2),ket(2,x)*ket(2,x).H,eye(2**(2*(n-j))),eye(2))
+        
+        C=CNOT_ij(2*j,2*j+1,2*n+2)
+
+        X=1j*Rx_i(2*j+2,np.pi,2*n+2)
+
+        return Mx*C*(X**x)
+
+
+    indices=list(itertools.product(*[range(2)]*n))
+
+    rho_out=np.matrix(np.zeros((2**(2*n+2),2**(2*n+2)),dtype=complex))
+
+    for index in indices:
+        index=list(index)
+
+        L=K(1,index[0])
+        for j in range(2,n+1):
+            L=K(j,index[j-1])*L
+
+        rho_out=rho_out+L*rho*L.H
+
+    rho_out=TrX(rho_out,[2*j+1 for j in range(1,n+1)],[2]*(2*n+2))
+
+    return rho_out
+
+
+def post_ent_swap_GHZ_chain_fidelity(rho,n):
+
+    # Last modified: 16 June 2020
+
+    '''
+    Finds the fidelity of the output state of the apply_ent_swap_GHZ_chain_channel()
+    function with respect to the (n+2)-party GHZ state.
+    '''
+
+    indices=list(itertools.product(*[range(2)]*n))
+
+    f=0
+
+    for index in indices:
+        index=list(index)
+
+        s=np.mod(sum(index),2)
+
+        Bell_z=Bell_state(2,s,0,density_matrix=True)
+
+        for z in index:
+            Bell_z=tensor(Bell_z,Bell_state(2,z,0,density_matrix=True))
+
+        f=f+fidelity(Bell_z,rho)
 
     return f
 
