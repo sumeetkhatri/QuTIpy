@@ -489,6 +489,45 @@ def Werner_twirl_state(rho,d):
     return (np.trace(rho)/(d**2-1)-np.trace(F*rho)/(d*(d**2-1)))*eye(d**2)+(np.trace(F*rho)/(d**2-1)-np.trace(rho)/(d*(d**2-1)))*F
 
 
+def graph_state(A_G,n,density_matrix=False,return_CZ=False):
+
+    '''
+    Generates the graph state corresponding to the undirected graph G with n vertices.
+    A_G denotes the adjacency matrix of G, which for an undirected graph is a binary
+    symmetric matrix indicating which vertices are connected.
+
+    See the following book chapter for a review:
+
+        ``Cluster States'' in Compedium of Quantum Physics, pp. 96-105, by H. J. Briegel.
+
+    '''
+
+    plus=(1/np.sqrt(2))*(ket(2,0)+ket(2,1))
+
+    plus_n=tensor([plus,n])
+
+    CZ_G=eye(2**n)
+
+    for i in range(n):
+        for j in range(i,n):
+            if A_G[i,j]==1:
+                CZ_G=CZ_G*CZ_ij(i+1,j+1,n)
+
+    if density_matrix:
+        plus_n=plus_n*plus_n.H
+        if return_CZ:
+            return CZ_G*plus_n*CZ_G.H,CZ_G
+        else:
+            return CZ_G*plus_n*CZ_G.H
+    else:
+        if return_CZ:
+            return CZ_G*plus_n,CZ_G
+        else:
+            return CZ_G*plus_n
+
+
+
+
 def SWAP(sys,dim):
 
     '''
@@ -562,6 +601,38 @@ def CNOT_ij(i,j,n):
 	out=syspermute(out_temp,perm_rearrange,dims)
 
 	return out
+
+
+def CZ_ij(i,j,n):
+
+    '''
+    CZ gate on qubits i and j, i being the control and j being the target.
+    The total number of qubits is n. (Note that for the CZ gate it does matter
+    which qubit is the control and which qubit is the target.)
+    '''
+
+    dims=2*np.ones(n)
+    dims=dims.astype(int)
+
+    indices=np.linspace(1,n,n)
+    indices_diff=np.setdiff1d(indices,[i,j])
+
+    perm_arrange=np.append(np.array([i,j]),indices_diff)
+    perm_rearrange=np.zeros(n)
+
+    for i in range(n):
+        perm_rearrange[i]=np.argwhere(perm_arrange==i+1)[0][0]+1
+
+    perm_rearrange=perm_rearrange.astype(int)
+
+    Sz=np.matrix([[1,0],[0,-1]])
+    CZ=tensor(ket(2,0)*np.transpose(ket(2,0)),eye(2))+tensor(ket(2,1)*np.transpose(ket(2,1)),Sz)
+
+    out_temp=tensor(CZ,[eye(2),n-2])
+
+    out=syspermute(out_temp,perm_rearrange,dims)
+
+    return out
 
 
 def Rx(t):

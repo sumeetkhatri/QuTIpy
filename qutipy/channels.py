@@ -517,6 +517,75 @@ def post_ent_swap_GHZ_chain_fidelity(rho,n):
     return f
 
 
+def apply_graph_state_dist_channel(A_G,n,rho):
+
+    '''
+    Applies the graph state distribution channel to the 2n-partite state rho, where
+    n is the number of vertices in the graph G with adjacency matrix A_G (binary 
+    symmetric matrix).
+
+    rho is a state of the form rho_{A_1...A_n R_1...R_n}
+
+    The local graph state operations and measurements are applied to the qubits
+    R_1,...,R_n, and the correction operations are applied to A_1,...,A_n.
+
+    When rho is a state of the form
+
+        Phi_{A_1 R_1}^+ ⊗ Phi_{A_2 R_2}^+ ⊗ ... ⊗ Phi_{A_n R_n}^+,
+
+    then the output state on A_1,...,A_n is the graph state |G>. 
+    '''
+
+    indices=list(itertools.product(*[range(2)]*n))
+
+    H=(1/np.sqrt(2))*np.matrix([[1,1],[1,-1]])
+    Hn=tensor([H,n])
+
+    ket_G=graph_state(A_G,n)
+
+    rho_out=np.matrix(np.zeros((2**n,2**n),dtype=complex))
+
+    for index in indices:
+        Zx=generate_nQubit_Pauli_Z(index)
+
+        Gx=Zx*ket_G
+        rho_out=rho_out+tensor(Zx,Gx.H)*rho*tensor(Zx,Gx)
+
+    
+    return rho_out
+
+
+def post_graph_state_dist_fidelity(A_G,n,rho):
+
+    '''
+    Finds the fidelity of the output state of the graph state distribution channel
+    with respect to the graph state |G>, where A_G is the adjacency matrix of the 
+    graph G and n is the number of vertices of G.
+    '''
+
+    X_n=list(itertools.product(*[range(2)]*n))
+
+    f=0
+
+    for x_n in X_n:
+
+        x_n=np.matrix(x_n).H  # Turn x_n into a column vector matrix
+
+        z_n=A_G*x_n
+        z_n=np.mod(z_n,2)
+
+        Bell=Bell_state(2,z_n[0,0],x_n[0,0],density_matrix=True)
+    
+        for k in range(1,n):
+            Bell=tensor(Bell,Bell_state(2,z_n[k,0],x_n[k,0],density_matrix=True))
+        
+        Bell=syspermute(Bell,list(range(1,2*n,2))+list(range(2,2*n+1,2)),2*np.ones(2*n,dtype=int))
+
+        f+=fidelity(rho,Bell)
+
+    return f
+
+
 
 def compose_channels(C):
 
