@@ -989,36 +989,42 @@ def avg_fidelity_qubit(K):
     return (1./6.)*F
 
 
-def entanglement_distillation(rho1,rho2,outcome=1,twirl_after=False):
+def entanglement_distillation(rho1,rho2,outcome=1,twirl_after=False,normalize=False):
 
     '''
     Applies a particular entanglement distillation channel to the two two-qubit states
-    rho1 and rho2. [cite]
+    rho1 and rho2. [PRL 76, 722 (1996)]
 
     The channel is probabilistic. If the variable outcome=1, then the function returns
     the two-qubit state conditioned on the success of the distillation protocol.
     '''
 
-    Sx=np.matrix([[0,1],[1,0]])
     CNOT=CNOT_ij(1,2,2)
+    proj0=ket(2,0)*ket(2,0).H
     proj1=ket(2,1)*ket(2,1).H
 
+    P0=tensor(eye(2),proj0,eye(2),proj0)
     P1=tensor(eye(2),proj1,eye(2),proj1)
-    P0=eye(16)-P1
+    P2=eye(16)-P0-P1
     C=tensor(CNOT,CNOT)
-    K1=P1*C
     K0=P0*C
+    K1=P1*C
+    K2=P2*C
 
     rho_in=syspermute(tensor(rho1,rho2),[1,3,2,4],[2,2,2,2]) # rho_in==rho_{A1A2B1B2}
 
     if outcome==1:
         # rho_out is unnormalized. The trace of rho_out is equal to the success probability.
-        rho_out=TrX(K1*rho_in*K1.H,[2,4],[2,2,2,2])
+        rho_out=TrX(K0*rho_in*K0.H+K1*rho_in*K1.H,[2,4],[2,2,2,2])
         if twirl_after:
             rho_out=isotropic_twirl_state(rho_out,2)
+        if normalize:
+            rho_out=rho_out/np.trace(rho_out)
 
     elif outcome==0:
         # rho_out is unnormalized. The trace of rho_out is equal to the failure probability.
-        rho_out=TrX(K0*rho_in*K0.H,[2,4],[2,2,2,2])
+        rho_out=TrX(K2*rho_in*K2.H,[2,4],[2,2,2,2])
+        if normalize:
+            rho_out=rho_out/np.trace(rho_out)
 
     return rho_out
