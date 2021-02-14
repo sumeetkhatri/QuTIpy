@@ -59,16 +59,16 @@ In general, ```ket(d,[j_1,j_2,...,j_n])``` creates the n-fold tensor product |j_
 Given an operator ```R_AB``` acting on a tensor product Hilbert space of the quantum systems ```A``` and ```B```, the partial trace over ```B``` can be calculated as follows:
 
 ```python
->>> TrX(R_AB,[2],[dimA,dimB])
+>>> partial_trace(R_AB,[2],[dimA,dimB])
 ```
 
 Here, ```dimA``` is the dimension of system ```A``` and ```dimB``` is the dimension of system ```B```. Similarly,
 
 ```python
->>> TrX(R_AB,[1],[dimA,dimB])
+>>> partial_trace(R_AB,[1],[dimA,dimB])
 ```
 
-takes the partial trace of ```R_AB``` over system ```A```. In general, ```TrX(R,sys,dim)``` traces over the systems in the list ```sys```, and ```dim``` is a list of the dimensions of all of the subsystems on which the operator ```R``` acts.
+takes the partial trace of ```R_AB``` over system ```A```. In general, ```partial_trace(R,sys,dim)``` traces over the systems in the list ```sys```, and ```dim``` is a list of the dimensions of all of the subsystems on which the operator ```R``` acts.
 
 ### Quantum states
 
