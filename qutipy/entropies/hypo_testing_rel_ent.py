@@ -1,5 +1,5 @@
 '''
-This code is part of QuTIPy.
+This code is part of QuTIpy.
 
 (c) Copyright Sumeet Khatri, 2021
 
@@ -28,7 +28,7 @@ def hypo_testing_rel_ent(rho,sigma,eps,dual=False,display=False):
     '''
 
     if not dual:
-        
+
         dim=rho.shape[0]
 
         L=cvx.Variable((dim,dim),hermitian=True)

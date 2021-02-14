@@ -1,5 +1,5 @@
 '''
-This code is part of QuTIPy.
+This code is part of QuTIpy.
 
 (c) Copyright Sumeet Khatri, 2021
 
@@ -16,7 +16,7 @@ that they have been altered from the originals.
 import numpy as np
 import cvxpy as cvx
 
-from qutipy.general_functions import syspermute,ket
+from qutipy.general_functions import syspermute,ket,eye
 
 
 def diamond_norm(J,dimA,dimB,display=True):

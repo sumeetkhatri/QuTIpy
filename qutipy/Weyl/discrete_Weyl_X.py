@@ -1,5 +1,5 @@
 '''
-This code is part of QuTIPy.
+This code is part of QuTIpy.
 
 (c) Copyright Sumeet Khatri, 2021
 

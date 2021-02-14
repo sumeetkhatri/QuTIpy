@@ -1,5 +1,5 @@
 '''
-This code is part of QuTIPy.
+This code is part of QuTIpy.
 
 (c) Copyright Sumeet Khatri, 2021
 
@@ -17,6 +17,7 @@ import numpy as np
 
 from qutipy.gates import Rx_i,Ry_i,Rz_i
 from qutipy.channels import apply_channel
+from qutipy.general_functions import eye
 
 
 def Clifford_twirl_channel_one_qubit(K,rho,sys=1,dim=[2]):

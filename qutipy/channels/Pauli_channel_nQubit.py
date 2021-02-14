@@ -1,5 +1,5 @@
 '''
-This code is part of QuTIPy.
+This code is part of QuTIpy.
 
 (c) Copyright Sumeet Khatri, 2021
 
@@ -17,7 +17,7 @@ import numpy as np
 import itertools
 
 
-from qutipy.Pauli import generate_nQubit_Pauli_X, generate_nQubit_Pauli_Z
+from qutipy.Pauli import generate_nQubit_Pauli,generate_nQubit_Pauli_X, generate_nQubit_Pauli_Z
 from qutipy.channels import generate_channel_isometry
 
 
