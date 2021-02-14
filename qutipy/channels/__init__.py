@@ -1,3 +1,4 @@
+from qutipy.channels.generate_channel_isometry import generate_channel_isometry
 from qutipy.channels.Pauli_channel import Pauli_channel
 from qutipy.channels.Pauli_channel_coeffs import Pauli_channel_coeffs
 from qutipy.channels.Pauli_channel_nQubit import Pauli_channel_nQubit
@@ -17,7 +18,6 @@ from qutipy.channels.Choi_to_Natural import Choi_to_Natural
 from qutipy.channels.Kraus_representation import Kraus_representation
 from qutipy.channels.Natural_representation import Natural_representation
 from qutipy.channels.channel_scalar_multiply import channel_scalar_multiply
-from qutipy.channels.generate_channel_isometry import generate_channel_isometry
 from qutipy.channels.tensor_channels import tensor_channels
 from qutipy.channels.diamond_norm import diamond_norm
 from qutipy.channels.n_channel_uses import n_channel_uses

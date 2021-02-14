@@ -1,1 +1,3 @@
 from qutipy.misc.base_number_to_int import base_number_to_int
+from qutipy.misc.cvxpy_to_numpy import cvxpy_to_numpy
+from qutipy.misc.numpy_to_cvxpy import numpy_to_cvxpy

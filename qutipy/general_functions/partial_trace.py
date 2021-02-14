@@ -12,9 +12,12 @@ copyright notice, and modified files need to carry a notice indicating
 that they have been altered from the originals.
 '''
 
-import numpy as np
 
-from qutipy.general_functions import syspermute
+import numpy as np
+import cvxpy
+
+from qutipy.general_functions import syspermute,Tr
+from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 
 
 def partial_trace(X,sys,dim):
@@ -26,26 +29,32 @@ def partial_trace(X,sys,dim):
     Example: If rho_AB is a bipartite state with dimA the dimension of system A 
     and dimB the dimension of system B, then
 
-    TrX(rho_AB,[2],[dimA,dimB]) gives the density matrix on
+    partial_trace(rho_AB,[2],[dimA,dimB]) gives the density matrix on
 
     system A, i.e., rho_A:=TrX[rho_AB].
 
-    Similarly, TrX(rho_AB,[1],[dimA,dimB]) discards the first subsystem,
+    Similarly, partial_trace(rho_AB,[1],[dimA,dimB]) discards the first subsystem,
     returning the density matrix of system B.
 
     If rho_ABC is a tripartite state, then, e.g.,
 
-    TrX(rho_ABC,[1,3],[dimA,dimB,dimC])
+    partial_trace(rho_ABC,[1,3],[dimA,dimB,dimC])
 
     discards the first and third subsystems, so that we obtain the density
     matrix for system B.
 
     '''
 
+    if isinstance(X,cvxpy.Variable):
+        X=cvxpy_to_numpy(X)
+        X_out=partial_trace(X,sys,dim)
+        return numpy_to_cvxpy(X_out)
+
+
     if not sys:  # If sys is empty, just return the original operator
         return X
     elif len(sys)==len(dim):  # If tracing over all systems
-        return np.trace(X)
+        return Tr(X)
     else:
 
         if X.shape[1]==1:

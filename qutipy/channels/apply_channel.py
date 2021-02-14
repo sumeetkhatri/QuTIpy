@@ -14,7 +14,10 @@ that they have been altered from the originals.
 
 
 import numpy as np
+import cvxpy
+
 from qutipy.general_functions import tensor,eye
+from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 
 
 def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
@@ -28,15 +31,18 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
     channel.
     '''
 
+    if isinstance(rho,cvxpy.Variable):
+        rho=cvxpy_to_numpy(rho)
+        rho=np.matrix(rho)
+        rho_out=apply_channel(K,rho,sys,dim,adjoint)
+        return numpy_to_cvxpy(rho_out)
+
     if adjoint==True:
         K_tmp=K
         K=[]
         K=[K_tmp[i].H for i in range(len(K_tmp))]
 
     if sys==None:
-        #if type(rho)==cvx.expressions.variable.Variable:
-        #    return np.sum([K[i]*rho*K[i].H for i in range(len(K))],0)
-        #else:
         return np.matrix(np.sum([K[i]*rho*K[i].H for i in range(len(K))],0))
     else:
         A=[]
@@ -48,7 +54,5 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
                 else:
                     X=tensor(X,eye(dim[j]))
             A.append(X)
-        #if type(rho)==cvx.expressions.variable.Variable:
-        #    return np.sum([A[i]*rho*A[i].H for i in range(len(A))],0)
-        #else:
+
         return np.matrix(np.sum([A[i]*rho*A[i].H for i in range(len(A))],0))

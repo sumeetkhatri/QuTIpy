@@ -1,8 +1,8 @@
+from qutipy.states.MaxEnt_state import MaxEnt_state
 from qutipy.states.GHZ_state import GHZ_state
 from qutipy.states.graph_state import graph_state
 from qutipy.states.isotropic_state import isotropic_state
 from qutipy.states.isotropic_twirl_state import isotropic_twirl_state
-from qutipy.states.MaxEnt_state import MaxEnt_state
 from qutipy.states.MaxMix_state import MaxMix_state
 from qutipy.states.singlet_state import singlet_state
 from qutipy.states.Werner_state import Werner_state
@@ -11,3 +11,4 @@ from qutipy.states.RandomDensityMatrix import RandomDensityMatrix
 from qutipy.states.RandomPureState import RandomPureState
 from qutipy.states.Bell_state import Bell_state
 from qutipy.states.log_negativity import log_negativity
+from qutipy.states.check_kext import check_kext

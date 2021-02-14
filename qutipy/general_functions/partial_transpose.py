@@ -13,6 +13,9 @@ that they have been altered from the originals.
 '''
 
 import numpy as np
+import cvxpy
+
+from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 
 
 def partial_transpose(X,sys,dim):
@@ -43,6 +46,12 @@ def partial_transpose(X,sys,dim):
     factor lives in an operator space taking a 5-dimensional space to a 
     3-dimensional space.
     '''
+
+    if isinstance(X,cvxpy.Variable):
+        X=cvxpy_to_numpy(X)
+        X_out=partial_transpose(X,sys,dim)
+        return numpy_to_cvxpy(X_out)
+
 
     if X.shape[1]==1:
         X=X*X.H

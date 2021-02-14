@@ -15,7 +15,7 @@ that they have been altered from the originals.
 import numpy as np
 
 from qutipy.states import MaxEnt_state
-from quitpy.general_functions import eye
+from qutipy.general_functions import eye
 
 
 def isotropic_state(p,d,fidelity=False):
@@ -37,6 +37,6 @@ def isotropic_state(p,d,fidelity=False):
     Bell=MaxEnt_state(d)
 
     if fidelity:
-        return p*Bell*Bell.H+((1-p)/(d**2-1))*(eye(d**2)-Bell*Bell.H)
+        return p*Bell+((1-p)/(d**2-1))*(eye(d**2)-Bell)
     else:
-        return p*Bell*Bell.H+(1-p)*eye(d**2)/d**2
+        return p*Bell+(1-p)*eye(d**2)/d**2
