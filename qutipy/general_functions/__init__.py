@@ -11,3 +11,4 @@ from qutipy.general_functions.trace_norm import trace_norm
 from qutipy.general_functions.trace_distance_pure_states import trace_distance_pure_states
 from qutipy.general_functions.spectral_norm import spectral_norm
 from qutipy.general_functions.unitary_distance import unitary_distance
+from qutipy.general_functions.dag import dag

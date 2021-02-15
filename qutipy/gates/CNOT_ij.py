@@ -14,7 +14,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import ket,tensor,syspermute,eye
+from qutipy.general_functions import dag,ket,tensor,syspermute,eye
 
 
 def CNOT_ij(i,j,n):
@@ -38,8 +38,8 @@ def CNOT_ij(i,j,n):
 	
 	perm_rearrange=perm_rearrange.astype(int)
 
-	Sx=np.matrix([[0,1],[1,0]])
-	CX=tensor(ket(2,0)*np.transpose(ket(2,0)),eye(2))+tensor(ket(2,1)*np.transpose(ket(2,1)),Sx)
+	Sx=np.array([[0,1],[1,0]])
+	CX=tensor(ket(2,0)@dag(ket(2,0)),eye(2))+tensor(ket(2,1)@dag(ket(2,1)),Sx)
 
 	out_temp=tensor(CX,[eye(2),n-2])
 

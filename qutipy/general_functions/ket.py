@@ -42,4 +42,4 @@ def ket(dim,*args):
         for j in range(1,len(args)):
             out=np.kron(out,ket(dim,args[j]))
     
-    return np.matrix(out)
+    return out

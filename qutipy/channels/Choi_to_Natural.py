@@ -32,4 +32,4 @@ def Choi_to_Natural(C_AB,dimA,dimB):
 
     C_AB=np.array(C_AB)
 
-    return np.matrix(np.reshape(C_AB,[dimA,dimB,dimA,dimB]).transpose((0,2,1,3)).reshape([dimA*dimA,dimB*dimB])).T
+    return np.array(np.reshape(C_AB,[dimA,dimB,dimA,dimB]).transpose((0,2,1,3)).reshape([dimA*dimA,dimB*dimB])).T

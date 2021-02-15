@@ -12,5 +12,5 @@ from qutipy.su import *
 from qutipy.Weyl import *
 from qutipy.channels import *
 
-from numpy.linalg import eig
+from numpy.linalg import eig,norm
 from scipy.linalg import expm,logm

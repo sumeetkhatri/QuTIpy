@@ -17,7 +17,7 @@ import numpy as np
 
 from qutipy.gates import Rx_i,Ry_i,Rz_i
 from qutipy.channels import apply_channel
-from qutipy.general_functions import eye
+from qutipy.general_functions import dag,eye
 
 
 def Clifford_twirl_channel_one_qubit(K,rho,sys=1,dim=[2]):
@@ -60,6 +60,6 @@ def Clifford_twirl_channel_one_qubit(K,rho,sys=1,dim=[2]):
     rho_twirl=0
 
     for i in range(len(C)):
-        rho_twirl+=(1./24.)*C[i]*apply_channel(K,C[i].H*rho*C[i],sys,dim)*C[i].H
+        rho_twirl+=(1./24.)*C[i]@apply_channel(K,dag(C[i])@rho@C[i],sys,dim)@dag(C[i])
 
     return rho_twirl,C

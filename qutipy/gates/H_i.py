@@ -35,8 +35,8 @@ def H_i(i,n):
         perm_rearrange[i]=np.argwhere(perm_arrange==i+1)[0][0]+1
 
     perm_rearrange=perm_rearrange.astype(int)
-    H=(1/np.sqrt(2))*np.matrix([[1,1],[1,-1]])
+    H=(1/np.sqrt(2))*np.array([[1,1],[1,-1]])
     out_temp=tensor(H,[eye(2),n-1])
     out=syspermute(out_temp,perm_rearrange,dims)
 
-    return np.matrix(out)
+    return out

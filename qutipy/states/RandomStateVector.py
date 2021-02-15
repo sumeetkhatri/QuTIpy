@@ -17,10 +17,10 @@ import numpy as np
 from numpy.linalg import norm
 
 from qutipy.states import MaxEnt_state
-from qutipy.general_functions import syspermute,tensor,eye
+from qutipy.general_functions import syspermute,tensor,eye,dag
 
 
-def RandomPureState(dim,rank=None):
+def RandomStateVector(dim,rank=None):
 
     '''
     Generates a random pure state.
@@ -38,7 +38,7 @@ def RandomPureState(dim,rank=None):
         # Generate the real and imaginary parts of the components using numbers
         # sampled from the standard normal distribution (normal distribution with
         # mean zero and variance 1).
-        psi=np.matrix(np.random.randn(dim)).H+1j*np.matrix(np.random.randn(dim)).H
+        psi=dag(np.array([np.random.randn(dim)])+1j*np.array([np.random.randn(dim)]))
 
         psi=psi/norm(psi)
 
@@ -46,14 +46,19 @@ def RandomPureState(dim,rank=None):
     else:
         dimA=dim[0]
         dimB=dim[1]
-        k=rank
-        psi_k=MaxEnt_state(k)
-        a=np.matrix(np.random.rand(dimA*k)).H+1j*np.matrix(np.random.rand(dimA*k)).H
-        b=np.matrix(np.random.rand(dimB*k)).H+1j*np.matrix(np.random.rand(dimB*k)).H
+        
+        if rank==None:
+            rank=max([dimA,dimB])
+        else:
+            k=rank
+
+        psi_k=MaxEnt_state(k,density_matrix=False,normalized=False)
+        a=dag(np.array([np.random.rand(dimA*k)])+1j*np.array([np.random.rand(dimA*k)]))
+        b=dag(np.array([np.random.rand(dimB*k)])+1j*np.array([np.random.rand(dimB*k)]))
 
         psi_init=syspermute(tensor(a,b),[1,3,2,4],[k,dimA,k,dimB])
 
-        psi=tensor(psi_k.H,eye(dimA*dimB))*psi_init
+        psi=tensor(dag(psi_k),eye(dimA*dimB))@psi_init
 
         psi=psi/norm(psi)
 

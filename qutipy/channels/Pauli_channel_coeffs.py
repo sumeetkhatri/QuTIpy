@@ -17,7 +17,7 @@ import numpy as np
 import itertools
 
 from qutipy.Pauli import generate_nQubit_Pauli_X, generate_nQubit_Pauli_Z
-from qutipy.general_functions import Tr
+from qutipy.general_functions import dag,Tr
 from qutipy.channels import apply_channel
 
 
@@ -29,7 +29,7 @@ def Pauli_channel_coeffs(K,n,as_dict=False):
 
         P(X^aZ^b)=c_{a,b}X^aZ^b,
     
-    for the Pauli channel P with the Kraus operators in K.
+    for the channel P with the Kraus operators in K.
     '''
 
     if as_dict:
@@ -45,8 +45,8 @@ def Pauli_channel_coeffs(K,n,as_dict=False):
             Xa=generate_nQubit_Pauli_X(list(a))
             Zb=generate_nQubit_Pauli_Z(list(b))
             if as_dict:
-                c[(a,b)]=(1/2**n)*Tr((Xa*Zb).H*apply_channel(K,Xa*Zb))
+                c[(a,b)]=(1/2**n)*Tr(dag(Xa@Zb)@apply_channel(K,Xa@Zb))
             else:
-                c.append((1/2**n)*Tr((Xa*Zb).H*apply_channel(K,Xa*Zb)))
+                c.append((1/2**n)*Tr(dag(Xa@Zb)@apply_channel(K,Xa@Zb)))
 
     return c

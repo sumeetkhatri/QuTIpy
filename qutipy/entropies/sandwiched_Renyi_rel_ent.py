@@ -17,6 +17,8 @@ that they have been altered from the originals.
 import numpy as np
 from scipy.linalg import fractional_matrix_power
 
+from qutipy.general_functions import Tr
+
 
 def sandwiched_Renyi_rel_ent(rho,sigma,alpha):
 
@@ -27,6 +29,6 @@ def sandwiched_Renyi_rel_ent(rho,sigma,alpha):
 
     sigma_a=np.matrix(fractional_matrix_power(sigma,(1.-alpha)/(2*alpha)))
 
-    Q=np.real(np.trace(fractional_matrix_power(sigma_a*rho*sigma_a,alpha)))
+    Q=np.real(Tr(fractional_matrix_power(sigma_a@rho@sigma_a,alpha)))
 
     return (1./(alpha-1))*np.log2(Q)

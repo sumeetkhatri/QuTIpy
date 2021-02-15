@@ -14,9 +14,10 @@ that they have been altered from the originals.
 
 
 import numpy as np
+from numpy.linalg import matrix_power
 import itertools
 
-from qutipy.general_functions import tensor,eye
+from qutipy.general_functions import dag,tensor,eye
 from qutipy.states import Bell_state
 from qutipy.Weyl import discrete_Weyl_X, discrete_Weyl_Z
 
@@ -47,7 +48,7 @@ def apply_teleportation_chain_channel(rho,n,dA=2,dR=2,dB=2):
 
     indices=list(itertools.product(*[range(dB)]*n))
 
-    rho_out=np.matrix(np.zeros((dA*dB,dA*dB),dtype=complex))
+    rho_out=np.array(np.zeros((dA*dB,dA*dB),dtype=complex))
 
     for z_indices in indices:
         for x_indices in indices:
@@ -59,8 +60,8 @@ def apply_teleportation_chain_channel(rho,n,dA=2,dR=2,dB=2):
             z_sum=np.mod(sum(z_indices),dB)
             x_sum=np.mod(sum(x_indices),dB)
 
-            W_zx=(discrete_Weyl_Z(dB)**z_sum)*(discrete_Weyl_X(dB)**x_sum)
+            W_zx=matrix_power(discrete_Weyl_Z(dB),z_sum)@matrix_power(discrete_Weyl_X(dB),x_sum)
 
-            rho_out=rho_out+tensor(eye(dA),Bell_zx.H,W_zx)*rho*tensor(eye(dA),Bell_zx,W_zx.H)
+            rho_out=rho_out+tensor(eye(dA),dag(Bell_zx),W_zx)@rho@tensor(eye(dA),Bell_zx,dag(W_zx))
 
     return rho_out

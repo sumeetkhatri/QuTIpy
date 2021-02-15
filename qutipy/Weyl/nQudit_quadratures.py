@@ -14,7 +14,7 @@ that they have been altered from the originals.
 
 
 import numpy as np
-from qutipy.general_functions import ket
+from qutipy.general_functions import dag,ket
 from qutipy.Weyl import generate_nQudit_X, generate_nQudit_Z
 
 
@@ -47,7 +47,7 @@ def nQudit_quadratures(d,n):
     count=0
 
     for i in range(1,2*n+1,2):
-        v=list(np.array(ket(n,count).H,dtype=np.int).flatten())
+        v=list(np.array(dag(ket(n,count)),dtype=np.int).flatten())
         S[i]=generate_nQudit_X(d,v)
         S[i+1]=generate_nQudit_Z(d,v)
         count+=1

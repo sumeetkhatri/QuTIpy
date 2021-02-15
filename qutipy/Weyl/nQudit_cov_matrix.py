@@ -16,7 +16,7 @@ that they have been altered from the originals.
 import numpy as np
 
 from qutipy.Weyl import nQudit_quadratures
-from qutipy.general_functions import Tr
+from qutipy.general_functions import dag,Tr
 
 
 def nQudit_cov_matrix(X,d,n):
@@ -29,11 +29,10 @@ def nQudit_cov_matrix(X,d,n):
 
     S=nQudit_quadratures(d,n)
 
-    V=np.matrix(np.zeros((2*n,2*n)),dtype=np.complex128)
+    V=np.array(np.zeros((2*n,2*n)),dtype=np.complex128)
 
     for i in range(2*n):
         for j in range(2*n):
-            #V[i,j]=np.trace(X*(S[i+1]*S[j+1].H+S[j+1].H*S[i+1]))
-            V[i,j]=Tr(X*S[i+1]*S[j+1].H)  # Use this instead to be consistent with the qubit.
+            V[i,j]=Tr(X@S[i+1]@dag(S[j+1]))
 
     return V

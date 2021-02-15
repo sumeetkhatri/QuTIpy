@@ -18,7 +18,7 @@ import itertools
 
 
 from qutipy.Weyl import generate_nQudit_X, generate_nQudit_Z
-from qutipy.general_functions import Tr
+from qutipy.general_functions import dag,Tr
 
 
 def nQudit_Weyl_coeff(X,d,n):
@@ -36,7 +36,7 @@ def nQudit_Weyl_coeff(X,d,n):
         s=list(s)
         for t in S:
             t=list(t)
-            G=generate_nQudit_X(d,s)*generate_nQudit_Z(d,t)
-            C[(str(s),str(t))]=np.around(Tr(X.H*G),10)
+            G=generate_nQudit_X(d,s)@generate_nQudit_Z(d,t)
+            C[(str(s),str(t))]=np.around(Tr(dag(X)@G),10)
 
     return C

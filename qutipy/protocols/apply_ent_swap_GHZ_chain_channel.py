@@ -16,7 +16,9 @@ that they have been altered from the originals.
 import numpy as np
 import itertools
 
-from qutipy.general_functions import tensor,eye,ket,partial_trace
+from numpy.linalg import matrix_power
+
+from qutipy.general_functions import dag,tensor,eye,ket,partial_trace
 from qutipy.gates import CNOT_ij, Rx_i
 
 
@@ -42,27 +44,27 @@ def apply_ent_swap_GHZ_chain_channel(rho,n):
         # j is between 1 and n, denoting the pair of R systems. x is either 0 or 1.
         # For each j, the qubit indices are 2*j and 2*j+1 for the pair Rj1 and Rj2
 
-        Mx=tensor(eye(2),eye(2**(2*j-2)),eye(2),ket(2,x)*ket(2,x).H,eye(2**(2*(n-j))),eye(2))
+        Mx=tensor(eye(2),eye(2**(2*j-2)),eye(2),ket(2,x)@dag(ket(2,x)),eye(2**(2*(n-j))),eye(2))
         
         C=CNOT_ij(2*j,2*j+1,2*n+2)
 
         X=1j*Rx_i(2*j+2,np.pi,2*n+2)
 
-        return Mx*C*(X**x)
+        return Mx@C@matrix_power(X,x)
 
 
     indices=list(itertools.product(*[range(2)]*n))
 
-    rho_out=np.matrix(np.zeros((2**(2*n+2),2**(2*n+2)),dtype=complex))
+    rho_out=np.array(np.zeros((2**(2*n+2),2**(2*n+2)),dtype=complex))
 
     for index in indices:
         index=list(index)
 
         L=K(1,index[0])
         for j in range(2,n+1):
-            L=K(j,index[j-1])*L
+            L=K(j,index[j-1])@L
 
-        rho_out=rho_out+L*rho*L.H
+        rho_out=rho_out+L@rho@dag(L)
 
     rho_out=partial_trace(rho_out,[2*j+1 for j in range(1,n+1)],[2]*(2*n+2))
 

@@ -15,9 +15,9 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import tensor,ket
+from qutipy.general_functions import dag,tensor,ket
 from qutipy.linalg import gram_schmidt
-from qutipy.states import RandomPureState
+from qutipy.states import RandomStateVector
 
 
 def generate_channel_isometry(K,dimA,dimB):
@@ -32,21 +32,21 @@ def generate_channel_isometry(K,dimA,dimB):
 
     dimE=len(K)
 
-    V=np.matrix(np.sum([tensor(K[i],ket(dimE,i)) for i in range(dimE)],0))
+    V=np.sum([tensor(K[i],ket(dimE,i)) for i in range(dimE)],0)
 
     if dimA==dimB:
         # In this case, the unitary we generate has dimensions dimA*dimE x dimA*dimE
-        U=tensor(V,ket(dimE,0).H)
-        states=[V*ket(dimA,i) for i in range(dimA)]
+        U=tensor(V,dag(ket(dimE,0)))
+        states=[V@ket(dimA,i) for i in range(dimA)]
         for i in range(dimA*dimE-dimA):
-            states.append(RandomPureState(dimA*dimE))
+            states.append(RandomStateVector(dimA*dimE))
 
         states_new=gram_schmidt(states,dimA*dimE)
 
         count=dimA
         for i in range(dimA):
             for j in range(1,dimE):
-                U=U+tensor(states_new[count],ket(dimA,i).H,ket(dimE,j).H)
+                U=U+tensor(states_new[count],dag(ket(dimA,i)),dag(ket(dimE,j)))
                 count+=1
         
         return V,U

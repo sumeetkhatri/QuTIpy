@@ -26,7 +26,7 @@ def generate_nQubit_Pauli_Z(indices):
     '''
 
     Id=eye(2)
-    Sz=np.matrix([[1,0],[0,-1]])
+    Sz=np.array([[1,0],[0,-1]])
 
     out=1
 

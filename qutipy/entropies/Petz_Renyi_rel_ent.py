@@ -16,6 +16,8 @@ that they have been altered from the originals.
 import numpy as np
 from scipy.linalg import fractional_matrix_power
 
+from qutipy.general_functions import Tr
+
 
 
 def Petz_Renyi_rel_ent(rho,sigma,alpha):
@@ -24,9 +26,9 @@ def Petz_Renyi_rel_ent(rho,sigma,alpha):
     Computes the Petz-Renyi relative entropy of rho and sigma for 0<=alpha<=1.
     '''
 
-    rho_a=np.matrix(fractional_matrix_power(rho,alpha))
-    sigma_a=np.matrix(fractional_matrix_power(sigma,1-alpha))
+    rho_a=fractional_matrix_power(rho,alpha)
+    sigma_a=fractional_matrix_power(sigma,1-alpha)
 
-    Q=np.real(np.trace(rho_a*sigma_a))
+    Q=np.real(Tr(rho_a@sigma_a))
 
     return (1./(alpha-1))*np.log2(Q)

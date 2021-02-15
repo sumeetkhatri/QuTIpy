@@ -23,7 +23,7 @@ def amplitude_damping_channel(gamma):
     Generates the amplitude damping channel.
     '''
 
-    A1=np.matrix([[1,0],[0,np.sqrt(1-gamma)]])
-    A2=np.matrix([[0,np.sqrt(gamma)],[0,0]])
+    A1=np.array([[1,0],[0,np.sqrt(1-gamma)]])
+    A2=np.array([[0,np.sqrt(gamma)],[0,0]])
 
     return [A1,A2]

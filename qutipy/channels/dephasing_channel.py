@@ -14,6 +14,7 @@ that they have been altered from the originals.
 
 
 import numpy as np
+from numpy.linalg import matrix_power
 
 from qutipy.Weyl import discrete_Weyl_Z
 from qutipy.channels import Pauli_channel
@@ -33,5 +34,5 @@ def dephasing_channel(p,d=2):
     if d==2:
         return Pauli_channel(0,0,p)
     else:
-        K=[np.sqrt(p[k])*discrete_Weyl_Z(d)**k for k in range(d)]
+        K=[np.sqrt(p[k])*matrix_power(discrete_Weyl_Z(d),k) for k in range(d)]
         return K

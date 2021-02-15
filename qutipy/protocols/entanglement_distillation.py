@@ -14,7 +14,7 @@ that they have been altered from the originals.
 
 
 from qutipy.gates import CNOT_ij
-from qutipy.general_functions import ket,eye,tensor,partial_trace,syspermute,Tr
+from qutipy.general_functions import dag,ket,eye,tensor,partial_trace,syspermute,Tr
 from qutipy.states import isotropic_twirl_state
 
 
@@ -30,8 +30,8 @@ def entanglement_distillation(rho1,rho2,outcome=1,twirl_after=False,normalize=Fa
     '''
 
     CNOT=CNOT_ij(1,2,2)
-    proj0=ket(2,0)*ket(2,0).H
-    proj1=ket(2,1)*ket(2,1).H
+    proj0=ket(2,0)@dag(ket(2,0))
+    proj1=ket(2,1)@dag(ket(2,1))
 
     P0=tensor(eye(2),proj0,eye(2),proj0)
     P1=tensor(eye(2),proj1,eye(2),proj1)
@@ -45,7 +45,7 @@ def entanglement_distillation(rho1,rho2,outcome=1,twirl_after=False,normalize=Fa
 
     if outcome==1:
         # rho_out is unnormalized. The trace of rho_out is equal to the success probability.
-        rho_out=partial_trace(K0*rho_in*K0.H+K1*rho_in*K1.H,[2,4],[2,2,2,2])
+        rho_out=partial_trace(K0@rho_in@dag(K0)+K1@rho_in@dag(K1),[2,4],[2,2,2,2])
         if twirl_after:
             rho_out=isotropic_twirl_state(rho_out,2)
         if normalize:
@@ -53,7 +53,7 @@ def entanglement_distillation(rho1,rho2,outcome=1,twirl_after=False,normalize=Fa
 
     elif outcome==0:
         # rho_out is unnormalized. The trace of rho_out is equal to the failure probability.
-        rho_out=partial_trace(K2*rho_in*K2.H,[2,4],[2,2,2,2])
+        rho_out=partial_trace(K2@rho_in@dag(K2),[2,4],[2,2,2,2])
         if normalize:
             rho_out=rho_out/Tr(rho_out)
 

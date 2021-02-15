@@ -24,7 +24,7 @@ def Werner_state(p,d,fidelity=False):
     Generates the Werner state with parameter p on two d-dimensional systems.
     The state is defined as
 
-        rho_W=(1/(d^2-dp))*(eye(d^2)+p*SWAP),
+        rho_W=(1/(d^2-dp))*(eye(d^2)-p*SWAP),
 
     where SWAP is the swap operator between two d-dimensional systems and 
     p is between -1 and 1. Werner states are invariant under U ⊗ U for any
@@ -43,4 +43,4 @@ def Werner_state(p,d,fidelity=False):
         return p*singlet+((1-p)/(d**2-1))*(eye(d**2)-singlet)
     else:
         F=SWAP([1,2],[d,d])
-        return (1/(d**2-d*p))*(eye(d**2)+p*F)
+        return (1/(d**2-d*p))*(eye(d**2)-p*F)

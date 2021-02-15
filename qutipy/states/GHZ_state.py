@@ -14,12 +14,10 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import ket
+from qutipy.general_functions import ket,dag
 
 
 def GHZ_state(dim,n,density_matrix=True):
-
-    # Last modified: 15 June 2020
 
     '''
     Generates the n-party GHZ state in dim-dimensions for each party, which is defined as
@@ -29,9 +27,9 @@ def GHZ_state(dim,n,density_matrix=True):
     If density_matrix=True, then the function returns the state as a density matrix.
     '''
 
-    GHZ=(1/np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i]*n) for i in range(dim)],0))
+    GHZ=(1/np.sqrt(dim))*np.sum([ket(dim,[i]*n) for i in range(dim)],0)
 
     if density_matrix:
-        return GHZ*GHZ.H
+        return GHZ@dag(GHZ)
     else:
         return GHZ

@@ -32,7 +32,6 @@ def Choi_representation(K,dimA):
     '''
 
 
-    #Gamma=np.sqrt(dimA)*MaxEnt_state(dimA)
     Gamma=MaxEnt_state(dimA,normalized=False)
 
-    return np.matrix(apply_channel(K,Gamma,2,[dimA,dimA]),dtype=np.complex)
+    return np.array(apply_channel(K,Gamma,2,[dimA,dimA]),dtype=np.complex)

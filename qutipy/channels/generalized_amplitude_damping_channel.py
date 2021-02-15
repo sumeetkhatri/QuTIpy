@@ -27,13 +27,13 @@ def generalized_amplitude_damping_channel(gamma,N):
     if N==0:
         return amplitude_damping_channel(gamma)
     elif N==1:
-        A1=np.matrix([[np.sqrt(1-gamma),0],[0,1]])
-        A2=np.matrix([[0,0],[np.sqrt(gamma),0]])
+        A1=np.array([[np.sqrt(1-gamma),0],[0,1]])
+        A2=np.array([[0,0],[np.sqrt(gamma),0]])
         return [A1,A2]
     else:
-        A1=np.sqrt(1-N)*np.matrix([[1,0],[0,np.sqrt(1-gamma)]])
-        A2=np.sqrt(1-N)*np.matrix([[0,np.sqrt(gamma)],[0,0]])
-        A3=np.sqrt(N)*np.matrix([[np.sqrt(1-gamma),0],[0,1]])
-        A4=np.sqrt(N)*np.matrix([[0,0],[np.sqrt(gamma),0]])
+        A1=np.sqrt(1-N)*np.array([[1,0],[0,np.sqrt(1-gamma)]])
+        A2=np.sqrt(1-N)*np.array([[0,np.sqrt(gamma)],[0,0]])
+        A3=np.sqrt(N)*np.array([[np.sqrt(1-gamma),0],[0,1]])
+        A4=np.sqrt(N)*np.array([[0,0],[np.sqrt(gamma),0]])
 
         return [A1,A2,A3,A4]

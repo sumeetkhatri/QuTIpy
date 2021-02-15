@@ -36,9 +36,9 @@ def Ry_i(i,t,n):
 		perm_rearrange[i]=np.argwhere(perm_arrange==i+1)[0][0]+1
 	
 	perm_rearrange=perm_rearrange.astype(int)
-	Sy=np.matrix([[0,-1j],[1j,0]])
+	Sy=np.array([[0,-1j],[1j,0]])
 	Ry=expm(-1j*t*Sy/2)
 	out_temp=tensor(Ry,[eye(2),n-1])
 	out=syspermute(out_temp,perm_rearrange,dims)
 
-	return np.matrix(out)
+	return out

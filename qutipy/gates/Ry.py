@@ -22,5 +22,6 @@ def Ry(t):
     Generates the unitary rotation matrix about the Y axis on the Bloch sphere.
     '''
 
-    Sy=np.matrix([[0,-1j],[1j,0]])
-    return np.matrix(expm(-1j*t*Sy/2.))
+    Sy=np.array([[0,-1j],[1j,0]])
+
+    return expm(-1j*t*Sy/2.)

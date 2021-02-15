@@ -15,7 +15,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import ket
+from qutipy.general_functions import ket,dag
 
 
 def discrete_Weyl_Z(d):
@@ -26,9 +26,9 @@ def discrete_Weyl_Z(d):
 
     w=np.exp(2*np.pi*1j/d)
 
-    Z=ket(d,0)*ket(d,0).H
+    Z=ket(d,0)@dag(ket(d,0))
 
     for i in range(1,d):
-        Z=Z+w**i*ket(d,i)*ket(d,i).H
+        Z=Z+w**i*ket(d,i)@dag(ket(d,i))
 
     return Z

@@ -45,7 +45,7 @@ def generate_state_2design(C,n,display=False):
     S=[ket(2**n,0)]
 
     for c in C:
-        s_test=c*ket(2**n,0)
+        s_test=c@ket(2**n,0)
 
         if not in_list(S,s_test):
             S.append(s_test)

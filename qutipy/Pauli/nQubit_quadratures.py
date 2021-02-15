@@ -15,7 +15,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import ket
+from qutipy.general_functions import dag,ket
 from qutipy.Pauli import generate_nQubit_Pauli_X,generate_nQubit_Pauli_Z
 
 
@@ -51,7 +51,7 @@ def nQubit_quadratures(n):
     count=0
 
     for i in range(1,2*n+1,2):
-        v=list(np.array(ket(n,count).H,dtype=np.int).flatten())
+        v=list(np.array(dag(ket(n,count)),dtype=np.int).flatten())
         S[i]=generate_nQubit_Pauli_X(v)
         S[i+1]=generate_nQubit_Pauli_Z(v)
         count+=1

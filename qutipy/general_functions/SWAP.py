@@ -14,7 +14,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import tensor,ket,eye,syspermute,partial_transpose
+from qutipy.general_functions import dag,ket,eye,syspermute,partial_transpose,tensor
 
 
 def SWAP(sys,dim):
@@ -48,7 +48,7 @@ def SWAP(sys,dim):
     G1=np.matrix(np.sum([ket(dim1,[i,i]) for i in range(dim1)],0))
     G2=np.matrix(np.sum([ket(dim2,[i,i]) for i in range(dim2)],0))
 
-    G=G1*G2.H
+    G=G1@dag(G2)
 
     S=partial_transpose(G,[2],[(dim1,dim2),(dim1,dim2)])
 

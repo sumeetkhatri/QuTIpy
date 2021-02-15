@@ -15,6 +15,8 @@ that they have been altered from the originals.
 
 from numpy.linalg import norm
 
+from qutipy.general_functions import dag
+
 
 def proj(u,v):
 
@@ -22,4 +24,4 @@ def proj(u,v):
     Calculates the projection of vector v onto vector u.
     '''
 
-    return (complex(u.H*v)/float(norm(u)**2))*u
+    return (complex(dag(u)@v)/float(norm(u)**2))*u

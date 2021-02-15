@@ -14,9 +14,10 @@ that they have been altered from the originals.
 
 
 import numpy as np
+from numpy.linalg import matrix_power
 
 from qutipy.Weyl import discrete_Weyl_X, discrete_Weyl_Z
-from qutipy.general_functions import eye,tensor
+from qutipy.general_functions import dag,eye,tensor
 from qutipy.states import Bell_state
 
 
@@ -43,9 +44,9 @@ def apply_teleportation_channel(rho,dA=2,dR1=2,dR2=2,dB=2):
     The result of the channel is then Phi_{AB}^+
     '''
 
-    X=[discrete_Weyl_X(dB)**x for x in range(dB)]
-    Z=[discrete_Weyl_Z(dB)**z for z in range(dB)]
+    X=[matrix_power(discrete_Weyl_X(dB),x) for x in range(dB)]
+    Z=[matrix_power(discrete_Weyl_Z(dB),z) for z in range(dB)]
     
-    rho_out=np.matrix(np.sum([tensor(eye(dA),Bell_state(dR1,z,x).H,Z[z]*X[x])*rho*tensor(eye(dA),Bell_state(dR1,z,x),X[x].H*Z[z].H) for z in range(dB) for x in range(dB)],0))
+    rho_out=np.sum([tensor(eye(dA),dag(Bell_state(dR1,z,x)),Z[z]@X[x])@rho@tensor(eye(dA),Bell_state(dR1,z,x),dag(X[x])@dag(Z[z])) for z in range(dB) for x in range(dB)],0)
 
     return rho_out

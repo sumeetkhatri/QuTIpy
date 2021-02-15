@@ -16,18 +16,18 @@ that they have been altered from the originals.
 from qutipy.general_functions import SWAP,Tr,eye
 
 
-def Werner_twirl_state(rho,d):
+def Werner_twirl_state(X,d):
 
     '''
     Applies the twirling channel
 
-        rho -> ∫ (U ⊗ U)*rho*(U ⊗ U).H dU
+        X -> ∫ (U ⊗ U)*rho*(U ⊗ U).H dU
 
-    to the input state rho acting on two d-dimensional systems.
+    to the input operator X acting on two d-dimensional systems.
 
     For d=2, this is equivalent to
 
-        rho -> (1/24)*sum_i (c_i ⊗ c_i)*rho*(c_i ⊗ c_i).H
+        X -> (1/24)*sum_i (c_i ⊗ c_i)*X*(c_i ⊗ c_i).H
 
     where the unitaries c_i form the one-qubit Clifford group (because the Clifford
     unitaries constitute a unitary 2-design).
@@ -38,7 +38,4 @@ def Werner_twirl_state(rho,d):
 
     F=SWAP([1,2],[d,d])
 
-    #f=fidelity(rho,singlet_state(d))
-    #return Werner_state(f,d,fidelity=True)
-
-    return (Tr(rho)/(d**2-1)-Tr(F*rho)/(d*(d**2-1)))*eye(d**2)+(Tr(F*rho)/(d**2-1)-Tr(rho)/(d*(d**2-1)))*F
+    return (Tr(X)/(d**2-1)-Tr(F@X)/(d*(d**2-1)))*eye(d**2)+(Tr(F@X)/(d**2-1)-Tr(X)/(d*(d**2-1)))@F

@@ -30,9 +30,9 @@ def Pauli_channel(px,py,pz):
 
     pI=1-px-py-pz
 
-    Sx=np.matrix([[0,1],[1,0]])
-    Sy=np.matrix([[0,-1j],[1j,0]])
-    Sz=np.matrix([[1,0],[0,-1]])
+    Sx=np.array([[0,1],[1,0]])
+    Sy=np.array([[0,-1j],[1j,0]])
+    Sz=np.array([[1,0],[0,-1]])
 
     K=[np.sqrt(pI)*eye(2),np.sqrt(px)*Sx,np.sqrt(py)*Sy,np.sqrt(pz)*Sz]
 

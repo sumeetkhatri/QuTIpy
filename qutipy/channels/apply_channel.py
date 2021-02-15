@@ -16,7 +16,7 @@ that they have been altered from the originals.
 import numpy as np
 import cvxpy
 
-from qutipy.general_functions import tensor,eye
+from qutipy.general_functions import dag,tensor,eye
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 
 
@@ -33,17 +33,16 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
 
     if isinstance(rho,cvxpy.Variable):
         rho=cvxpy_to_numpy(rho)
-        rho=np.matrix(rho)
         rho_out=apply_channel(K,rho,sys,dim,adjoint)
         return numpy_to_cvxpy(rho_out)
 
     if adjoint==True:
         K_tmp=K
         K=[]
-        K=[K_tmp[i].H for i in range(len(K_tmp))]
+        K=[dag(K_tmp[i]) for i in range(len(K_tmp))]
 
     if sys==None:
-        return np.matrix(np.sum([K[i]*rho*K[i].H for i in range(len(K))],0))
+        return np.sum([K[i]@rho@dag(K[i]) for i in range(len(K))],0)
     else:
         A=[]
         for i in range(len(K)):
@@ -55,4 +54,4 @@ def apply_channel(K,rho,sys=None,dim=None,adjoint=False):
                     X=tensor(X,eye(dim[j]))
             A.append(X)
 
-        return np.matrix(np.sum([A[i]*rho*A[i].H for i in range(len(A))],0))
+        return np.sum([A[i]@rho@dag(A[i]) for i in range(len(A))],0)

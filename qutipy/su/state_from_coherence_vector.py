@@ -22,25 +22,19 @@ from qutipy.general_functions import eye
 def state_from_coherence_vector(n,d,state=True):
 
     '''
-    Uses the supplied coherence vector n to generate the corresponding state via
+    Uses the supplied coherence vector n to generate the corresponding operator via
 
-        rho=(1/d)*(eye(d)+n*L),
+        X=(1/d)*(eye(d)+n*L),
 
-    where L are the su(d) generators.
-
-    If state=True, then n is a vector of length d^2-1. Otherwise, if state=False, then n is a vector of length d^2
+    where L are the su(d) generators. n is a vector of length d^2.
     '''
 
     L=su_generators(d)
 
-    if state:
-        rho=np.matrix((1/d)*eye(d),dtype=np.complex128)
-        for i in range(1,len(L)):
-            rho+=(1/d)*n[i-1]*L[i]
-        return rho
+    X=np.array(np.zeros((d,d)),dtype=np.complex128)
     
-    else:
-        X=np.matrix(np.zeros((d,d)),dtype=np.complex128)
-        for i in range(len(L)):
-            X+=(1/d)*n[i]*L[i]
-        return X
+    for i in range(len(L)):
+        X+=(1/d)*n[i]*L[i]
+    
+    return X
+        

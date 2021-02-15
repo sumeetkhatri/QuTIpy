@@ -15,7 +15,7 @@ that they have been altered from the originals.
 import numpy as np
 
 
-from qutipy.general_functions import ket,tensor,syspermute,eye
+from qutipy.general_functions import ket,tensor,syspermute,eye,dag
 
 
 def CZ_ij(i,j,n):
@@ -40,8 +40,8 @@ def CZ_ij(i,j,n):
 
     perm_rearrange=perm_rearrange.astype(int)
 
-    Sz=np.matrix([[1,0],[0,-1]])
-    CZ=tensor(ket(2,0)*np.transpose(ket(2,0)),eye(2))+tensor(ket(2,1)*np.transpose(ket(2,1)),Sz)
+    Sz=np.array([[1,0],[0,-1]])
+    CZ=tensor(ket(2,0)@dag(ket(2,0)),eye(2))+tensor(ket(2,1)@dag(ket(2,1)),Sz)
 
     out_temp=tensor(CZ,[eye(2),n-2])
 

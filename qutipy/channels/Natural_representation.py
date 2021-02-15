@@ -24,9 +24,9 @@ def Natural_representation(K):
     given by the Kraus operators in K. In terms of the Kraus operators, the natural
     representation of the channel in the standard basis is given by
 
-    N=sum_i K_i ⊗ conj(C_i),
+    N=sum_i K_i ⊗ conj(K_i),
 
     where the sum is over the Kraus operators K_i in K.
     '''
 
-    return np.matrix(np.sum([tensor(k,np.conjugate(k)) for k in K],1))
+    return np.sum([tensor(k,np.conjugate(k)) for k in K],1)

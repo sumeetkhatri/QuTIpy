@@ -14,7 +14,9 @@ that they have been altered from the originals.
 
 import numpy as np
 from scipy.linalg import logm
+from numpy.linalg import matrix_power
 
+from qutipy.general_functions import Tr
 from qutipy.entropies import relative_entropy
 
 
@@ -27,4 +29,4 @@ def relative_entropy_var(rho,sigma):
     V(rho||sigma)=Tr[rho*(log2(rho)-log2(sigma))^2]-D(rho||sigma)^2.
     '''
 
-    return np.real(np.trace(rho*(np.matrix(logm(rho))/np.log(2)-np.matrix(logm(sigma))/np.log(2))**2))-relative_entropy(rho,sigma)**2
+    return np.real(Tr(rho@matrix_power((logm(rho))/np.log(2)-(logm(sigma))/np.log(2),2)))-relative_entropy(rho,sigma)**2

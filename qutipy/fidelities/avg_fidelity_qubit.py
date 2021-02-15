@@ -16,7 +16,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import ket
+from qutipy.general_functions import dag,ket,Tr
 from qutipy.channels import apply_channel
 
 
@@ -41,6 +41,6 @@ def avg_fidelity_qubit(K):
 
     for state in states:
 
-        F+=np.real(np.trace((state*state.H)*apply_channel(K,state*state.H)))
+        F+=np.real(Tr((state@dag(state))*apply_channel(K,state@dag(state))))
 
     return (1./6.)*F

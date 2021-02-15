@@ -14,15 +14,14 @@ that they have been altered from the originals.
 
 
 import numpy as np
+from numpy.linalg import matrix_power
 
 from qutipy.gates import CNOT_ij
-from qutipy.general_functions import tensor,eye,ket
+from qutipy.general_functions import dag,tensor,eye,ket
 from qutipy.Weyl import discrete_Weyl_X
 
 
 def apply_ent_swap_GHZ_channel(rho):
-
-    # Last modified: 15 June 2020
 
     '''
     Applies the channel that takes two copies of a maximally entangled state and outputs
@@ -38,8 +37,8 @@ def apply_ent_swap_GHZ_channel(rho):
 
     C=CNOT_ij(2,3,4)
 
-    X=[discrete_Weyl_X(2)**x for x in range(2)]
+    X=[matrix_power(discrete_Weyl_X(2),x) for x in range(2)]
     
-    rho_out=np.matrix(np.sum([tensor(eye(4),ket(2,x).H,eye(2))*C*tensor(eye(8),X[x])*rho*tensor(eye(8),X[x])*C.H*tensor(eye(4),ket(2,x),eye(2)) for x in range(2)],0))
+    rho_out=np.sum([tensor(eye(4),dag(ket(2,x)),eye(2))@C@tensor(eye(8),X[x])@rho@tensor(eye(8),X[x])@dag(C)@tensor(eye(4),ket(2,x),eye(2)) for x in range(2)],0)
 
     return rho_out

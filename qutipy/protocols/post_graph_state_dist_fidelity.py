@@ -36,7 +36,7 @@ def post_graph_state_dist_fidelity(A_G,n,rho):
 
     for x_n in X_n:
 
-        x_n=np.matrix(x_n).H  # Turn x_n into a column vector matrix
+        x_n=np.array([x_n]).T  # Turn x_n into a column vector matrix
 
         z_n=A_G*x_n
         z_n=np.mod(z_n,2)

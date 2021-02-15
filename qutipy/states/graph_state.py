@@ -14,7 +14,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import tensor,ket,eye
+from qutipy.general_functions import tensor,ket,eye,dag
 from qutipy.gates import CZ_ij
 
 
@@ -41,16 +41,16 @@ def graph_state(A_G,n,density_matrix=False,return_CZ=False):
     for i in range(n):
         for j in range(i,n):
             if A_G[i,j]==1:
-                CZ_G=CZ_G*CZ_ij(i+1,j+1,n)
+                CZ_G=CZ_G@CZ_ij(i+1,j+1,n)
 
     if density_matrix:
-        plus_n=plus_n*plus_n.H
+        plus_n=plus_n@dag(plus_n)
         if return_CZ:
-            return CZ_G*plus_n*CZ_G.H,CZ_G
+            return CZ_G@plus_n@dag(CZ_G),CZ_G
         else:
-            return CZ_G*plus_n*CZ_G.H
+            return CZ_G@plus_n@dag(CZ_G)
     else:
         if return_CZ:
-            return CZ_G*plus_n,CZ_G
+            return CZ_G@plus_n,CZ_G
         else:
-            return CZ_G*plus_n
+            return CZ_G@plus_n

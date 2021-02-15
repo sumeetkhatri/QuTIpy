@@ -38,7 +38,7 @@ def compose_channels(C):
     for comb in combs:
         tmp=1
         for i in range(len(comb)):
-            tmp=C[i][comb[i]]*tmp
+            tmp=C[i][comb[i]]@tmp
         K_n.append(tmp)
 
     return K_n

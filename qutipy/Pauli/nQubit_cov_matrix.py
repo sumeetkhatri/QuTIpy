@@ -32,11 +32,10 @@ def nQubit_cov_matrix(X,n):
 
     S=nQubit_quadratures(n)
 
-    V=np.matrix(np.zeros((2*n,2*n)),dtype=np.complex128)
-    #V=np.matrix(np.zeros((2*n,2*n)),dtype=object)
+    V=np.array(np.zeros((2*n,2*n)),dtype=np.complex128)
 
     for i in range(2*n):
         for j in range(2*n):
-            V[i,j]=Tr(X*S[i+1]*S[j+1])
+            V[i,j]=Tr(X@S[i+1]@S[j+1])
     
     return V

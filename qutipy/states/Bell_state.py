@@ -12,9 +12,10 @@ copyright notice, and modified files need to carry a notice indicating
 that they have been altered from the originals.
 '''
 
+from numpy.linalg import matrix_power
 
 from qutipy.states import MaxEnt_state
-from qutipy.general_functions import tensor,eye
+from qutipy.general_functions import tensor,eye,dag
 from qutipy.Weyl import discrete_Weyl_X, discrete_Weyl_Z
 
 
@@ -29,11 +30,11 @@ def Bell_state(d,z,x,density_matrix=False):
 
     Bell=MaxEnt_state(d,density_matrix=density_matrix)
 
-    W_zx=discrete_Weyl_Z(d)**z*discrete_Weyl_X(d)**x
+    W_zx=matrix_power(discrete_Weyl_Z(d),z)@matrix_power(discrete_Weyl_X(d),x)
 
     if density_matrix:
-        out=tensor(W_zx,eye(d))*Bell*tensor(W_zx.H,eye(d))
+        out=tensor(W_zx,eye(d))@Bell@tensor(dag(W_zx),eye(d))
         return out
     else:
-        out=tensor(W_zx,eye(d))*Bell
+        out=tensor(W_zx,eye(d))@Bell
         return out

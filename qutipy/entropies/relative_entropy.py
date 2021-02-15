@@ -16,6 +16,8 @@ that they have been altered from the originals.
 import numpy as np
 from scipy.linalg import logm
 
+from qutipy.general_functions import Tr
+
 
 def relative_entropy(rho,sigma):
 
@@ -24,4 +26,4 @@ def relative_entropy(rho,sigma):
     and sigma, provided that supp(rho) is contained in supp(sigma).
     '''
 
-    return np.real(np.trace(rho*(np.matrix(logm(rho))-np.matrix(logm(sigma)))))/np.log(2)
+    return np.real(Tr(rho@(logm(rho)-logm(sigma))))/np.log(2)

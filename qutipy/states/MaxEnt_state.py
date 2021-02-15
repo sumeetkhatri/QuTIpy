@@ -14,7 +14,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import ket
+from qutipy.general_functions import ket,dag
 
 
 def MaxEnt_state(dim,normalized=True,density_matrix=True):
@@ -31,14 +31,14 @@ def MaxEnt_state(dim,normalized=True,density_matrix=True):
     '''
 
     if normalized:
-        Bell=(1./np.sqrt(dim))*np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+        Bell=(1./np.sqrt(dim))*np.sum([ket(dim,[i,i]) for i in range(dim)],0)
         if density_matrix:
-            return Bell*Bell.H
+            return Bell@dag(Bell)
         else:
             return Bell
     else:
-        Gamma=np.matrix(np.sum([ket(dim,[i,i]) for i in range(dim)],0))
+        Gamma=np.sum([ket(dim,[i,i]) for i in range(dim)],0)
         if density_matrix:
-            return Gamma*Gamma.H
+            return Gamma@dag(Gamma)
         else:
             return Gamma

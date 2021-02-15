@@ -16,7 +16,7 @@ that they have been altered from the originals.
 import numpy as np
 import itertools
 
-from qutipy.general_functions import tensor
+from qutipy.general_functions import dag,tensor
 from qutipy.states import graph_state
 from qutipy.Pauli import generate_nQubit_Pauli_Z
 
@@ -43,18 +43,18 @@ def apply_graph_state_dist_channel(A_G,n,rho):
 
     indices=list(itertools.product(*[range(2)]*n))
 
-    H=(1/np.sqrt(2))*np.matrix([[1,1],[1,-1]])
+    H=(1/np.sqrt(2))*np.array([[1,1],[1,-1]])
     Hn=tensor([H,n])
 
     ket_G=graph_state(A_G,n)
 
-    rho_out=np.matrix(np.zeros((2**n,2**n),dtype=complex))
+    rho_out=np.array(np.zeros((2**n,2**n),dtype=complex))
 
     for index in indices:
         Zx=generate_nQubit_Pauli_Z(index)
 
         Gx=Zx*ket_G
-        rho_out=rho_out+tensor(Zx,Gx.H)*rho*tensor(Zx,Gx)
+        rho_out=rho_out+tensor(Zx,dag(Gx))@rho@tensor(Zx,Gx)
 
     
     return rho_out

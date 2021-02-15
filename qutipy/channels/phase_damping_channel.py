@@ -21,8 +21,8 @@ def phase_damping_channel(p):
     Generates the phase damping channel.
     '''
 
-    K1=np.matrix([[1,0],[0,np.sqrt(p)]])
-    K2=np.matrix([[0,0],[0,np.sqrt(1-p)]])
+    K1=np.array([[1,0],[0,np.sqrt(p)]])
+    K2=np.array([[0,0],[0,np.sqrt(1-p)]])
 
     return [K1,K2]
 

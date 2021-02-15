@@ -36,9 +36,9 @@ def Rz_i(i,t,n):
 		perm_rearrange[i]=np.argwhere(perm_arrange==i+1)[0][0]+1
 	
 	perm_rearrange=perm_rearrange.astype(int)
-	Sz=np.matrix([[1,0],[0,-1]])
+	Sz=np.array([[1,0],[0,-1]])
 	Rz=expm(-1j*t*Sz/2)
 	out_temp=tensor(Rz,[eye(2),n-1])
 	out=syspermute(out_temp,perm_rearrange,dims)
 
-	return np.matrix(out)
+	return out

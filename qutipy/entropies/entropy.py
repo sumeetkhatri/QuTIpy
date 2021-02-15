@@ -16,6 +16,8 @@ that they have been altered from the originals.
 import numpy as np
 from scipy.linalg import logm
 
+from qutipy.general_functions import Tr
+
 
 def entropy(rho):
 
@@ -23,4 +25,4 @@ def entropy(rho):
     Returns the quantum (von Neumann) entropy of the state rho.
     '''
 
-    return -np.real(np.trace(rho*np.matrix(logm(rho))))/np.log(2)
+    return -np.real(Tr(rho@logm(rho)))/np.log(2)

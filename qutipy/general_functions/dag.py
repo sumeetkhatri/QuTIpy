@@ -12,22 +12,11 @@ copyright notice, and modified files need to carry a notice indicating
 that they have been altered from the originals.
 '''
 
-import numpy as np
 
-from qutipy.general_functions import dag,Tr
+def dag(X):
 
-def unitary_distance(U,V):
-    
     '''
-    Checks whether two unitaries U and V are the same (taking into account global phase) by using the distance measure:
-    
-    1-(1/d)*|Tr[UV^†]|,
-    
-    where d is the dimension of the space on which the unitaries act.
-    
-    U and V are the same if and only if this is equal to zero; otherwise, it is greater than zero.
+    Takes the numpy array X and returns its complex conjugate transpose.
     '''
 
-    d=U.shape[0]
-    
-    return 1-(1/d)*np.abs(Tr(U@dag(V)))
+    return X.conj().T

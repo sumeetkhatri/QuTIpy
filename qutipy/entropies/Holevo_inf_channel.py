@@ -17,7 +17,7 @@ import numpy as np
 from scipy.optimize import minimize
 from numpy.linalg import norm
 
-from qutipy.general_functions import tensor,eye,ket
+from qutipy.general_functions import dag,Tr,tensor,eye,ket
 from qutipy.entropies import Holevo_inf_ensemble
 from qutipy.channels import apply_channel
 
@@ -35,19 +35,19 @@ def Holevo_inf_channel(K,dim,display=True):
 
     def objfunc(x):
 
-        Re=np.matrix(x[0:dim**3])
-        Im=np.matrix(x[dim**3:])
+        Re=np.array(x[0:dim**3])
+        Im=np.array(x[dim**3:])
 
-        psi=np.matrix(Re.T+1j*Im.T)
+        psi=np.array([Re+1j*Im]).T
         psi=psi/norm(psi)
 
         p=[]
         S=[]
 
         for j in range(dim**2):
-            R=tensor(ket(dim**2,j),eye(dim)).H*(psi*psi.H)*tensor(ket(dim**2,j),eye(dim))
-            p.append(np.trace(R))
-            rho=R/np.trace(R)
+            R=tensor(dag(ket(dim**2,j)),eye(dim))@(psi@dag(psi))@tensor(ket(dim**2,j),eye(dim))
+            p.append(Tr(R))
+            rho=R/Tr(R)
             rho_out=apply_channel(K,rho)
             S.append(rho_out)
         

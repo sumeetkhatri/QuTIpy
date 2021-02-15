@@ -30,4 +30,4 @@ def tensor(*args):
         else:
             M=np.kron(M,args[j])
 
-    return np.matrix(M)
+    return M

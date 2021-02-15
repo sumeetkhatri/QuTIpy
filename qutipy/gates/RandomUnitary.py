@@ -22,4 +22,4 @@ def RandomUnitary(dim):
     Generates a random unitary. 
     '''
 
-    return np.matrix(unitary_group.rvs(dim))
+    return unitary_group.rvs(dim)

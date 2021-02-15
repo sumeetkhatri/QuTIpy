@@ -41,6 +41,8 @@ def syspermute(X,perm,dim):
         perm=perm-1
         tmp=np.reshape(X,dim)
         q=np.reshape(np.transpose(tmp,perm),d)
+
+        return q
     elif d[0]==d[1]:
         # For a mixed state (density matrix)
         perm=perm-1
@@ -49,4 +51,4 @@ def syspermute(X,perm,dim):
         tmp=np.reshape(X,dim)
         Y=np.reshape(np.transpose(tmp,perm),d)
 
-    return np.matrix(Y)
+        return Y

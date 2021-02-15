@@ -40,8 +40,8 @@ def su_structure_constants(d):
         for j in range(1,d**2):
             for k in range(1,d**2):
 
-                f[(i,j,k)]=(1/(1j*d**2))*Tr(L[k]*(L[i]*L[j]-L[j]*L[i]))
+                f[(i,j,k)]=(1/(1j*d**2))*Tr(L[k]@(L[i]@L[j]-L[j]@L[i]))
 
-                g[(i,j,k)]=(1/d**2)*Tr(L[k]*(L[i]*L[j]+L[j]*L[i]))
+                g[(i,j,k)]=(1/d**2)*Tr(L[k]@(L[i]@L[j]+L[j]@L[i]))
 
     return f,g

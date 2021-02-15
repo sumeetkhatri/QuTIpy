@@ -56,7 +56,7 @@ def Pauli_channel_nQubit(n,p,alt_repr=False):
             a=list(a)
             for b in S:
                 b=list(b)
-                K.append(np.sqrt(p[count])*generate_nQubit_Pauli_X(a)*generate_nQubit_Pauli_Z(b))
+                K.append(np.sqrt(p[count])*generate_nQubit_Pauli_X(a)@generate_nQubit_Pauli_Z(b))
                 count+=1
 
         V,U=generate_channel_isometry(K,2**n,2**n)

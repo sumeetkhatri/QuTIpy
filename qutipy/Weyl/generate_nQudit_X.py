@@ -12,6 +12,7 @@ copyright notice, and modified files need to carry a notice indicating
 that they have been altered from the originals.
 '''
 
+from numpy.linalg import matrix_power
 
 from qutipy.Weyl import discrete_Weyl_X
 from qutipy.general_functions import tensor
@@ -30,6 +31,6 @@ def generate_nQudit_X(d,indices):
     out=1
 
     for index in indices:
-        out=tensor(out,X**index)
+        out=tensor(out,matrix_power(X,index))
 
     return out

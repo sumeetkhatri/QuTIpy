@@ -31,10 +31,9 @@ def nQubit_mean_vector(X,n):
 
     S=nQubit_quadratures(n)
 
-    r=np.matrix(np.zeros((2*n,1)),dtype=np.complex128)
-    #r=np.matrix(np.zeros((2*n,1)),dtype=object)
+    r=np.array(np.zeros((2*n,1)),dtype=np.complex128)
 
     for i in range(2*n):
-        r[i,0]=Tr(X*S[i+1])
+        r[i,0]=Tr(X@S[i+1])
 
     return r

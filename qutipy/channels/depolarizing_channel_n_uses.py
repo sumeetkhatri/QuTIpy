@@ -14,6 +14,7 @@ that they have been altered from the originals.
 
 
 import numpy as np
+from numpy.linalg import matrix_power
 import itertools
 
 from qutipy.general_functions import syspermute,eye,partial_trace,tensor
@@ -56,10 +57,10 @@ def depolarizing_channel_n_uses(p,n,rho,m):
 
             perm_rearrange=perm_rearrange.astype(int)
 
-            mix=eye(2**k)/2.**k
+            mix=matrix_power(eye(2**k)/2,k)
 
             rho_part=partial_trace(rho,index,dims)
 
             rho_out=rho_out+(4*p/3.)**k*(1-(4*p/3.))**(n-k)*syspermute(tensor(mix,rho_part),perm_rearrange,dims)
 
-    return np.matrix(rho_out)
+    return rho_out

@@ -16,7 +16,7 @@ that they have been altered from the originals.
 import numpy as np
 
 from qutipy.Clifford import Clifford_group_generators
-from qutipy.general_functions import unitary_distance,eye
+from qutipy.general_functions import dag,unitary_distance,eye
 
 
 def generate_Clifford_group(n,display=False):
@@ -58,8 +58,8 @@ def generate_Clifford_group(n,display=False):
 
         for c in C:
             for g in G:
-                t1=c*g
-                t2=c*g.H
+                t1=c@g
+                t2=c@dag(g)
                 
                 # t1 and t2 might be the same, in which case we add only one of the two to the list (if needed).
                 # Also, t1 and t2 might already by in tmp (up to global phase), so we need to check for that as well.

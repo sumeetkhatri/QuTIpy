@@ -14,7 +14,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import Tr
+from qutipy.general_functions import Tr,dag
 
 
 def trace_distance_pure_states(psi,phi):
@@ -27,4 +27,9 @@ def trace_distance_pure_states(psi,phi):
 
     '''
 
-    return 1-Tr((psi*psi.H)*(phi*phi.H))
+    if psi.shape[1]==1:
+        psi=psi@dag(psi)
+    if phi.shape[1]==1:
+        phi=phi@dag(phi)
+
+    return 1-Tr(psi*phi)

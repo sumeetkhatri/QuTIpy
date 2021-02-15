@@ -22,5 +22,6 @@ def Rx(t):
     Generates the unitary rotation matrix about the X axis on the Bloch sphere.
     '''
 
-    Sx=np.matrix([[0,1],[1,0]])
-    return np.matrix(expm(-1j*t*Sx/2.))
+    Sx=np.array([[0,1],[1,0]])
+    
+    return expm(-1j*t*Sx/2.)

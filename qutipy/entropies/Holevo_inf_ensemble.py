@@ -31,7 +31,7 @@ def Holevo_inf_ensemble(p,S):
 
     dim=np.shape(S[0])[0]
 
-    R=np.matrix(np.zeros((dim,dim)))
+    R=np.zeros((dim,dim))
     av=0
 
     for i in range(len(p)):

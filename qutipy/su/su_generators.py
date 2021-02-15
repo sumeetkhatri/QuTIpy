@@ -15,7 +15,7 @@ that they have been altered from the originals.
 
 import numpy as np
 
-from qutipy.general_functions import ket,eye
+from qutipy.general_functions import dag,ket,eye
 
 
 def su_generators(d):
@@ -42,15 +42,15 @@ def su_generators(d):
 
     for l in range(d):
         for k in range(l):
-            L.append(np.sqrt(d/2)*(ket(d,k)*ket(d,l).H+ket(d,l)*ket(d,k).H))
-            L.append(np.sqrt(d/2)*(-1j*ket(d,k)*ket(d,l).H+1j*ket(d,l)*ket(d,k).H))
+            L.append(np.sqrt(d/2)*(ket(d,k)@dag(ket(d,l))+ket(d,l)@dag(ket(d,k))))
+            L.append(np.sqrt(d/2)*(-1j*ket(d,k)@dag(ket(d,l))+1j*ket(d,l)@dag(ket(d,k))))
 
     for k in range(1,d):
         X=0
         for j in range(k):
-            X+=ket(d,j)*ket(d,j).H
+            X+=ket(d,j)@dag(ket(d,j))
         
-        L.append(np.sqrt(d/(k*(k+1)))*(X-k*ket(d,k)*ket(d,k).H))
+        L.append(np.sqrt(d/(k*(k+1)))*(X-k*ket(d,k)@dag(ket(d,k))))
 
     
     return L

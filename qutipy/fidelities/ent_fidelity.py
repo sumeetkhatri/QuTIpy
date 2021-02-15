@@ -28,4 +28,4 @@ def ent_fidelity(sigma,d):
 
     Bell=MaxEnt_state(d,density_matrix=True)
 
-    return np.real(Tr(Bell*sigma))
+    return np.real(Tr(Bell@sigma))

@@ -17,18 +17,18 @@ from qutipy.states import MaxEnt_state
 from qutipy.general_functions import eye,Tr
 
 
-def isotropic_twirl_state(rho,d):
+def isotropic_twirl_state(X,d):
 
     '''
     Applies the twirling channel
 
-        rho -> ∫ (U ⊗ conj(U))*rho*(U ⊗ conj(U)).H dU
+        X -> ∫ (U ⊗ conj(U))*X*(U ⊗ conj(U)).H dU
 
-    to the input state rho acting on two d-dimensional systems.
+    to the input operator X acting on two d-dimensional systems.
 
     For d=2, this is equivalent to
 
-        rho -> (1/24)*sum_i (c_i ⊗ conj(c_i))*rho*(c_i ⊗ conj(c_i)).H
+        X -> (1/24)*sum_i (c_i ⊗ conj(c_i))*X*(c_i ⊗ conj(c_i)).H
 
     where the unitaries c_i form the one-qubit Clifford group (because the Clifford
     unitaries constitute a unitary 2-design).
@@ -37,9 +37,6 @@ def isotropic_twirl_state(rho,d):
     the same fidelity to the maximally entangled state as rho.
     '''
 
-    #f=fidelity(rho,MaxEnt_state(d)*MaxEnt_state(d).H)
-    #return isotropic_state(f,d,fidelity=True)
-
     G=MaxEnt_state(d,normalized=False,density_matrix=True)
 
-    return (Tr(rho)/(d**2-1)-Tr(G*rho)/(d*(d**2-1)))*eye(d**2)+(Tr(G*rho)/(d**2-1)-Tr(rho)/(d*(d**2-1)))*G
+    return (Tr(X)/(d**2-1)-Tr(G@X)/(d*(d**2-1)))*eye(d**2)+(Tr(G@X)/(d**2-1)-Tr(X)/(d*(d**2-1)))@G

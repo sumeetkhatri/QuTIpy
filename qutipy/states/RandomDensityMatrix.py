@@ -15,8 +15,10 @@ that they have been altered from the originals.
 
 import numpy as np
 
+from qutipy.general_functions import dag,Tr
 
-def RandomDensityMatrix(dim,comp=True,*args):
+
+def RandomDensityMatrix(dim,*args):
 
     '''
     Generates a random density matrix.
@@ -34,11 +36,7 @@ def RandomDensityMatrix(dim,comp=True,*args):
     else:
         r=args[0]
 
-    if comp:
-        gin=np.matrix(np.random.randn(dim,r)+1j*np.random.randn(dim,r))
-        rho=gin*gin.H
-    else:
-        gin=np.matrix(np.random.randn(dim,r))
-        rho=gin*gin.H
-
-    return rho/np.trace(rho)
+    gin=np.random.randn(dim,r)+1j*np.random.randn(dim,r)
+    rho=gin@dag(gin)
+    
+    return rho/Tr(rho)

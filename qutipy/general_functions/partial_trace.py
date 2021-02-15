@@ -16,7 +16,7 @@ that they have been altered from the originals.
 import numpy as np
 import cvxpy
 
-from qutipy.general_functions import syspermute,Tr
+from qutipy.general_functions import syspermute,Tr,dag
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 
 
@@ -31,7 +31,7 @@ def partial_trace(X,sys,dim):
 
     partial_trace(rho_AB,[2],[dimA,dimB]) gives the density matrix on
 
-    system A, i.e., rho_A:=TrX[rho_AB].
+    system A, i.e., rho_A:=partial_trace[rho_AB].
 
     Similarly, partial_trace(rho_AB,[1],[dimA,dimB]) discards the first subsystem,
     returning the density matrix of system B.
@@ -58,7 +58,7 @@ def partial_trace(X,sys,dim):
     else:
 
         if X.shape[1]==1:
-            X=X*X.H
+            X=X@dag(X)
 
         num_sys=len(dim)
         total_sys=range(1,num_sys+1)
@@ -77,4 +77,4 @@ def partial_trace(X,sys,dim):
         X_reshape=np.sum(np.diagonal(X_reshape,axis1=0,axis2=len(dim)),axis=-1)
         X=np.reshape(X_reshape,(dim_keep,dim_keep))
 
-        return np.matrix(X)
+        return X

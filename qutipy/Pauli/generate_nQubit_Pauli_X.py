@@ -26,7 +26,7 @@ def generate_nQubit_Pauli_X(indices):
     '''
 
     Id=eye(2)
-    Sx=np.matrix([[0,1],[1,0]])
+    Sx=np.array([[0,1],[1,0]])
 
     out=1
 

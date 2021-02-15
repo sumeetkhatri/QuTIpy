@@ -15,6 +15,7 @@ that they have been altered from the originals.
 import numpy as np
 import cvxpy
 
+from qutipy.general_functions import dag
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 
 
@@ -54,7 +55,7 @@ def partial_transpose(X,sys,dim):
 
 
     if X.shape[1]==1:
-        X=X*X.H
+        X=X@dag(X)
 
     X=np.array(X)
 
@@ -93,4 +94,4 @@ def partial_transpose(X,sys,dim):
 
     X_new=np.reshape(X_reshape,dim_total)
 
-    return np.matrix(X_new)
+    return X_new

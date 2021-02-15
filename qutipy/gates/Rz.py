@@ -21,5 +21,6 @@ def Rz(t):
     Generates the unitary rotation matrix about the Z axis on the Bloch sphere.
     '''
 
-    Sz=np.matrix([[1,0],[0,-1]])
-    return np.matrix(expm(-1j*t*Sz/2.))
+    Sz=np.array([[1,0],[0,-1]])
+    
+    return expm(-1j*t*Sz/2.)

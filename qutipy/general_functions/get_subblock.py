@@ -24,7 +24,7 @@ def get_subblock(X,sys,indices,dim):
     tuple corresponding to a system in sys. For each tuple, the first element
     gives the row and the second the column.
 
-    For example, the subblock (<i|\otimes 1\otimes <j|)X(|k>\otimes 1\otimes |l>)
+    For example, the subblock (<i| ⊗ id ⊗ <j|)X(|k> ⊗ id ⊗ |l>)
     is given by get_subblock(X,[1,3],[(i,k),(j,l)],[dim1,dim2,dim3]), so the result
     is a dim2 x dim2 matrix, which is the desired subblock.
     '''

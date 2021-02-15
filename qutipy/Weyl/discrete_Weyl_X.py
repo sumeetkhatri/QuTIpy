@@ -13,7 +13,7 @@ that they have been altered from the originals.
 '''
 
 
-from qutipy.general_functions import ket
+from qutipy.general_functions import ket,dag
 
 
 
@@ -23,9 +23,9 @@ def discrete_Weyl_X(d):
     Generates the X shift operators.
     '''
 
-    X=ket(d,1)*ket(d,0).H
+    X=ket(d,1)@dag(ket(d,0))
 
     for i in range(1,d):
-        X=X+ket(d,(i+1)%d)*ket(d,i).H
+        X=X+ket(d,(i+1)%d)@dag(ket(d,i))
 
     return X

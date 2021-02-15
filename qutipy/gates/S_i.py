@@ -40,8 +40,8 @@ def S_i(i,n):
         perm_rearrange[i]=np.argwhere(perm_arrange==i+1)[0][0]+1
 
     perm_rearrange=perm_rearrange.astype(int)
-    S=np.matrix([[1,0],[0,1j]])
+    S=np.array([[1,0],[0,1j]])
     out_temp=tensor(S,[eye(2),n-1])
     out=syspermute(out_temp,perm_rearrange,dims)
 
-    return np.matrix(out)
+    return out

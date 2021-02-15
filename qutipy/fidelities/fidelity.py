@@ -25,4 +25,4 @@ def fidelity(rho,sigma):
     Returns the fidelity between the states rho and sigma.
     '''
 
-    return trace_norm(np.matrix(sqrtm(rho))*np.matrix(sqrtm(sigma)))**2
+    return trace_norm(sqrtm(rho)@sqrtm(sigma))**2

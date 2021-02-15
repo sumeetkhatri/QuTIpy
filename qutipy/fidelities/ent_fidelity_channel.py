@@ -32,4 +32,4 @@ def ent_fidelity_channel(K,d):
 
     K_choi=(1./d)*Choi_representation(K,d)
 
-    return np.real(Tr((Bell)*K_choi))
+    return np.real(Tr((Bell)@K_choi))

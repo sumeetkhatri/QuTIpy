@@ -18,10 +18,7 @@ import numpy as np
 def Tr(A):
 
     '''
-    Takes the trace of the matrix A. The object A should be a numpy matrix.
+    Takes the trace of the matrix A, which should be specified as a numpy 2d array.
     '''
-
-    if type(A)!=np.matrix:
-        A=np.matrix(A)
 
     return np.trace(A)
