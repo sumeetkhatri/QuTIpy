@@ -23,7 +23,7 @@ def singlet_state(d):
     Generates the singlet state acting on two d-dimensional systems, which is defined
     as
 
-        |Psi^-><Psi^-|=(1/(d^2-d))(eye(d^2)-F),
+        (1/(d^2-d))(eye(d^2)-F),
 
     where F is the swap operator given by SWAP([1,2],[d,d]) (see below).
     '''

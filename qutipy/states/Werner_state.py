@@ -18,7 +18,7 @@ from qutipy.states import singlet_state
 from qutipy.general_functions import SWAP,eye
 
 
-def Werner_state(p,d,fidelity=False):
+def Werner_state(p,d,alt_param=False):
 
     '''
     Generates the Werner state with parameter p on two d-dimensional systems.
@@ -27,18 +27,18 @@ def Werner_state(p,d,fidelity=False):
         rho_W=(1/(d^2-dp))*(eye(d^2)-p*SWAP),
 
     where SWAP is the swap operator between two d-dimensional systems and 
-    p is between -1 and 1. Werner states are invariant under U ⊗ U for any
+    p is between -1 and 1. Werner states are invariant under U ⊗ U for every
     unitary U.
 
-    If fidelity=True, then the function returns a different parameterization of 
-    the Werner state in which the parameter p is the fidelity of the state with
-    respect to the d-dimensional singlet state, defined as
+    If alt_param=True, then the function returns a different parameterization of 
+    the Werner state in which the parameter p is the fraction of the
+    d-dimensional singlet state, which is defined as
 
-        |Psi^-><Psi^-|=(1/(d^2-d))*(eye(d^2)-SWAP)
+        (1/(d^2-d))*(eye(d^2)-SWAP)
 
     '''
     
-    if fidelity:
+    if alt_param:
         singlet=singlet_state(d)
         return p*singlet+((1-p)/(d**2-1))*(eye(d**2)-singlet)
     else:

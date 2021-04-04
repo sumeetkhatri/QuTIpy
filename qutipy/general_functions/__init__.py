@@ -4,7 +4,6 @@ from qutipy.general_functions.eye import eye
 from qutipy.general_functions.get_subblock import get_subblock
 from qutipy.general_functions.partial_trace import partial_trace
 from qutipy.general_functions.partial_transpose import partial_transpose
-from qutipy.general_functions.SWAP import SWAP
 from qutipy.general_functions.tensor import tensor
 from qutipy.general_functions.Tr import Tr
 from qutipy.general_functions.trace_norm import trace_norm
@@ -12,3 +11,4 @@ from qutipy.general_functions.trace_distance_pure_states import trace_distance_p
 from qutipy.general_functions.spectral_norm import spectral_norm
 from qutipy.general_functions.unitary_distance import unitary_distance
 from qutipy.general_functions.dag import dag
+from qutipy.general_functions.SWAP import SWAP
