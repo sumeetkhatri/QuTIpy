@@ -24,23 +24,25 @@ def Werner_state(p,d,alt_param=False):
     Generates the Werner state with parameter p on two d-dimensional systems.
     The state is defined as
 
-        rho_W=(1/(d^2-dp))*(eye(d^2)-p*SWAP),
-
-    where SWAP is the swap operator between two d-dimensional systems and 
-    p is between -1 and 1. Werner states are invariant under U ⊗ U for every
-    unitary U.
+        rho_W=p*singlet+(1-p)*singlet_perp,
+        
+    where singlet is the state defined as (1/(d^2-d))*(eye(d^2)-SWAP) and
+    singlet_perp is the state defined as (1/(d^2+d))*(eye(d^2)+SWAP),
+    where SWAP is the swap operator between two d-dimensional systems. The parameter
+    p is between 0 and 1.
+    
+    Werner states are invariant under U ⊗ U for every unitary U.
 
     If alt_param=True, then the function returns a different parameterization of 
-    the Werner state in which the parameter p is the fraction of the
-    d-dimensional singlet state, which is defined as
+    the Werner state in which the parameter p is between -1 and 1, and
 
-        (1/(d^2-d))*(eye(d^2)-SWAP)
+        rho_W=(1/(d^2-d*p))*(eye(d^2)-p*SWAP)
 
     '''
     
     if alt_param:
-        singlet=singlet_state(d)
-        return p*singlet+((1-p)/(d**2-1))*(eye(d**2)-singlet)
-    else:
         F=SWAP([1,2],[d,d])
         return (1/(d**2-d*p))*(eye(d**2)-p*F)
+    else:
+        singlet,singlet_perp=singlet_state(d,perp=True)
+        return p*singlet+(1-p)*singlet_perp

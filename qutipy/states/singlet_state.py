@@ -17,7 +17,7 @@ import numpy as np
 from qutipy.general_functions import SWAP,eye
 
 
-def singlet_state(d):
+def singlet_state(d,perp=False):
 
     '''
     Generates the singlet state acting on two d-dimensional systems, which is defined
@@ -26,9 +26,19 @@ def singlet_state(d):
         (1/(d^2-d))(eye(d^2)-F),
 
     where F is the swap operator given by SWAP([1,2],[d,d]) (see below).
+
+    If perp=True, then the function also returns the state orthogonal to the singlet
+    state, given by 
+
+        (1/(d^2+d))(eye(d^2)+F).
     '''
 
     F=SWAP([1,2],[d,d])
+    
     singlet=(1/(d**2-d))*(eye(d**2)-F)
-
-    return singlet
+    
+    if perp:
+        singlet_perp=(1/(d**2+d))*(eye(d**2)+F)
+        return singlet,singlet_perp
+    else:
+        return singlet
