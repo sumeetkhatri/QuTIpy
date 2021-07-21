@@ -1,3 +1,4 @@
+from qutipy.distance_measures import *
 from qutipy.Clifford import *
 from qutipy.entropies import *
 from qutipy.fidelities import *
@@ -14,3 +15,7 @@ from qutipy.channels import *
 
 from numpy.linalg import eig,norm
 from scipy.linalg import expm,logm
+
+
+__version__='0.1.0'
+__author__='Sumeet Khatri'
