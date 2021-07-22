@@ -1,4 +1,3 @@
-from qutipy.distance_measures import *
 from qutipy.Clifford import *
 from qutipy.entropies import *
 from qutipy.fidelities import *
@@ -12,6 +11,7 @@ from qutipy.states import *
 from qutipy.su import *
 from qutipy.Weyl import *
 from qutipy.channels import *
+from qutipy.distance_measures import *
 
 from numpy.linalg import eig,norm
 from scipy.linalg import expm,logm

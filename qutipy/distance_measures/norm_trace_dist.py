@@ -16,43 +16,46 @@ that they have been altered from the originals.
 import numpy as np
 import cvxpy as cvx
 
-from qutipy.general_functions import eye
+from qutipy.general_functions import eye,trace_norm
 
 
 
-def norm_trace_dist(rho,sigma,dual=False,display=False):
+def norm_trace_dist(rho,sigma,sdp=False,dual=False,display=False):
 
     '''
     Calculates the normalized trace distance (1/2)*||rho-sigma||_1 using an SDP,
     where rho and sigma are quantum states.
     '''
 
-    if not dual:
+    if sdp:
+        if not dual:
 
-        dim=rho.shape[0]
+            dim=rho.shape[0]
 
-        L=cvx.Variable((dim,dim),hermitian=True)
+            L=cvx.Variable((dim,dim),hermitian=True)
 
-        c=[L>>0,eye(dim)-L>>0]
+            c=[L>>0,eye(dim)-L>>0]
 
-        obj=cvx.Maximize(cvx.real(cvx.trace(L@(rho-sigma))))
-        prob=cvx.Problem(obj,constraints=c)
+            obj=cvx.Maximize(cvx.real(cvx.trace(L@(rho-sigma))))
+            prob=cvx.Problem(obj,constraints=c)
 
-        prob.solve(verbose=display)
+            prob.solve(verbose=display)
 
-        return prob.value
+            return prob.value
 
-    elif dual:
+        elif dual:
 
-        dim=rho.shape[0]
+            dim=rho.shape[0]
 
-        Z=cvx.Variable((dim,dim),hermitian=True)
-        
-        c=[Z>>0,Z>>rho-sigma]
+            Z=cvx.Variable((dim,dim),hermitian=True)
+            
+            c=[Z>>0,Z>>rho-sigma]
 
-        obj=cvx.Minimize(cvx.real(cvx.trace(Z)))
+            obj=cvx.Minimize(cvx.real(cvx.trace(Z)))
 
-        prob=cvx.Problem(obj,c)
-        prob.solve(verbose=display)
+            prob=cvx.Problem(obj,c)
+            prob.solve(verbose=display)
 
-        return prob.value
+            return prob.value
+    else:
+        return (1/2)*trace_norm(rho-sigma)

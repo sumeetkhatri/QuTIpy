@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name='QuTIpy',
@@ -8,7 +8,7 @@ setup(
     author='Sumeet Khatri',
     author_email='khatri6000@gmail.com',
     license='Apache-2.0',
-    packages=['qutipy'],
+    packages=find_packages(),
     install_requires=['numpy','scipy','sympy','cvxpy'],
     classifiers=[
         'Development Status :: 1 - Planning',
