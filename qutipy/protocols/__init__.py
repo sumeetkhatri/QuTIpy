@@ -9,3 +9,5 @@ from qutipy.protocols.post_ent_swap_GHZ_chain_fidelity import post_ent_swap_GHZ_
 from qutipy.protocols.post_ent_swap_GHZ_fidelity import post_ent_swap_GHZ_fidelity
 from qutipy.protocols.post_graph_state_dist_fidelity import post_graph_state_dist_fidelity
 from qutipy.protocols.entanglement_distillation import entanglement_distillation
+from qutipy.protocols.state_discrimination import state_discrimination
+from qutipy.protocols.channel_discrimination import channel_discrimination

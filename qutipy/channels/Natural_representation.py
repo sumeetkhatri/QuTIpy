@@ -29,4 +29,4 @@ def Natural_representation(K):
     where the sum is over the Kraus operators K_i in K.
     '''
 
-    return np.sum([tensor(k,np.conjugate(k)) for k in K],1)
+    return np.sum([tensor(k,np.conjugate(k)) for k in K],0)

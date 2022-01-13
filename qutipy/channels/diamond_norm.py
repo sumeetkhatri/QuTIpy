@@ -47,19 +47,19 @@ def diamond_norm(J,dimA,dimB,display=False):
 
     J=syspermute(J,[2,1],[dimA,dimB])
 
-    X=cvx.Variable((dimA*dimB,dimA*dimB))
+    X=cvx.Variable((dimA*dimB,dimA*dimB),hermitian=False)
     rho0=cvx.Variable((dimA,dimA),PSD=True)
     rho1=cvx.Variable((dimA,dimA),PSD=True)
 
-    M=cvx.kron(ket(2,0)@dag(ket(2,0)),cvx.kron(eye(dimB),rho0))+cvx.kron(ket(2,0)@dag(ket(2,1)),X)+cvx.kron(ket(2,1)@dag(ket(2,0)),X.H)+cvx.kron(ket(2,1)@dag(ket(2,1)),cvx.kron(eye(dimB),rho1))
+    M=cvx.bmat([[cvx.kron(eye(dimB),rho0),X],[X.H,cvx.kron(eye(dimB),rho1)]])
 
     c=[]
     c+=[M>>0,cvx.trace(rho0)==1,cvx.trace(rho1)==1]
 
-    obj=cvx.Maximize((1./2.)*cvx.real(cvx.trace(dag(J)@X))+(1./2.)*cvx.real(cvx.trace(J@X.H)))
+    obj=cvx.Maximize((1/2)*cvx.real(cvx.trace(dag(J)@X))+(1/2)*cvx.real(cvx.trace(J@X.H)))
 
     prob=cvx.Problem(obj,constraints=c)
 
-    prob.solve(verbose=display)
+    prob.solve(verbose=display,eps=1e-7)
 
     return prob.value

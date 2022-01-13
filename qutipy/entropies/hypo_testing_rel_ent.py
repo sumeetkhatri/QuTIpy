@@ -20,7 +20,7 @@ from qutipy.general_functions import eye
 
 
 
-def hypo_testing_rel_ent(rho,sigma,eps,dual=False,display=False):
+def hypo_testing_rel_ent(rho,sigma,eps,dual=False,log=False,display=False,return_all=False):
 
     '''
     Calculates the eps-hypothesis testing relative entropy of the two states
@@ -39,22 +39,40 @@ def hypo_testing_rel_ent(rho,sigma,eps,dual=False,display=False):
         obj=cvx.Minimize(cvx.real(cvx.trace(L@sigma)))
         prob=cvx.Problem(obj,constraints=c)
 
-        prob.solve(verbose=display)
+        prob.solve(verbose=display,eps=1e-7)
 
-        return -np.log2(prob.value)
+        if not log:
+            if return_all:
+                return prob.value,L.value
+            else:
+                return prob.value
+        else:
+            if return_all:
+                return -np.log2(prob.value),L.value
+            else:
+                return -np.log2(prob.value)
 
     elif dual:
 
         dim=rho.shape[0]
 
-        Y=cvx.Variable((dim,dim),hermitian=True)
-        l=cvx.Variable()
+        Z=cvx.Variable((dim,dim),hermitian=True)
+        mu=cvx.Variable()
 
-        c=[l>=0,Y>>sigma,Y-l*rho>>0]
+        c=[mu>=0,mu*rho<<sigma+Z,Z>>0]
 
-        obj=cvx.Maximize(cvx.real(-cvx.trace(Y)+cvx.trace(sigma)+l*(1-eps)))
+        obj=cvx.Maximize(cvx.real(mu*(1-eps)-cvx.trace(Z)))
 
         prob=cvx.Problem(obj,c)
-        prob.solve(verbose=display)
+        prob.solve(verbose=display,eps=1e-7)
 
-        return -np.log2(prob.value)
+        if not log:
+            if return_all:
+                return prob.value,Z.value,mu.value
+            else:
+                return prob.value
+        else:
+            if return_all:
+                return -np.log2(prob.value),Z.value,mu.value
+            else:
+                return -np.log2(prob.value)

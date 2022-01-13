@@ -24,7 +24,8 @@ def norm_trace_dist(rho,sigma,sdp=False,dual=False,display=False):
 
     '''
     Calculates the normalized trace distance (1/2)*||rho-sigma||_1 using an SDP,
-    where rho and sigma are quantum states.
+    where rho and sigma are quantum states. More generally, they can be Hermitian
+    operators.
     '''
 
     if sdp:
@@ -32,30 +33,32 @@ def norm_trace_dist(rho,sigma,sdp=False,dual=False,display=False):
 
             dim=rho.shape[0]
 
-            L=cvx.Variable((dim,dim),hermitian=True)
+            L1=cvx.Variable((dim,dim),hermitian=True)
+            L2=cvx.Variable((dim,dim),hermitian=True)
 
-            c=[L>>0,eye(dim)-L>>0]
+            c=[L1>>0,L2>>0,eye(dim)-L1>>0,eye(dim)-L2>>0]
 
-            obj=cvx.Maximize(cvx.real(cvx.trace(L@(rho-sigma))))
+            obj=cvx.Maximize(cvx.real(cvx.trace((L1-L2)@(rho-sigma))))
             prob=cvx.Problem(obj,constraints=c)
 
-            prob.solve(verbose=display)
+            prob.solve(verbose=display,eps=1e-7)
 
-            return prob.value
+            return (1/2)*prob.value
 
         elif dual:
 
             dim=rho.shape[0]
 
-            Z=cvx.Variable((dim,dim),hermitian=True)
+            Y1=cvx.Variable((dim,dim),hermitian=True)
+            Y2=cvx.Variable((dim,dim),hermitian=True)
             
-            c=[Z>>0,Z>>rho-sigma]
+            c=[Y1>>0,Y2>>0,Y1>>rho-sigma,Y2>>-(rho-sigma)]
 
-            obj=cvx.Minimize(cvx.real(cvx.trace(Z)))
+            obj=cvx.Minimize(cvx.real(cvx.trace(Y1+Y2)))
 
             prob=cvx.Problem(obj,c)
-            prob.solve(verbose=display)
+            prob.solve(verbose=display,eps=1e-7)
 
-            return prob.value
+            return (1/2)*prob.value
     else:
         return (1/2)*trace_norm(rho-sigma)

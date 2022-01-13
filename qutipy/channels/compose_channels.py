@@ -13,6 +13,7 @@ that they have been altered from the originals.
 '''
 
 
+from qutipy.general_functions import eye
 
 import itertools
 
@@ -27,6 +28,8 @@ def compose_channels(C):
     the channel corresponding to K1 is applied first, then K2, etc.
     '''
 
+    d=C[0][0].shape[0]
+
     lengths=[]
     for c in C:
         lengths.append(len(c))
@@ -36,7 +39,8 @@ def compose_channels(C):
     K_n=[]
 
     for comb in combs:
-        tmp=1
+        #tmp=1
+        tmp=eye(d)
         for i in range(len(comb)):
             tmp=C[i][comb[i]]@tmp
         K_n.append(tmp)

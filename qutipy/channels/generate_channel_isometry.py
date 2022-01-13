@@ -49,6 +49,6 @@ def generate_channel_isometry(K,dimA,dimB):
                 U=U+tensor(states_new[count],dag(ket(dimA,i)),dag(ket(dimE,j)))
                 count+=1
         
-        return V,U
+        return V,np.array(U)
     else:
         return V

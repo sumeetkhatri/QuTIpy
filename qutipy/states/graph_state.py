@@ -19,7 +19,7 @@ from qutipy.gates import CZ_ij
 
 
 
-def graph_state(A_G,n,density_matrix=False,return_CZ=False):
+def graph_state(A_G,n,density_matrix=False,return_CZ=False,alt=True):
 
     '''
     Generates the graph state corresponding to the undirected graph G with n vertices.
@@ -36,21 +36,21 @@ def graph_state(A_G,n,density_matrix=False,return_CZ=False):
 
     plus_n=tensor([plus,n])
 
-    CZ_G=eye(2**n)
+    G=eye(2**n)
 
     for i in range(n):
         for j in range(i,n):
             if A_G[i,j]==1:
-                CZ_G=CZ_G@CZ_ij(i+1,j+1,n)
+                G=G@CZ_ij(i+1,j+1,n)
 
     if density_matrix:
         plus_n=plus_n@dag(plus_n)
         if return_CZ:
-            return CZ_G@plus_n@dag(CZ_G),CZ_G
+            return G@plus_n@dag(G),G
         else:
-            return CZ_G@plus_n@dag(CZ_G)
+            return G@plus_n@dag(G)
     else:
         if return_CZ:
-            return CZ_G@plus_n,CZ_G
+            return G@plus_n,G
         else:
-            return CZ_G@plus_n
+            return G@plus_n
