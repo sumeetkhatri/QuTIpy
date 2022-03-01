@@ -12,9 +12,12 @@ from qutipy.su import *
 from qutipy.Weyl import *
 from qutipy.channels import *
 from qutipy.distance_measures import *
+from qutipy.fermions import *
 
 from numpy.linalg import eig,norm
 from scipy.linalg import expm,logm
+
+import numpy as np
 
 
 __version__='0.1.0'

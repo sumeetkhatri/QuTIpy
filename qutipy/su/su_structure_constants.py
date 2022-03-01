@@ -25,23 +25,23 @@ def su_structure_constants(d):
     Generates the structure constants corresponding to the su(d)
     basis elements. They are defined as follows:
 
-        f_{i,j,k}=(1/(1j*d^2))*Tr[l_k*[l_i,l_j]]
+        f_{i,j,k}=(1/(1j*d^2))*Tr[S_k*[S_i,S_j]]
 
-        g_{i,j,k}=(1/d^2)*Tr[l_k*{l_i,l_j}]
+        g_{i,j,k}=(1/d^2)*Tr[S_k*{S_i,S_j}]
     
     '''
 
     f={}
     g={}
 
-    L=su_generators(d)
+    S=su_generators(d)
 
     for i in range(1,d**2):
         for j in range(1,d**2):
             for k in range(1,d**2):
 
-                f[(i,j,k)]=(1/(1j*d**2))*Tr(L[k]@(L[i]@L[j]-L[j]@L[i]))
+                f[(i,j,k)]=(1/(1j*d**2))*Tr(S[k]@(S[i]@S[j]-S[j]@S[i]))
 
-                g[(i,j,k)]=(1/d**2)*Tr(L[k]@(L[i]@L[j]+L[j]@L[i]))
+                g[(i,j,k)]=(1/d**2)*Tr(S[k]@(S[i]@S[j]+S[j]@S[i]))
 
     return f,g

@@ -12,3 +12,5 @@ from qutipy.general_functions.spectral_norm import spectral_norm
 from qutipy.general_functions.unitary_distance import unitary_distance
 from qutipy.general_functions.dag import dag
 from qutipy.general_functions.SWAP import SWAP
+from qutipy.general_functions.generate_all_kets import generate_all_kets
+from qutipy.general_functions.permute_tensor_factors import permute_tensor_factors

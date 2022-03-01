@@ -20,7 +20,7 @@ from qutipy.Pauli import generate_nQubit_Pauli
 from qutipy.general_functions import dag,Tr
 
 
-def nQubit_Pauli_coeff(X,n):
+def nQubit_Pauli_coeff(X,n,return_dict=False):
 
     '''
     Generates the coefficients of the matrix X in the n-qubit Pauli basis.
@@ -33,10 +33,16 @@ def nQubit_Pauli_coeff(X,n):
 
     indices=list(itertools.product(*[range(0,4)]*n))
 
-    C=[]
+    if return_dict:
+        C={}
+    else:
+        C=[]
 
     for index in indices:
         sigma_i=generate_nQubit_Pauli(index)
-        C.append(Tr(dag(sigma_i)@X))
+        if return_dict:
+            C[index]=Tr(dag(sigma_i)@X)
+        else:
+            C.append(Tr(dag(sigma_i)@X))
 
     return C

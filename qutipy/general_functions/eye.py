@@ -21,4 +21,4 @@ def eye(n):
     Generates the nxn identity matrix.
     '''
 
-    return np.identity(n,dtype=int)
+    return np.identity(n,dtype=float)

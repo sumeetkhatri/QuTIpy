@@ -29,28 +29,28 @@ def su_generators(d):
 
     The orthogonality condition is
 
-        Tr[l_i*l_j]=d*delta_{i,j}
+        Tr[S_i*S_j]=d*delta_{i,j}
 
     (This is a particular convention we use here; there are other conventions.)
 
     For d=2, we get the Pauli matrices.
     '''
 
-    L=[]
+    S=[]
 
-    L.append(eye(d))
+    S.append(eye(d))
 
     for l in range(d):
         for k in range(l):
-            L.append(np.sqrt(d/2)*(ket(d,k)@dag(ket(d,l))+ket(d,l)@dag(ket(d,k))))
-            L.append(np.sqrt(d/2)*(-1j*ket(d,k)@dag(ket(d,l))+1j*ket(d,l)@dag(ket(d,k))))
+            S.append(np.sqrt(d/2)*(ket(d,k)@dag(ket(d,l))+ket(d,l)@dag(ket(d,k))))
+            S.append(np.sqrt(d/2)*(-1j*ket(d,k)@dag(ket(d,l))+1j*ket(d,l)@dag(ket(d,k))))
 
     for k in range(1,d):
         X=0
         for j in range(k):
             X+=ket(d,j)@dag(ket(d,j))
         
-        L.append(np.sqrt(d/(k*(k+1)))*(X-k*ket(d,k)@dag(ket(d,k))))
+        S.append(np.sqrt(d/(k*(k+1)))*(X-k*ket(d,k)@dag(ket(d,k))))
 
     
-    return L
+    return S

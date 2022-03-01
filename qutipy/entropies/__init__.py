@@ -12,3 +12,4 @@ from qutipy.entropies.sandwiched_Renyi_mut_inf_state import sandwiched_Renyi_mut
 from qutipy.entropies.hypo_testing_rel_ent import hypo_testing_rel_ent
 from qutipy.entropies.Holevo_inf_channel import Holevo_inf_channel
 from qutipy.entropies.coherent_inf_channel import coherent_inf_channel
+from qutipy.entropies.min_output_entropy import min_output_entropy
