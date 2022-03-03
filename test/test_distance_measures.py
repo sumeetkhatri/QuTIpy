@@ -20,6 +20,15 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
-from qutipy.misc.base_number_to_int import base_number_to_int
-from qutipy.misc.cvxpy_to_numpy import cvxpy_to_numpy
-from qutipy.misc.numpy_to_cvxpy import numpy_to_cvxpy
+import numpy as np
+
+from qutipy.distance_measures import norm_trace_dist
+
+X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
+
+H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))
+
+
+def test_norm_trace_dist():
+    assert norm_trace_dist(X, X) == 0
+    assert norm_trace_dist(X, X.transpose()) == 13.416407864998739

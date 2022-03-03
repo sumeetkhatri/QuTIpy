@@ -1,24 +1,32 @@
-'''
-This code is part of QuTIpy.
+#               This file is part of the QuTIpy package.
+#                https://github.com/sumeetkhatri/QuTIpy
+#
+#                   Copyright (c) 2022 Sumeet Khatri.
+#                       --.- ..- - .. .--. -.--
+#
+#
+# SPDX-License-Identifier: AGPL-3.0
+#
+#  This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, version 3.
+#
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
 
-(c) Copyright Sumeet Khatri, 2021
 
-This code is licensed under the Apache License, Version 2.0. You may
-obtain a copy of this license in the LICENSE.txt file in the root directory
-of this source tree or at http://www.apache.org/licenses/LICENSE-2.0.
-
-Any modifications or derivative works of this code must retain this
-copyright notice, and modified files need to carry a notice indicating
-that they have been altered from the originals.
-'''
-
-
-def base_number_to_int(string,base):
+def base_number_to_int(string, base):
 
     # Last modified: 10 August 2018
 
-    b=base
+    b = base
 
-    string=string[::-1]
+    string = string[::-1]
 
-    return sum([string[k]*b**k for k in range(len(string))])
+    return sum([string[k] * b**k for k in range(len(string))])

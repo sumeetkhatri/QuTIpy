@@ -21,24 +21,37 @@
 #
 
 import numpy as np
-from numpy.linalg import eig, norm
-from scipy.linalg import expm, logm
 
-from qutipy.channels import *
-from qutipy.Clifford import *
-from qutipy.distance_measures import *
-from qutipy.entropies import *
-from qutipy.fermions import *
-from qutipy.fidelities import *
-from qutipy.gates import *
-from qutipy.general_functions import *
-from qutipy.linalg import *
-from qutipy.misc import *
-from qutipy.Pauli import *
-from qutipy.protocols import *
-from qutipy.states import *
-from qutipy.su import *
-from qutipy.Weyl import *
+from qutipy.fidelities import (
+    avg_fidelity,
+    avg_fidelity_qubit,
+    ent_fidelity,
+    ent_fidelity_channel,
+    fidelity,
+)
+from qutipy.states import MaxEnt_state
 
-__version__ = "0.1.0"
-__author__ = "Sumeet Khatri"
+X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
+
+H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))
+
+
+def test_avg_fidelity():
+    assert np.round(avg_fidelity([H], 2), 8) == 0.33333333
+
+
+def test_avg_fidelity_qubit():
+    assert np.round(avg_fidelity_qubit(H @ (X / 20)[2:, 2:]), 5) == 0.9325
+
+
+def test_ent_fidelity():
+    assert np.round(ent_fidelity(X, 2), 8) == 17.0
+
+
+def test_ent_fidelity_channel():
+    assert np.round(ent_fidelity_channel([MaxEnt_state(2)], 4), 8) == 0.0625
+
+
+def test_fidelity():
+    assert fidelity(H, X[:2, :2]) == 13.178570359601418
+    assert fidelity(H, X[::2, ::2]) == 24.91835598486949
