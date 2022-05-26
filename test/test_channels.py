@@ -103,12 +103,8 @@ def test_Kraus_representation():
 
 def test_phase_damping_channel():
     channel = phase_damping_channel(0.2)
-    assert np.all(
-        np.round(channel[0], 8) == np.array([[1.       , 0.       ],[0.       , 0.4472136]])
-    )
-    assert np.all(
-        np.round(channel[1], 8) == np.array([[0.       , 0.       ],[0.       , 0.89442719]])
-    )
+    assert np.all(np.round(channel[0], 8) == np.array([[1.0, 0.0], [0.0, 0.4472136]]))
+    assert np.all(np.round(channel[1], 8) == np.array([[0.0, 0.0], [0.0, 0.89442719]]))
 
 
 def test_generate_channel_isometry():
@@ -131,8 +127,8 @@ def test_apply_channel():
 
 def test_amplitude_damping_channel():
     channel = amplitude_damping_channel(0.2)
-    assert np.all(np.round(channel[0], 5) == np.array([[1.     , 0.     ], [0.     , 0.89443]]))
-    assert np.all(np.round(channel[1], 5) == np.array([[0.     , 0.44721], [0.     , 0.     ]]))
+    assert np.all(np.round(channel[0], 5) == np.array([[1.0, 0.0], [0.0, 0.89443]]))
+    assert np.all(np.round(channel[1], 5) == np.array([[0.0, 0.44721], [0.0, 0.0]]))
 
 
 def test_Natural_representation():

@@ -180,10 +180,10 @@ def coherent_inf_channel(K, dim_in, dim_out, s=1, display=True):
 
     def objfunc(x):
         Re = np.array(x[0 : dim_in**2])
-        Re = np.reshape( Re, [*Re.shape, 1][:2] ) # Build a matrix instead of a list
+        Re = np.reshape(Re, [*Re.shape, 1][:2])  # Build a matrix instead of a list
 
         Im = np.array(x[dim_in**2 :])
-        Im = np.reshape( Im, [*Im.shape, 1][:2] ) # Build a matrix instead of a list
+        Im = np.reshape(Im, [*Im.shape, 1][:2])  # Build a matrix instead of a list
 
         psi = np.array(Re.T + 1j * Im.T)
         psi = psi / norm(psi)

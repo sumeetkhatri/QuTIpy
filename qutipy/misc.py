@@ -23,10 +23,12 @@
 import numpy as np
 from cvxpy import bmat
 
+
 def base_number_to_int(string, base):
     b = base
     string = string[::-1]
     return sum([string[k] * b**k for k in range(len(string))])
+
 
 def cvxpy_to_numpy(cvx_obj):
     """
@@ -45,10 +47,10 @@ def cvxpy_to_numpy(cvx_obj):
         X = np.array(X)
         return X
 
+
 def numpy_to_cvxpy(np_obj):
     """
     Converts numpy array to cvxpy expression.
     """
     np_obj_list = np_obj.tolist()
     return bmat(np_obj_list)
-

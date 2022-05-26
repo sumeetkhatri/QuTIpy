@@ -109,8 +109,8 @@ def test_Holevo_inf_channel():
 
 
 def test_min_output_entropy():
-    t = X@X.transpose() /(X.mean()*100)
-    new_t = t@t.transpose()
+    t = X @ X.transpose() / (X.mean() * 100)
+    new_t = t @ t.transpose()
     new_t = new_t[:2, :2] + new_t[2:, 2:]
     new_t = (new_t @ amplitude_damping_channel @ H)[0]
     assert np.round(min_output_entropy([new_t], 2), 8) == -19.82683426
