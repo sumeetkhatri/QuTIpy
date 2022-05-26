@@ -421,11 +421,11 @@ def diamond_norm(J, dimA, dimB, display=False):
     """
     The Choi representation J in the above paper is defined using a different
     convention:
-        J=(N\\otimes I)(|Phi^+><Phi^+|).
+        J=(N⊗ I)(|Phi^+><Phi^+|).
     In other words, the channel N acts on the first half of the maximally-
     entangled state, while the convention used throughout this code stack
     is
-        J=(I\\otimes N)(|Phi^+><Phi^+|).
+        J=(I⊗ N)(|Phi^+><Phi^+|).
     We thus use syspermute to convert to the form used in the aforementioned
     paper.
     """

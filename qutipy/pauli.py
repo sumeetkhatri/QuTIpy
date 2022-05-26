@@ -167,22 +167,22 @@ def nQubit_quadratures(n):
     Returns the list of n-qubit "quadrature" operators, which are defined as
     (for two qubits)
 
-        S[0]=Sx \\otimes Id
-        S[1]=Sz \\otimes Id
-        S[2]=Id \\otimes Sx
-        S[3]=Id \\otimes Sz
+        S[0]=Sx ⊗ Id
+        S[1]=Sz ⊗ Id
+        S[2]=Id ⊗ Sx
+        S[3]=Id ⊗ Sz
 
     In general, for n qubits:
 
-        S[0]=Sx \\otimes Id \\otimes ... \\otimes Id
-        S[1]=Sz \\otimes Id \\otimes ... \\otimes Id
-        S[2]=Id \\otimes Sx \\otimes ... \\otimes Id
-        S[3]=Id \\otimes Sz \\otimes ... \\otimes Id
+        S[0]=Sx ⊗ Id ⊗ ... ⊗ Id
+        S[1]=Sz ⊗ Id ⊗ ... ⊗ Id
+        S[2]=Id ⊗ Sx ⊗ ... ⊗ Id
+        S[3]=Id ⊗ Sz ⊗ ... ⊗ Id
         .
         .
         .
-        S[2n-2]=Id \\otimes Id \\otimes ... \\otimes Sx
-        S[2n-1]=Id\\otimes Id \\otimes ... \\otimes Sz
+        S[2n-2]=Id ⊗ Id ⊗ ... ⊗ Sx
+        S[2n-1]=Id⊗ Id ⊗ ... ⊗ Sz
     """
 
     S = {}

@@ -52,7 +52,7 @@ def mutual_information(rhoAB, dimA, dimB):
     """
     Computes the mutual information of the bipartite state rhoAB, defined as
 
-    I(A;B)_rho=D(rhoAB||rhoA\\otimes rhoB)
+    I(A;B)_rho=D(rhoAB||rhoA⊗ rhoB)
     """
 
     rhoA = partial_trace(rhoAB, [2], [dimA, dimB])
