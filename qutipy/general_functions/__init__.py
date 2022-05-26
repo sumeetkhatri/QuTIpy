@@ -140,8 +140,6 @@ def ket(dim, *args):
     and the second tensor factor being d2-dimensional.
     """
 
-    # TODO: Dimensions are probably not required
-
     args = np.array(args)
 
     if args.size == 1:
