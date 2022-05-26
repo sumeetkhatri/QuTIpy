@@ -106,7 +106,7 @@ def test_Clifford_twirl_channel_one_qubit():
         [
             np.round(c[0], 3)
             == np.array(
-                [0.245 + 0.0j, 0.242 + 0.0j, 0.242 + 0.0j, -0.209 + 0.0j]
+                [0.552 + 0.0j, 0.552 + 0.0j, 0.552 + 0.0j, -0.552 + 0.0j]
             ).reshape((2, 2)),
             np.round(c[1][0], 4) == np.array([1.0, 0.0, 0.0, 1.0]).reshape((2, 2)),
             np.round(c[1][1], 4) == np.array([0j, -1j, -1j, 0j]).reshape((2, 2)),
@@ -119,44 +119,69 @@ def test_Clifford_twirl_channel_one_qubit():
                 (2, 2)
             ),
             np.round(c[1][4], 4) == np.array([-1j, 0j, 0j, 1j]).reshape((2, 2)),
-            np.round(c[1][5], 4) == np.array([0j, 0j, 0j, 0j]).reshape((2, 2)),
+            np.round(c[1][5], 4) == np.array([0j, 1 + 0j, -1 + 0j, 0j]).reshape((2, 2)),
             np.round(c[1][6], 4)
-            == np.array([-0.7071j, 0j, 0j, 0.7071j]).reshape((2, 2)),
+            == np.array([-0.7071j, 0.7071, -0.7071, 0.7071j]).reshape((2, 2)),
             np.round(c[1][7], 4)
-            == np.array([-0.7071j, 0j, 0j, 0.7071j]).reshape((2, 2)),
+            == np.array([-0.7071j, -0.7071, 0.7071, 0.7071j]).reshape((2, 2)),
             np.round(c[1][8], 4)
             == np.array([(0.7071 - 0.7071j), 0j, 0j, (0.7071 + 0.7071j)]).reshape(
                 (2, 2)
             ),
-            np.round(c[1][9], 4) == np.array([0j, (-0 + 0j), 0j, 0j]).reshape((2, 2)),
+            np.round(c[1][9], 4)
+            == np.array([0j, -0.7071 - 0.7071j, 0.7071 - 0.7071j, 0j]).reshape((2, 2)),
             np.round(c[1][10], 4)
-            == np.array([(0.5 - 0.5j), 0j, (-0 + 0j), (0.5 + 0.5j)]).reshape((2, 2)),
+            == np.array(
+                [(0.5 - 0.5j), 0.5 + 0.5j, (-0.5 + 0.5j), (0.5 + 0.5j)]
+            ).reshape((2, 2)),
             np.round(c[1][11], 4)
-            == np.array([(0.5 - 0.5j), (-0 + 0j), 0j, (0.5 + 0.5j)]).reshape((2, 2)),
+            == np.array(
+                [(0.5 - 0.5j), (-0.5 - 0.5j), (0.5 - 0.5j), (0.5 + 0.5j)]
+            ).reshape((2, 2)),
             np.round(c[1][12], 4)
             == np.array([(0.7071 + 0.7071j), 0j, 0j, (0.7071 - 0.7071j)]).reshape(
                 (2, 2)
             ),
-            np.round(c[1][13], 4) == np.array([0j, (-0 + 0j), 0j, 0j]).reshape((2, 2)),
+            np.round(c[1][13], 4)
+            == np.array([0j, (-0.7071 + 0.7071j), 0.7071 + 0.7071j, 0j]).reshape(
+                (2, 2)
+            ),
             np.round(c[1][14], 4)
-            == np.array([(0.5 + 0.5j), 0j, (-0 + 0j), (0.5 - 0.5j)]).reshape((2, 2)),
+            == np.array(
+                [(0.5 + 0.5j), 0.5 - 0.5j, (-0.5 - 0.5j), (0.5 - 0.5j)]
+            ).reshape((2, 2)),
             np.round(c[1][15], 4)
-            == np.array([(0.5 + 0.5j), (-0 + 0j), 0j, (0.5 - 0.5j)]).reshape((2, 2)),
+            == np.array(
+                [(0.5 + 0.5j), (-0.5 + 0.5j), 0.5 + 0.5j, (0.5 - 0.5j)]
+            ).reshape((2, 2)),
             np.round(c[1][16], 4)
-            == np.array([(0.7071 + 0j), 0j, 0j, (0.7071 + 0j)]).reshape((2, 2)),
+            == np.array(
+                [(0.7071 + 0j), 0.7071 + 0j, -0.7071 + 0j, (0.7071 + 0j)]
+            ).reshape((2, 2)),
             np.round(c[1][17], 4)
-            == np.array([-0.7071j, 0j, 0j, 0.7071j]).reshape((2, 2)),
+            == np.array([-0.7071j, -0.7071j, -0.7071j, 0.7071j]).reshape((2, 2)),
             np.round(c[1][18], 4)
-            == np.array([(-0.5 - 0.5j), 0j, 0j, (-0.5 + 0.5j)]).reshape((2, 2)),
+            == np.array(
+                [(-0.5 - 0.5j), -0.5 - 0.5j, 0.5 - 0.5j, (-0.5 + 0.5j)]
+            ).reshape((2, 2)),
             np.round(c[1][19], 4)
-            == np.array([(0.5 - 0.5j), 0j, 0j, (0.5 + 0.5j)]).reshape((2, 2)),
+            == np.array([(0.5 - 0.5j), 0.5 - 0.5j, -0.5 - 0.5j, (0.5 + 0.5j)]).reshape(
+                (2, 2)
+            ),
             np.round(c[1][20], 4)
-            == np.array([-0.7071j, 0j, 0j, 0.7071j]).reshape((2, 2)),
+            == np.array([-0.7071j, 0.7071j, 0.7071j, 0.7071j]).reshape((2, 2)),
             np.round(c[1][21], 4)
-            == np.array([(0.7071 + 0j), 0j, 0j, (0.7071 + 0j)]).reshape((2, 2)),
+            == np.array([(0.7071 + 0j), -0.7071, 0.7071, (0.7071 + 0j)]).reshape(
+                (2, 2)
+            ),
             np.round(c[1][22], 4)
-            == np.array([(0.5 - 0.5j), 0j, 0j, (0.5 + 0.5j)]).reshape((2, 2)),
-            np.round(c[1][23], 4) == np.array([0j, 0j, 0j, 0j]).reshape((2, 2)),
+            == np.array([(0.5 - 0.5j), -0.5 + 0.5j, 0.5 + 0.5j, (0.5 + 0.5j)]).reshape(
+                (2, 2)
+            ),
+            np.round(c[1][23], 4)
+            == np.array([0.5 - 0.5j, 0.5 - 0.5j, -0.5 - 0.5j, 0.5 + 0.5j]).reshape(
+                (2, 2)
+            ),
         ]
     )
 
