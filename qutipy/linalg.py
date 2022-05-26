@@ -38,7 +38,7 @@ def gram_schmidt(states, dim, normalize=True):
     e.append(states[0] / norm(states[0]))
 
     for k in range(1, len(states)):
-        S = np.matrix(np.zeros([dim, 1]), dtype=complex)
+        S = np.array(np.zeros([dim, 1]), dtype=complex)
         for j in range(k):
             S += proj(u[j], states[k])
         u.append(states[k] - S)

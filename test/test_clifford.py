@@ -22,7 +22,7 @@
 
 import numpy as np
 
-from qutipy.Clifford import (
+from qutipy.clifford import (
     Clifford_group_generators,
     Clifford_twirl_channel_one_qubit,
     generate_Clifford_group,

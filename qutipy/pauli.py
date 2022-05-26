@@ -187,8 +187,8 @@ def nQubit_quadratures(n):
 
     S = {}
 
-    # Sx=np.matrix([[0,1],[1,0]])
-    # Sz=np.matrix([[1,0],[0,-1]])
+    # Sx=np.array([[0,1],[1,0]])
+    # Sz=np.array([[1,0],[0,-1]])
 
     count = 0
 

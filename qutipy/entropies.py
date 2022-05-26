@@ -80,7 +80,7 @@ def sandwiched_Renyi_rel_ent(rho, sigma, alpha):
     or for alpha>=1 provided that supp(rho) is contained in supp(sigma).
     """
 
-    sigma_a = np.matrix(fractional_matrix_power(sigma, (1.0 - alpha) / (2 * alpha)))
+    sigma_a = np.array(fractional_matrix_power(sigma, (1.0 - alpha) / (2 * alpha)))
 
     Q = np.real(Tr(fractional_matrix_power(sigma_a @ rho @ sigma_a, alpha)))
 
@@ -179,13 +179,16 @@ def coherent_inf_channel(K, dim_in, dim_out, s=1, display=True):
     """
 
     def objfunc(x):
-        Re = np.matrix(x[0 : dim_in**2])
-        Im = np.matrix(x[dim_in**2 :])
+        Re = np.array(x[0 : dim_in**2])
+        Re = np.reshape( Re, [*Re.shape, 1][:2] ) # Build a matrix instead of a list
 
-        psi = np.matrix(Re.T + 1j * Im.T)
+        Im = np.array(x[dim_in**2 :])
+        Im = np.reshape( Im, [*Im.shape, 1][:2] ) # Build a matrix instead of a list
+
+        psi = np.array(Re.T + 1j * Im.T)
         psi = psi / norm(psi)
 
-        psi_AA = psi * psi.H
+        psi_AA = psi * dag(psi)
 
         rho_AB = apply_channel(K, psi_AA, 2, dim=[dim_in, dim_in])
 

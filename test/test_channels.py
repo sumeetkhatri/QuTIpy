@@ -124,9 +124,9 @@ def test_apply_channel():
 
 
 def test_amplitude_damping_channel():
-    channel = amplitude_damping_channel(X)
-    assert channel[1][0][1].shape == X.shape
-    assert channel[0][1][1].shape == X.shape
+    channel = amplitude_damping_channel(0.2)
+    assert np.all(np.round(channel[0], 5) == np.array([[1.     , 0.     ], [0.     , 0.89443]]))
+    assert np.all(np.round(channel[1], 5) == np.array([[0.     , 0.44721], [0.     , 0.     ]]))
 
 
 def test_Natural_representation():

@@ -391,7 +391,7 @@ def syspermute(X, perm, dim):
     subsystems.
     """
 
-    # If p is defined using np.matrix(), then it must first be converted
+    # If p is defined using np.array(), then it must first be converted
     # to a numpy array, or else the reshaping below won't work.
     X = np.array(X)
 

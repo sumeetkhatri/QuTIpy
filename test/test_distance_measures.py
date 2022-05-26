@@ -22,7 +22,7 @@
 
 import numpy as np
 
-from qutipy.distance_measures import norm_trace_dist
+from qutipy.distance import norm_trace_dist
 
 X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
 

@@ -41,9 +41,9 @@ from qutipy.general_functions import (
     trace_norm,
 )
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
-from qutipy.Pauli import generate_nQubit_Pauli_Z
+from qutipy.pauli import generate_nQubit_Pauli_Z
 from qutipy.states import Bell_state, graph_state, isotropic_twirl_state
-from qutipy.Weyl import discrete_Weyl_X, discrete_Weyl_Z
+from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
 
 
 def state_discrimination(

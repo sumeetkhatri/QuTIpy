@@ -128,7 +128,7 @@ def test_permute_tensor_factors():
 
 
 def test_syspermute():
-    # NOTES: Dims is [2, 2] and not [4, 4] as the dims are for states and not
+    # NOTE: Dims is [2, 2] and not [4, 4] as the dims are for states and not
     # for matrix
     assert np.all(
         syspermute(X, [2, 1], [2, 2])

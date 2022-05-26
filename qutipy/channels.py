@@ -38,13 +38,13 @@ from qutipy.general_functions import (
 )
 from qutipy.linalg import gram_schmidt
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
-from qutipy.Pauli import (
+from qutipy.pauli import (
     generate_nQubit_Pauli,
     generate_nQubit_Pauli_X,
     generate_nQubit_Pauli_Z,
 )
 from qutipy.states import MaxEnt_state, RandomStateVector
-from qutipy.Weyl import discrete_Weyl_Z
+from qutipy.weyl import discrete_Weyl_Z
 
 
 def Choi_to_Natural(C_AB, dimA, dimB):
@@ -303,7 +303,7 @@ def Choi_representation(K, dimA):
 
     Gamma = MaxEnt_state(dimA, normalized=False)
 
-    return np.array(apply_channel(K, Gamma, 2, [dimA, dimA]), dtype=np.complex)
+    return np.array(apply_channel(K, Gamma, 2, [dimA, dimA]), dtype=np.complex_)
 
 
 def compose_channels(C):

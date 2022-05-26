@@ -25,7 +25,7 @@ from numpy.linalg import matrix_power, norm
 
 from qutipy.gates import CZ_ij
 from qutipy.general_functions import SWAP, Tr, dag, eye, ket, syspermute, tensor
-from qutipy.Weyl import discrete_Weyl_X, discrete_Weyl_Z
+from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
 
 
 def MaxEnt_state(dim, normalized=True, density_matrix=True):

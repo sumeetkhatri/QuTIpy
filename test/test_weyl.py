@@ -22,7 +22,7 @@
 
 import numpy as np
 
-from qutipy.Weyl import (
+from qutipy.weyl import (
     discrete_Weyl,
     discrete_Weyl_X,
     discrete_Weyl_Z,

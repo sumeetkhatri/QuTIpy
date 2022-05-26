@@ -22,7 +22,7 @@
 
 import numpy as np
 
-from qutipy.Pauli import (
+from qutipy.pauli import (
     Pauli_coeff_to_matrix,
     generate_nQubit_Pauli,
     generate_nQubit_Pauli_X,
