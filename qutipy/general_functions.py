@@ -453,12 +453,12 @@ def trace_distance_pure_states(psi, phi):
 
     """
 
-    if psi.shape[1] == 1:
+    if psi.shape[1] == 1:  # If psi is specified as a state vector
         psi = psi @ dag(psi)
-    if phi.shape[1] == 1:
+    if phi.shape[1] == 1:  # If phi is specified as a state vector
         phi = phi @ dag(phi)
 
-    return 1 - Tr(psi * phi)
+    return 1 - Tr(psi @ phi)
 
 
 def trace_norm(X):

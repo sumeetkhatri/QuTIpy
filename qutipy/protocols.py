@@ -491,9 +491,6 @@ def apply_graph_state_dist_channel(A_G, n, rho):
 
     indices = list(itertools.product(*[range(2)] * n))
 
-    H = (1 / np.sqrt(2)) * np.array([[1, 1], [1, -1]])
-    Hn = tensor([H, n])
-
     ket_G = graph_state(A_G, n)
 
     rho_out = np.array(np.zeros((2 ** (2 * n), 2 ** (2 * n)), dtype=complex))
