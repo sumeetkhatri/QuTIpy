@@ -21,25 +21,36 @@
 #
 
 import numpy as np
-from numpy.linalg import eig, norm
-from scipy.linalg import expm, logm
+from cvxpy import bmat
 
-from . import channels as channels
-from . import clifford as Clifford
-from . import distance as distance
-from . import entropies as entropies
-from . import fermions as fermions
-from . import fidelities as fidelities
-from . import gates as gates
-from . import general_functions as general_functions
-from . import linalg as linalg
-from . import misc as misc
-from . import pauli as Pauli
-from . import protocols as protocols
-from . import states as states
-from . import su as su
-from . import weyl as Weyl
-from .general_functions import dag, eye, ket, syspermute, tensor
 
-__version__ = "0.1.0"
-__author__ = "Sumeet Khatri"
+def base_number_to_int(string, base):
+    b = base
+    string = string[::-1]
+    return sum([string[k] * b**k for k in range(len(string))])
+
+
+def cvxpy_to_numpy(cvx_obj):
+    """
+    Converts a cvxpy variable into a numpy array.
+    """
+
+    if cvx_obj.is_scalar():
+        return np.array(cvx_obj)
+    elif len(cvx_obj.shape) == 1:  # cvx_obj is a (column or row) vector
+        return np.array(list(cvx_obj))
+    else:  # cvx_obj is a matrix
+        X = []
+        for i in range(cvx_obj.shape[0]):
+            x = [cvx_obj[i, j] for j in range(cvx_obj.shape[1])]
+            X.append(x)
+        X = np.array(X)
+        return X
+
+
+def numpy_to_cvxpy(np_obj):
+    """
+    Converts numpy array to cvxpy expression.
+    """
+    np_obj_list = np_obj.tolist()
+    return bmat(np_obj_list)

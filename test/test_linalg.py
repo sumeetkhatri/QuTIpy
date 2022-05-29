@@ -21,25 +21,34 @@
 #
 
 import numpy as np
-from numpy.linalg import eig, norm
-from scipy.linalg import expm, logm
 
-from . import channels as channels
-from . import clifford as Clifford
-from . import distance as distance
-from . import entropies as entropies
-from . import fermions as fermions
-from . import fidelities as fidelities
-from . import gates as gates
-from . import general_functions as general_functions
-from . import linalg as linalg
-from . import misc as misc
-from . import pauli as Pauli
-from . import protocols as protocols
-from . import states as states
-from . import su as su
-from . import weyl as Weyl
-from .general_functions import dag, eye, ket, syspermute, tensor
+from qutipy.linalg import gram_schmidt, proj, rank
 
-__version__ = "0.1.0"
-__author__ = "Sumeet Khatri"
+X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
+
+H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))
+
+
+def test_gram_schmidt():
+    assert np.all(
+        np.round(gram_schmidt([X], 4)[0], 8)
+        == np.array(
+            [
+                [0.02585438, 0.05170877, 0.07756315, 0.10341754],
+                [0.12927192, 0.15512631, 0.18098069, 0.20683508],
+                [0.23268946, 0.25854384, 0.28439823, 0.31025261],
+                [0.336107, 0.36196138, 0.38781577, 0.41367015],
+            ]
+        )
+    )
+
+
+def test_proj():
+    assert np.all(
+        np.round(proj(X[1], X[2]), 8)
+        == np.array([7.98850575, 9.5862069, 11.18390805, 12.7816092])
+    )
+
+
+def test_rank():
+    assert rank(X) == 2
