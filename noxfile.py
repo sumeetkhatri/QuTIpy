@@ -61,5 +61,5 @@ def formatting(session):
 
     session.run("isort", "--profile=black", *SOURCE_FILES)
     session.run("black", "--target-version=py39", *SOURCE_FILES)
-    session.run("stubgen", "-p", "qutipy")
+    session.run("stubgen", "-p", "qutipy", external=True)
     session.run("python", "utils/license-headers.py", "fix", *SOURCE_FILES)
