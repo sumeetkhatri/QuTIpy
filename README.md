@@ -4,6 +4,8 @@
 Quantum Theory of Information for Python
 pronounced "cutie pie". A package for performing calculations with quantum states and channels. It is comparable to the [QETLAB package](http://www.qetlab.com/Main_Page) for MATLAB / Octave.
 
+Read more about the QuTIpy package at our [GitBook](https://arnav-das.gitbook.io/qutipy-quantum-theory-of-information-for-python/).
+
 
 ## Requirements
 The code requires Python 3, and apart from the standard `numpy` and `scipy` packages, it requires `cvxpy` if you want to run [SDPs](https://en.wikipedia.org/wiki/Semidefinite\_programming) (e.g., for the [diamond norm](https://en.wikipedia.org/wiki/Diamond\_norm)). It requires `sympy` for symbolic computations.
