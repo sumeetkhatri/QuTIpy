@@ -22,7 +22,7 @@
 
 import numpy as np
 
-from qutipy.states.utils import check_kext, log_negativity
+from qutipy.states import check_kext, log_negativity
 
 X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
 H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))

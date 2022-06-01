@@ -28,7 +28,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="QuTIpy",
-    version="0.1.2",
+    version="0.1.0a",
     description="A package to perform quantum information calculations",
     long_description=long_description,
     long_description_content_type="text/markdown",
@@ -36,7 +36,7 @@ setup(
     project_urls={
         "GitHub": "https://github.com/sumeetkhatri/QuTIpy",
         "Homepage": "https://arnav-das.gitbook.io/qutipy-quantum-theory-of-information-for-python",
-        "TestPyPi": "https://test.pypi.org/project/QuTIpy",
+        "PyPi": "https://pypi.org/project/QuTIpy",
         "Author": "https://sumeetkhatri.com",
     },
     author="Sumeet Khatri",
