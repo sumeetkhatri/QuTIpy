@@ -39,7 +39,21 @@ from . import protocols as protocols
 from . import states as states
 from . import su as su
 from . import weyl as Weyl
-from .general_functions import dag, eye, ket, syspermute, tensor
+from .channels import *
+from .clifford import *
+from .distance import *
+from .entropies import *
+from .fermions import *
+from .fidelities import *
+from .gates import *
+from .general_functions import *
+from .linalg import *
+from .misc import *
+from .pauli import *
+from .protocols import *
+from .states import *
+from .su import *
+from .weyl import *
 
 __version__ = "0.1.0"
 __author__ = "Sumeet Khatri"
