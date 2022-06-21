@@ -42,7 +42,7 @@ from qutipy.general_functions import (
 )
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 from qutipy.pauli import generate_nQubit_Pauli_Z
-from qutipy.states import Bell_state, graph_state, isotropic_twirl_state
+from qutipy.states import Bell, graph_state, isotropic_twirl_state
 from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
 
 
@@ -142,9 +142,9 @@ def apply_teleportation_chain_channel(rho, n, dA=2, dR=2, dB=2):
     for z_indices in indices:
         for x_indices in indices:
 
-            Bell_zx = Bell_state(dB, z_indices[0], x_indices[0])
+            Bell_zx = Bell(dB, z_indices[0], x_indices[0])
             for j in range(1, n):
-                Bell_zx = tensor(Bell_zx, Bell_state(dB, z_indices[j], x_indices[j]))
+                Bell_zx = tensor(Bell_zx, Bell(dB, z_indices[j], x_indices[j]))
 
             z_sum = np.mod(sum(z_indices), dB)
             x_sum = np.mod(sum(x_indices), dB)
@@ -178,11 +178,11 @@ def post_graph_state_dist_fidelity(A_G, n, rho):
         z_n = A_G * x_n
         z_n = np.mod(z_n, 2)
 
-        Bell = Bell_state(2, z_n[0, 0], x_n[0, 0], density_matrix=True)
+        Bell = Bell(2, z_n[0, 0], x_n[0, 0], density_matrix=True)
 
         for k in range(1, n):
             Bell = tensor(
-                Bell, Bell_state(2, z_n[k, 0], x_n[k, 0], density_matrix=True)
+                Bell, Bell(2, z_n[k, 0], x_n[k, 0], density_matrix=True)
             )
 
         Bell = syspermute(
@@ -208,8 +208,8 @@ def post_teleportation_fidelity(rho, dA=2):
             fidelity(
                 rho,
                 tensor(
-                    Bell_state(dA, z, x, density_matrix=True),
-                    Bell_state(dA, z, x, density_matrix=True),
+                    Bell(dA, z, x, density_matrix=True),
+                    Bell(dA, z, x, density_matrix=True),
                 ),
             )
             for z in range(dA)
@@ -233,10 +233,10 @@ def post_ent_swap_GHZ_chain_fidelity(rho, n):
 
         s = np.mod(sum(index), 2)
 
-        Bell_z = Bell_state(2, s, 0, density_matrix=True)
+        Bell_z = Bell(2, s, 0, density_matrix=True)
 
         for z in index:
-            Bell_z = tensor(Bell_z, Bell_state(2, z, 0, density_matrix=True))
+            Bell_z = tensor(Bell_z, Bell(2, z, 0, density_matrix=True))
 
         f = f + fidelity(Bell_z, rho)
 
@@ -418,7 +418,7 @@ def post_ent_swap_GHZ_fidelity(rho):
     with respect to the three-party GHZ state.
     """
 
-    Phi = [Bell_state(2, z, 0, density_matrix=True) for z in range(2)]
+    Phi = [Bell(2, z, 0, density_matrix=True) for z in range(2)]
 
     return sum([fidelity(tensor(Phi[z], Phi[z]), rho) for z in range(2)])
 
@@ -530,9 +530,9 @@ def apply_teleportation_channel(rho, dA=2, dR1=2, dR2=2, dB=2):
 
     rho_out = np.sum(
         [
-            tensor(eye(dA), dag(Bell_state(dR1, z, x)), Z[z] @ X[x])
+            tensor(eye(dA), dag(Bell(dR1, z, x)), Z[z] @ X[x])
             @ rho
-            @ tensor(eye(dA), Bell_state(dR1, z, x), dag(X[x]) @ dag(Z[z]))
+            @ tensor(eye(dA), Bell(dR1, z, x), dag(X[x]) @ dag(Z[z]))
             for z in range(dB)
             for x in range(dB)
         ],
@@ -563,12 +563,12 @@ def post_teleportation_chain_fidelity(rho, n, dA=2):
             z_sum = np.mod(sum(z_indices), dA)
             x_sum = np.mod(sum(x_indices), dA)
 
-            Bell_tot = Bell_state(dA, z_sum, x_sum, density_matrix=True)
+            Bell_tot = Bell(dA, z_sum, x_sum, density_matrix=True)
 
             for j in range(n):
                 Bell_tot = tensor(
                     Bell_tot,
-                    Bell_state(dA, z_indices[j], x_indices[j], density_matrix=True),
+                    Bell(dA, z_indices[j], x_indices[j], density_matrix=True),
                 )
 
             f += fidelity(rho, Bell_tot)

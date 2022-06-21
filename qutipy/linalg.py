@@ -23,7 +23,8 @@
 import numpy as np
 from numpy.linalg import matrix_rank, norm
 
-from qutipy.general_functions import dag
+from qutipy.general_functions import dag,tensor,eye 
+from qutipy.states import max_ent
 
 
 def gram_schmidt(states, dim, normalize=True):
@@ -64,3 +65,30 @@ def rank(X):
     """
 
     return matrix_rank(X)
+
+
+def vec(X):
+    """
+    Takes a matrix X of size d1 x d2 and 'vectorizes' it, by
+    stacking the columns of X. The result is a bipartite vector
+    of dimension d2*d1, i.e., in the tensor product space
+    C^(d2) ⊗ C^(d1).
+    """
+
+    [d1,d2]=X.shape
+
+    gamma=max_ent(d2,normalized=False,density_matrix=False)
+
+    return tensor(eye(d2),X)@gamma
+
+
+def vec_inverse(v,d1,d2):
+    """
+    Take a bipartite vector v of dimension d1*d2, i.e., in the
+    tensor product space C^(d1) ⊗ C^(d2), and transforms it 
+    into a matrix of size d2 x d1.
+    """
+
+    gamma=max_ent(d1,normalized=False,density_matrix=False)
+
+    return tensor(dag(gamma),eye(d2))@tensor(eye(d1),v)

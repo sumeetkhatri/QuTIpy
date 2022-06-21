@@ -25,7 +25,7 @@ from scipy.linalg import sqrtm
 
 from qutipy.channels import Choi_representation, apply_channel
 from qutipy.general_functions import Tr, dag, ket, trace_norm
-from qutipy.states import MaxEnt_state
+from qutipy.states import max_ent
 
 
 def avg_fidelity_qubit(K):
@@ -73,7 +73,7 @@ def ent_fidelity_channel(K, d):
     Kraus operators. d is the dimension of the input space.
     """
 
-    Bell = MaxEnt_state(d)
+    Bell = max_ent(d)
 
     K_choi = (1.0 / d) * Choi_representation(K, d)
 
@@ -86,7 +86,7 @@ def ent_fidelity(sigma, d):
     d is the dimension.
     """
 
-    Bell = MaxEnt_state(d, density_matrix=True)
+    Bell = max_ent(d, density_matrix=True)
 
     return np.real(Tr(Bell @ sigma))
 

@@ -24,8 +24,8 @@ import itertools
 
 import cvxpy as cvx
 import numpy as np
-from numpy.linalg import matrix_power
-from scipy.linalg import eig
+from numpy.linalg import matrix_power,inv
+from scipy.linalg import eig,sqrtm
 
 from qutipy.general_functions import (
     Tr,
@@ -36,63 +36,21 @@ from qutipy.general_functions import (
     syspermute,
     tensor,
 )
-from qutipy.linalg import gram_schmidt
+from qutipy.linalg import gram_schmidt,vec
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 from qutipy.pauli import (
     generate_nQubit_Pauli,
     generate_nQubit_Pauli_X,
     generate_nQubit_Pauli_Z,
 )
-from qutipy.states import MaxEnt_state, RandomStateVector
+from qutipy.states import max_ent, random_state_vector, random_density_matrix
 from qutipy.weyl import discrete_Weyl_Z
 
 
-def Choi_to_Natural(C_AB, dimA, dimB):
+
+def choi_to_kraus(P, dimA, dimB):
     """
-    Takes the Choi representation of a map and outputs its natural representation.
-
-    The Choi represenatation Q of the channel acts as:
-
-        vec(N(rho))=Q*vec(rho),
-
-    where N is the channel in question. It can be obtained from the Choi representation
-    with a simple reshuffling of indices.
-    """
-
-    C_AB = np.array(C_AB)
-
-    return np.array(
-        np.reshape(C_AB, [dimA, dimB, dimA, dimB])
-        .transpose((0, 2, 1, 3))
-        .reshape([dimA * dimA, dimB * dimB])
-    ).T
-
-
-def bit_flip_channel(p):
-    """
-    Generates the channel rho -> (1-p)*rho+p*X*rho*X.
-    """
-
-    return Pauli_channel(p, 0, 0)
-
-
-def completely_dephasing_channel(d):
-    """
-    Generates the completely dephasing channel in d dimensions. This channel
-    eliminates the off-diagonal elements (in the standard basis) of the input operator.
-    """
-
-    if d == 2:
-        p = 1 / 2
-        return dephasing_channel(p, d=d)[0]
-    else:
-        p = (1 / d) * np.ones(d)
-        return dephasing_channel(p, d=d)
-
-
-def Kraus_representation(P, dimA, dimB):
-    """
-    Takes a Choi representation P of a channel and returns its Kraus representation.
+    Takes a Choi representation P of a CP map and returns its Kraus representation.
 
     The Choi representation is defined with the channel acting on the second half of
     the maximally entangled vector.
@@ -126,6 +84,155 @@ def Kraus_representation(P, dimA, dimB):
     return K
 
 
+def choi_to_natural(C_AB, dimA, dimB):
+    """
+    Takes the Choi representation of a superoperator and outputs its natural representation.
+
+    The Choi represenatation Q of the channel acts as:
+
+        vec(N(rho))=Q*vec(rho),
+
+    where N is the channel in question. It can be obtained from the Choi representation
+    with a simple reshuffling of indices.
+    """
+
+    C_AB = np.array(C_AB)
+
+    return np.array(
+        np.reshape(C_AB, [dimA, dimB, dimA, dimB])
+        .transpose((0, 2, 1, 3))
+        .reshape([dimA * dimA, dimB * dimB])).T
+
+
+def choi_to_stinespring(C_AB,dA,dB):
+    """
+    Takes the Choi representation C_AB of a CP map and outputs its
+    Stinespring representation.
+    """
+
+    C_AB_purif=vec(sqrtm(C_AB))
+    gamma=max_ent(dA,normalized=False,density_matrix=False)
+
+    return tensor(dag(gamma),eye(dB*(dA*dB)))@tensor(eye(dA),C_AB_purif)
+
+
+def random_CP_map(dA,dB,TP=False,unital=False,return_as='choi'):
+    """
+    Generates a random completely-positive (CP) map with input dimension dA
+    and output dimension dB.
+
+    We generate the CP map via a randomly-chosen bipartite quantum state that
+    represents the Choi state of the map.
+
+    The return_as optional argument can be either:
+        - 'choi' (default)
+        - 'kraus'
+        - 'natural'
+        - 'stinespring'
+    """
+
+    C_AB=random_density_matrix(dA*dB)
+
+    if not TP and not unital:
+        C_AB=C_AB
+    
+    elif TP and not unital:
+        C_A=partial_trace(C_AB,[2],[dA,dB])
+        C_A_inv_sq=tensor(inv(sqrtm(C_A)),eye(dB))
+        C_AB=C_A_inv_sq@C_AB@C_A_inv_sq
+
+    elif not TP and unital:
+        C_B=partial_trace(C_AB,[1],[dA,dB])
+        C_B_inv_sq=tensor(eye(dA),inv(sqrtm(C_B)))
+        C_AB=C_B_inv_sq@C_AB@C_B_inv_sq
+
+    elif TP and unital:
+        # Note here that we need dA=dB!
+        if dA!=dB:
+            return 'Input and output dimensions must match for a TP and unital CP map!'
+        else:
+            None ##### TO DO
+    else:
+        C_AB=C_AB
+
+    if return_as=='choi':
+        return C_AB
+    elif return_as=='kraus':
+        return choi_to_kraus(C_AB,dA,dB)
+    elif return_as=='natural':
+        return choi_to_natural(C_AB,dA,dB)
+    elif return_as=='stinespring':
+        return choi_to_stinespring(C_AB,dA,dB)
+    else:
+        print('Output format not recognized -- returning Choi representation...\n')
+        return C_AB
+
+
+def random_quantum_channel(dA,dB,unital=False,return_as='choi'):
+    """
+    Generates a random quantum channel -- a completely-positive and trace-preserving
+    superoperator -- with input dimension dA and output dimension dB.
+    """
+
+    return random_CP_map(dA,dB,TP=True,unital=unital,return_as=return_as)
+
+
+def random_POVM(d,num_elem,via_choi=True):
+    """
+    Generates a random POVM in d dimensions with num_elem elements.
+
+    If via_choi=True, then we generate the POVM by generating a random
+    quantum channel, and then taking the diagonal blocks of its Choi
+    representation (on the output system) as the POVM elements.
+
+    If via_choi=False, then we generate the POVM by generating num_elem
+    random quantum states, and then doing the 'pretty-good measurement'
+    construction.
+    """
+
+    M=[]
+
+    if via_choi:
+        C=random_quantum_channel(d,num_elem)
+        for i in range(num_elem):
+            Mi=tensor(eye(d),dag(ket(num_elem,i)))@C@tensor(eye(d),ket(num_elem,i))
+            M.append(Mi)
+
+    else:
+        S=[random_density_matrix(d) for i in range(num_elem)]
+        R=np.sum(S,0)
+        R_inv_sq=inv(sqrtm(R))
+        for i in range(num_elem):
+            Mi=R_inv_sq@S[i]@R_inv_sq
+
+    return M
+
+
+def bit_flip_channel(p):
+    """
+    Generates the channel rho -> (1-p)*rho+p*X*rho*X.
+    """
+
+    return Pauli_channel(p, 0, 0)
+
+
+def completely_dephasing_channel(d):
+    """
+    Generates the completely dephasing channel in d dimensions. This channel
+    eliminates the off-diagonal elements (in the standard basis) of the input operator.
+    """
+
+    if d == 2:
+        p = 1 / 2
+        return dephasing_channel(p, d=d)[0]
+    else:
+        p = (1 / d) * np.ones(d)
+        return dephasing_channel(p, d=d)
+
+
+
+
+
 def phase_damping_channel(p):
     """
     Generates the phase damping channel.
@@ -156,7 +263,7 @@ def generate_channel_isometry(K, dimA, dimB):
         U = tensor(V, dag(ket(dimE, 0)))
         states = [V @ ket(dimA, i) for i in range(dimA)]
         for i in range(dimA * dimE - dimA):
-            states.append(RandomStateVector(dimA * dimE))
+            states.append(random_state_vector(dimA * dimE))
 
         states_new = gram_schmidt(states, dimA * dimE)
 
@@ -301,7 +408,7 @@ def Choi_representation(K, dimA):
     half of the maximally entangled vector.
     """
 
-    Gamma = MaxEnt_state(dimA, normalized=False)
+    Gamma = max_ent(dimA, normalized=False)
 
     return np.array(apply_channel(K, Gamma, 2, [dimA, dimA]), dtype=np.complex_)
 
@@ -432,7 +539,7 @@ def diamond_norm(J, dimA, dimB, display=False):
 
     J = syspermute(J, [2, 1], [dimA, dimB])
 
-    X = cvx.Variable((dimA * dimB, dimA * dimB), hermitian=False)
+    X = cvx.Variable((dimA * dimB, dimA * dimB), complex=True)
     rho0 = cvx.Variable((dimA, dimA), PSD=True)
     rho1 = cvx.Variable((dimA, dimA), PSD=True)
 

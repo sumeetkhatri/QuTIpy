@@ -28,7 +28,7 @@ from qutipy.general_functions import SWAP, Tr, dag, eye, ket, syspermute, tensor
 from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
 
 
-def MaxEnt_state(dim, normalized=True, density_matrix=True):
+def max_ent(dim, normalized=True, density_matrix=True):
     """
     Generates the dim-dimensional maximally entangled state, which is defined as
 
@@ -54,7 +54,7 @@ def MaxEnt_state(dim, normalized=True, density_matrix=True):
             return Gamma
 
 
-def Bell_state(d, z, x, density_matrix=False):
+def Bell(d, z, x, density_matrix=False):
     """
     Generates a d-dimensional Bell state with 0 <= z,x <= d-1. These are defined as
 
@@ -62,7 +62,7 @@ def Bell_state(d, z, x, density_matrix=False):
 
     """
 
-    Bell = MaxEnt_state(d, density_matrix=density_matrix)
+    Bell = max_ent(d, density_matrix=density_matrix)
 
     W_zx = matrix_power(discrete_Weyl_Z(d), z) @ matrix_power(discrete_Weyl_X(d), x)
 
@@ -74,7 +74,7 @@ def Bell_state(d, z, x, density_matrix=False):
         return out
 
 
-def GHZ_state(dim, n, density_matrix=True):
+def GHZ(dim, n, density_matrix=True):
     """
     Generates the n-party GHZ state in dim-dimensions for each party, which is defined as
 
@@ -142,7 +142,7 @@ def isotropic_state(p, d, fidelity=False):
     with respect to the maximally entangled state.
     """
 
-    Bell = MaxEnt_state(d)
+    Bell = max_ent(d)
 
     if fidelity:
         return p * Bell + ((1 - p) / (d**2 - 1)) * (eye(d**2) - Bell)
@@ -169,14 +169,14 @@ def isotropic_twirl_state(X, d):
     the same fidelity to the maximally entangled state as rho.
     """
 
-    G = MaxEnt_state(d, normalized=False, density_matrix=True)
+    G = max_ent(d, normalized=False, density_matrix=True)
 
     return (Tr(X) / (d**2 - 1) - Tr(G @ X) / (d * (d**2 - 1))) * eye(d**2) + (
         Tr(G @ X) / (d**2 - 1) - Tr(X) / (d * (d**2 - 1))
     ) @ G
 
 
-def MaxMix_state(dim):
+def max_mix(dim):
     """
     Generates the dim-dimensional maximally mixed state.
     """
@@ -184,7 +184,7 @@ def MaxMix_state(dim):
     return eye(dim) / dim
 
 
-def RandomDensityMatrix(dim, *args):
+def random_density_matrix(dim, *args):
     """
     Generates a random density matrix.
 
@@ -207,7 +207,7 @@ def RandomDensityMatrix(dim, *args):
     return rho / Tr(rho)
 
 
-def RandomStateVector(dim, rank=None):
+def random_state_vector(dim, rank=None):
     """
     Generates a random pure state.
 
@@ -240,7 +240,7 @@ def RandomStateVector(dim, rank=None):
         else:
             k = rank
 
-        psi_k = MaxEnt_state(k, density_matrix=False, normalized=False)
+        psi_k = max_ent(k, density_matrix=False, normalized=False)
         a = dag(
             np.array([np.random.rand(dimA * k)])
             + 1j * np.array([np.random.rand(dimA * k)])
