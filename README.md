@@ -91,7 +91,7 @@ takes the partial trace of `R_AB` over system `A`. In general, `partial_trace(R,
 We can generate a random [quantum state](https://en.wikipedia.org/wiki/Quantum\_state#Mixed\_states) (i.e., [density matrix](https://en.wikipedia.org/wiki/Density\_matrix)) in `d` dimensions as follows:
 
 ```python
->>> RandomDensityMatrix(d)
+>>> random_density_matrix(d)
 ```
 
 To generate a random [pure state](https://en.wikipedia.org/wiki/Quantum\_state#Pure\_states) (i.e., state vector) in `d` dimensions:

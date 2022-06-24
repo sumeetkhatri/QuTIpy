@@ -39,7 +39,7 @@ from qutipy.protocols import (
     post_teleportation_fidelity,
     state_discrimination,
 )
-from qutipy.states import RandomDensityMatrix
+from qutipy.states import random_density_matrix
 
 X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
 H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))
@@ -338,7 +338,7 @@ def test_post_graph_state_dist_fidelity():
     fidility = np.round(
         avg_on(
             lambda: post_graph_state_dist_fidelity(
-                np.array([[1, 0], [0, 1]]), 2, np.round(RandomDensityMatrix(16), 6)
+                np.array([[1, 0], [0, 1]]), 2, np.round(random_density_matrix(16), 6)
             ),
             1000,
         ),
@@ -349,7 +349,7 @@ def test_post_graph_state_dist_fidelity():
 
 def test_post_teleportation_fidelity():
     avg_fidility = np.round(
-        avg_on(lambda: post_teleportation_fidelity(RandomDensityMatrix(16)), 1000), 3
+        avg_on(lambda: post_teleportation_fidelity(random_density_matrix(16)), 1000), 3
     )
     assert 0.244 < avg_fidility <= 0.256
 
@@ -357,7 +357,7 @@ def test_post_teleportation_fidelity():
 def test_post_ent_swap_GHZ_chain_fidelity():
     avg_fidility = np.round(
         avg_on(
-            lambda: post_ent_swap_GHZ_chain_fidelity(RandomDensityMatrix(64), 2), 1000
+            lambda: post_ent_swap_GHZ_chain_fidelity(random_density_matrix(64), 2), 1000
         ),
         3,
     )
@@ -389,7 +389,7 @@ def test_apply_ent_swap_GHZ_channel():
 def test_apply_ent_swap_GHZ_chain_channel():
     X = np.round(
         avg_on(
-            lambda: apply_ent_swap_GHZ_chain_channel(RandomDensityMatrix(64), 2), 1000
+            lambda: apply_ent_swap_GHZ_chain_channel(random_density_matrix(64), 2), 1000
         ),
         3,
     )
@@ -408,7 +408,7 @@ def test_channel_discrimination():
 
 def test_post_ent_swap_GHZ_fidelity():
     X = np.round(
-        avg_on(lambda: post_ent_swap_GHZ_fidelity(RandomDensityMatrix(16)), 1000), 3
+        avg_on(lambda: post_ent_swap_GHZ_fidelity(random_density_matrix(16)), 1000), 3
     )
     assert 0.120 < X < 0.130
 
@@ -429,7 +429,7 @@ def test_entanglement_distillation():
 
 def test_apply_graph_state_dist_channel():
     assert apply_graph_state_dist_channel(
-        Ag, 4, RandomDensityMatrix(2 ** (2 * 4))
+        Ag, 4, random_density_matrix(2 ** (2 * 4))
     ).shape == (256, 256)
 
     assert np.all(
@@ -448,7 +448,7 @@ def test_apply_graph_state_dist_channel():
 def test_apply_teleportation_channel():
     teleportation_channel = np.round(
         avg_on(
-            lambda: np.round(apply_teleportation_channel(RandomDensityMatrix(16)), 8),
+            lambda: np.round(apply_teleportation_channel(random_density_matrix(16)), 8),
             1000,
         ),
         3,

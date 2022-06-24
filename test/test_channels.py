@@ -25,8 +25,6 @@ import numpy as np
 from qutipy.channels import (
     BB84_channel,
     Choi_representation,
-    Choi_to_Natural,
-    Kraus_representation,
     Natural_representation,
     Pauli_channel,
     Pauli_channel_coeffs,
@@ -35,6 +33,8 @@ from qutipy.channels import (
     apply_channel,
     bit_flip_channel,
     channel_scalar_multiply,
+    choi_to_kraus,
+    choi_to_natural,
     completely_dephasing_channel,
     compose_channels,
     dephasing_channel,
@@ -54,9 +54,9 @@ X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
 H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))
 
 
-def test_Choi_to_Natural():
+def test_choi_to_natural():
     assert np.all(
-        Choi_to_Natural(X, 2, 2)
+        choi_to_natural(X, 2, 2)
         == np.array([[1, 3, 9, 11], [2, 4, 10, 12], [5, 7, 13, 15], [6, 8, 14, 16]])
     )
 
@@ -92,9 +92,8 @@ def test_completely_dephasing_channel():
         np.round(channel[3], 8) == np.array([[0.70710678, 0.0], [0.0, -0.70710678]])
     )
 
-
-def test_Kraus_representation():
-    K = Kraus_representation(H, 2, 1)
+    # def test_choi_to_kraus():
+    K = choi_to_kraus(H, 2, 1)
     assert np.all(
         np.round(K[0], 8) == np.array([[0.92387953 + 0.0j, 0.38268343 + 0.0j]])
     )

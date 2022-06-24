@@ -23,17 +23,17 @@
 import numpy as np
 
 from qutipy.states import (
-    Bell_state,
-    GHZ_state,
-    MaxEnt_state,
-    MaxMix_state,
-    RandomDensityMatrix,
-    RandomStateVector,
+    GHZ,
+    Bell,
     Werner_state,
     Werner_twirl_state,
     graph_state,
     isotropic_state,
     isotropic_twirl_state,
+    max_ent,
+    max_mix,
+    random_density_matrix,
+    random_state_vector,
     singlet_state,
 )
 
@@ -44,8 +44,8 @@ X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
 H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))
 
 
-def test_MaxEnt():
-    maxEnt = MaxEnt_state(dim)
+def test_max_ent():
+    maxEnt = max_ent(dim)
     assert maxEnt.shape == (9, 9)
     i = maxEnt[0][0]
     assert np.all(
@@ -66,31 +66,31 @@ def test_MaxEnt():
     )
 
 
-def test_RandomDensityMatrix():
-    randomDensityMatrix = RandomDensityMatrix(dim)
-    assert randomDensityMatrix.shape == (3, 3)
+def test_random_density_matrix():
+    rmd = random_density_matrix(dim)
+    assert rmd.shape == (3, 3)
 
 
-def test_MaxMix():
-    maxMix = MaxMix_state(dim)
+def test_max_mix():
+    maxMix = max_mix(dim)
     assert np.all(
         maxMix == np.array([[1 / 3, 0.0, 0.0], [0.0, 1 / 3, 0.0], [0.0, 0.0, 1 / 3]])
     )
 
 
-def test_RandomDensityMatrix_MaxMix():
-    randomDensityMatrix = RandomDensityMatrix(dim)
-    maxMix = MaxMix_state(dim)
-    assert maxMix.shape == randomDensityMatrix.shape
-    assert "numpy.complex" in str(type(randomDensityMatrix[0][0]))
+def test_random_density_matrix_MaxMix():
+    rmd = random_density_matrix(dim)
+    maxMix = max_mix(dim)
+    assert maxMix.shape == rmd.shape
+    assert "numpy.complex" in str(type(rmd[0][0]))
 
 
-def test_Bell_state():
+def test_Bell():
     d = 2
     z = 1
     x = 1
     assert np.all(
-        np.round(Bell_state(d, z, x, density_matrix=True), 5)
+        np.round(Bell(d, z, x, density_matrix=True), 5)
         == np.array(
             [
                 [0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],
@@ -102,13 +102,13 @@ def test_Bell_state():
     )
 
 
-def test_GHZ_state():
-    GHZ = GHZ_state(3, 2)
+def test_GHZ():
+    ghz = GHZ(3, 2)
     initials = (
         [round(1 / 3, 5)] + [0] * 3 + [round(1 / 3, 5)] + [0] * 3 + [round(1 / 3, 5)]
     )
     assert np.all(
-        np.round(GHZ, 5)
+        np.round(ghz, 5)
         == np.array(
             [
                 initials,
@@ -163,8 +163,8 @@ def test_isotropic_twirl_state():
     )
 
 
-def test_RandomStateVector():
-    assert RandomStateVector([2, 2], rank=2).shape == (4, 1)
+def test_random_state_vector():
+    assert random_state_vector([2, 2], rank=2).shape == (4, 1)
 
 
 def test_singlet_state():

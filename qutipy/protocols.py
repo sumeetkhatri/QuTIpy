@@ -178,20 +178,18 @@ def post_graph_state_dist_fidelity(A_G, n, rho):
         z_n = A_G * x_n
         z_n = np.mod(z_n, 2)
 
-        Bell = Bell(2, z_n[0, 0], x_n[0, 0], density_matrix=True)
+        bell = Bell(2, z_n[0, 0], x_n[0, 0], density_matrix=True)
 
         for k in range(1, n):
-            Bell = tensor(
-                Bell, Bell(2, z_n[k, 0], x_n[k, 0], density_matrix=True)
-            )
+            bell = tensor(bell, Bell(2, z_n[k, 0], x_n[k, 0], density_matrix=True))
 
-        Bell = syspermute(
-            Bell,
+        bell = syspermute(
+            bell,
             list(range(1, 2 * n, 2)) + list(range(2, 2 * n + 1, 2)),
             2 * np.ones(2 * n, dtype=int),
         )
 
-        f += fidelity(rho, Bell)
+        f += fidelity(rho, bell)
 
     return f
 
