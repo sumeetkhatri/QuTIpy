@@ -29,7 +29,7 @@ from qutipy.fidelities import (
     ent_fidelity_channel,
     fidelity,
 )
-from qutipy.states import MaxEnt_state
+from qutipy.states import max_ent
 
 X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
 
@@ -49,7 +49,7 @@ def test_ent_fidelity():
 
 
 def test_ent_fidelity_channel():
-    assert np.round(ent_fidelity_channel([MaxEnt_state(2)], 4), 8) == 0.0625
+    assert np.round(ent_fidelity_channel([max_ent(2)], 4), 8) == 0.0625
 
 
 def test_fidelity():

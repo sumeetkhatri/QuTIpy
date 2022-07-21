@@ -41,14 +41,14 @@ from qutipy.general_functions import (
     trace_norm,
     unitary_distance,
 )
-from qutipy.states import MaxEnt_state, MaxMix_state, RandomDensityMatrix
+from qutipy.states import max_ent, max_mix, random_density_matrix
 
 X = np.array([[1, 2, 3, 4], [5, 6, 7, 8], [9, 10, 11, 12], [13, 14, 15, 16]])
 
 H = np.dot(np.sqrt(1 / 2), np.array([[1, 1], [1, -1]]))
 
 
-def test_bra_ket():
+def test_ket():
     assert np.all(ket(2, 0) == np.array([[1.0], [0.0]]))
 
 
@@ -103,7 +103,7 @@ def test_partial_trace():
 def test_partial_transpose():
     dimA = 2
     assert np.all(
-        partial_transpose(MaxEnt_state(dimA, normalized=False), [2], [dimA, dimA])
+        partial_transpose(max_ent(dimA, normalized=False), [2], [dimA, dimA])
         == np.array(
             [
                 [1.0, 0.0, 0.0, 0.0],
