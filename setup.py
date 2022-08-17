@@ -48,9 +48,9 @@ setup(
     packages=find_packages(),
     install_requires=[
         "numpy>=1.21.3",
-        "scipy==1.8.0",
-        "sympy==1.9",
-        "cvxpy==1.2.0",
+        "scipy",
+        "sympy",
+        "cvxpy",
         "pytest",
     ],
     classifiers=[

@@ -1,5 +1,5 @@
 numpy>=1.21.3
 scipy
-sympy==1.9
-cvxpy==1.2.0
+sympy
+cvxpy
 pytest
