@@ -328,8 +328,8 @@ def Pauli_channel_nQubit(n, p, alt_repr=False):
 def apply_channel(K, rho, sys=None, dim=None, adjoint=False):
     """
     Applies the channel with Kraus operators in K to the state rho on
-    systems specified by sys. The dimensions of the subsystems on which rho
-    acts are given by dim.
+    systems specified by the list sys. The dimensions of the subsystems of
+    rho are given by dim.
 
     If adjoint is True, then this function applies the adjoint of the given
     channel.
@@ -345,17 +345,22 @@ def apply_channel(K, rho, sys=None, dim=None, adjoint=False):
         K = []
         K = [dag(K_tmp[i]) for i in range(len(K_tmp))]
 
-    if sys is None:
+    if sys is None:  # Applying the channel to the full state.
         return np.sum([K[i] @ rho @ dag(K[i]) for i in range(len(K))], 0)
-    else:
-        A = []
-        for i in range(len(K)):
-            X = 1
-            for j in range(len(dim)):
-                if j + 1 == sys:
-                    X = tensor(X, K[i])
+    else: # Applying the channel to subsystems
+        A=[]
+        n=len(dim) # Total number of systems corresponding to the state rho
+        k=len(sys) # Total number of systems on which the channel is being applied
+        indices=itertools.product(range(len(K)),repeat=k) # All possible tuples of the indices of the Kraus operators of the channel
+        for index in indices:
+            l=0
+            X=1
+            for i in range(n):
+                if i+1 in sys:
+                    X=tensor(X,K[index[l]])
+                    l+=1
                 else:
-                    X = tensor(X, eye(dim[j]))
+                    X=tensor(X,eye(dim[i]))
             A.append(X)
 
         return np.sum([A[i] @ rho @ dag(A[i]) for i in range(len(A))], 0)
