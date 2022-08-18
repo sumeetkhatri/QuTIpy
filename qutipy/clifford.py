@@ -55,7 +55,7 @@ def Clifford_group_generators(n):
     return G
 
 
-def Clifford_twirl_channel_one_qubit(K, rho, sys=1, dim=[2]):
+def Clifford_twirl_channel_one_qubit(K, rho, sys=[1], dim=[2]):
     """
     Twirls the given channel with Kraus operators in K by the one-qubit
     Clifford group on the given subsystem (specified by sys).

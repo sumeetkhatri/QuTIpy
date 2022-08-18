@@ -190,7 +190,7 @@ def coherent_inf_channel(K, dim_in, dim_out, s=1, display=True):
 
         psi_AA = psi * dag(psi)
 
-        rho_AB = apply_channel(K, psi_AA, 2, dim=[dim_in, dim_in])
+        rho_AB = apply_channel(K, psi_AA, [2], dim=[dim_in, dim_in])
 
         return -coherent_inf_state(rho_AB, dim_in, dim_out, s)
 

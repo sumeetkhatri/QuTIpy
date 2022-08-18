@@ -349,8 +349,8 @@ def apply_channel(K, rho, sys=None, dim=None, adjoint=False):
         return np.sum([K[i] @ rho @ dag(K[i]) for i in range(len(K))], 0)
     else: # Applying the channel to subsystems
         A=[]
-        n=len(dim) # Total number of systems corresponding to the state rho
-        k=len(sys) # Total number of systems on which the channel is being applied
+        n=len(dim) # [2, 2, _2, _2] Total number of systems corresponding to the state rho
+        k=len(sys) # [ 3, 4 ] # Total number of systems on which the channel is being applied
         indices=itertools.product(range(len(K)),repeat=k) # All possible tuples of the indices of the Kraus operators of the channel
         for index in indices:
             l=0

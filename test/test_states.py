@@ -90,7 +90,7 @@ def test_Bell():
     z = 1
     x = 1
     assert np.all(
-        np.round(Bell(d, z, x, density_matrix=True), 5)
+        np.round(Bell(d, z, x, as_matrix=True), 5)
         == np.array(
             [
                 [0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j, 0.0 + 0.0j],
