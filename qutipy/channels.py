@@ -416,7 +416,7 @@ def Choi_representation(K, dimA):
 
     Gamma = max_ent(dimA, normalized=False)
 
-    return np.array(apply_channel(K, Gamma, 2, [dimA, dimA]), dtype=np.complex_)
+    return np.array(apply_channel(K, Gamma, [2], [dimA, dimA]), dtype=np.complex_)
 
 
 def compose_channels(C):
