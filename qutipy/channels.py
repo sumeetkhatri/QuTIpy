@@ -111,7 +111,7 @@ def choi_to_stinespring(C_AB, dA, dB):
     """
 
     C_AB_purif = vec(sqrtm(C_AB))
-    gamma = max_ent(dA, normalized=False, density_matrix=False)
+    gamma = max_ent(dA, normalized=False, as_matrix=False)
 
     return tensor(dag(gamma), eye(dB * (dA * dB))) @ tensor(eye(dA), C_AB_purif)
 

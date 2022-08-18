@@ -178,10 +178,10 @@ def post_graph_state_dist_fidelity(A_G, n, rho):
         z_n = A_G * x_n
         z_n = np.mod(z_n, 2)
 
-        bell = Bell(2, z_n[0, 0], x_n[0, 0], density_matrix=True)
+        bell = Bell(2, z_n[0, 0], x_n[0, 0], as_matrix=True)
 
         for k in range(1, n):
-            bell = tensor(bell, Bell(2, z_n[k, 0], x_n[k, 0], density_matrix=True))
+            bell = tensor(bell, Bell(2, z_n[k, 0], x_n[k, 0], as_matrix=True))
 
         bell = syspermute(
             bell,
@@ -206,8 +206,8 @@ def post_teleportation_fidelity(rho, dA=2):
             fidelity(
                 rho,
                 tensor(
-                    Bell(dA, z, x, density_matrix=True),
-                    Bell(dA, z, x, density_matrix=True),
+                    Bell(dA, z, x, as_matrix=True),
+                    Bell(dA, z, x, as_matrix=True),
                 ),
             )
             for z in range(dA)
@@ -231,10 +231,10 @@ def post_ent_swap_GHZ_chain_fidelity(rho, n):
 
         s = np.mod(sum(index), 2)
 
-        Bell_z = Bell(2, s, 0, density_matrix=True)
+        Bell_z = Bell(2, s, 0, as_matrix=True)
 
         for z in index:
-            Bell_z = tensor(Bell_z, Bell(2, z, 0, density_matrix=True))
+            Bell_z = tensor(Bell_z, Bell(2, z, 0, as_matrix=True))
 
         f = f + fidelity(Bell_z, rho)
 
@@ -416,7 +416,7 @@ def post_ent_swap_GHZ_fidelity(rho):
     with respect to the three-party GHZ state.
     """
 
-    Phi = [Bell(2, z, 0, density_matrix=True) for z in range(2)]
+    Phi = [Bell(2, z, 0, as_matrix=True) for z in range(2)]
 
     return sum([fidelity(tensor(Phi[z], Phi[z]), rho) for z in range(2)])
 
@@ -561,12 +561,12 @@ def post_teleportation_chain_fidelity(rho, n, dA=2):
             z_sum = np.mod(sum(z_indices), dA)
             x_sum = np.mod(sum(x_indices), dA)
 
-            Bell_tot = Bell(dA, z_sum, x_sum, density_matrix=True)
+            Bell_tot = Bell(dA, z_sum, x_sum, as_matrix=True)
 
             for j in range(n):
                 Bell_tot = tensor(
                     Bell_tot,
-                    Bell(dA, z_indices[j], x_indices[j], density_matrix=True),
+                    Bell(dA, z_indices[j], x_indices[j], as_matrix=True),
                 )
 
             f += fidelity(rho, Bell_tot)

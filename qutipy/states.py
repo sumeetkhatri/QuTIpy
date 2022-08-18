@@ -28,7 +28,7 @@ from qutipy.general_functions import SWAP, Tr, dag, eye, ket, syspermute, tensor
 from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
 
 
-def max_ent(dim, normalized=True, density_matrix=True):
+def max_ent(dim, normalized=True, as_matrix=True):
     """
     Generates the dim-dimensional maximally entangled state, which is defined as
 
@@ -37,24 +37,24 @@ def max_ent(dim, normalized=True, density_matrix=True):
     If normalized=False, then the function returns the unnormalized maximally entangled
     vector.
 
-    If density_matrix=True, then the function returns the state as a density matrix.
+    If as_matrix=True, then the function returns the state as a density matrix.
     """
 
     if normalized:
         Bell = (1.0 / np.sqrt(dim)) * np.sum([ket(dim, [i, i]) for i in range(dim)], 0)
-        if density_matrix:
+        if as_matrix:
             return Bell @ dag(Bell)
         else:
             return Bell
     else:
         Gamma = np.sum([ket(dim, [i, i]) for i in range(dim)], 0)
-        if density_matrix:
+        if as_matrix:
             return Gamma @ dag(Gamma)
         else:
             return Gamma
 
 
-def Bell(d, z, x, density_matrix=False):
+def Bell(d, z, x, as_matrix=False):
     """
     Generates a d-dimensional Bell state with 0 <= z,x <= d-1. These are defined as
 
@@ -62,11 +62,11 @@ def Bell(d, z, x, density_matrix=False):
 
     """
 
-    Bell = max_ent(d, density_matrix=density_matrix)
+    Bell = max_ent(d, as_matrix=as_matrix)
 
     W_zx = matrix_power(discrete_Weyl_Z(d), z) @ matrix_power(discrete_Weyl_X(d), x)
 
-    if density_matrix:
+    if as_matrix:
         out = tensor(W_zx, eye(d)) @ Bell @ tensor(dag(W_zx), eye(d))
         return out
     else:
@@ -74,24 +74,24 @@ def Bell(d, z, x, density_matrix=False):
         return out
 
 
-def GHZ(dim, n, density_matrix=True):
+def GHZ(dim, n, as_matrix=True):
     """
     Generates the n-party GHZ state in dim-dimensions for each party, which is defined as
 
         |GHZ_n> = (1/sqrt(dim))*(|0,0,...,0> + |1,1,...,1> + ... + |d-1,d-1,...,d-1>)
 
-    If density_matrix=True, then the function returns the state as a density matrix.
+    If as_matrix=True, then the function returns the state as a density matrix.
     """
 
     GHZ = (1 / np.sqrt(dim)) * np.sum([ket(dim, [i] * n) for i in range(dim)], 0)
 
-    if density_matrix:
+    if as_matrix:
         return GHZ @ dag(GHZ)
     else:
         return GHZ
 
 
-def graph_state(A_G, n, density_matrix=False, return_CZ=False, alt=True):
+def graph_state(A_G, n, as_matrix=False, return_CZ=False, alt=True):
     """
     Generates the graph state corresponding to the undirected graph G with n vertices.
     A_G denotes the adjacency matrix of G, which for an undirected graph is a binary
@@ -114,7 +114,7 @@ def graph_state(A_G, n, density_matrix=False, return_CZ=False, alt=True):
             if A_G[i, j] == 1:
                 G = G @ CZ_ij(i + 1, j + 1, n)
 
-    if density_matrix:
+    if as_matrix:
         plus_n = plus_n @ dag(plus_n)
         if return_CZ:
             return G @ plus_n @ dag(G), G
@@ -169,7 +169,7 @@ def isotropic_twirl_state(X, d):
     the same fidelity to the maximally entangled state as rho.
     """
 
-    G = max_ent(d, normalized=False, density_matrix=True)
+    G = max_ent(d, normalized=False, as_matrix=True)
 
     return (Tr(X) / (d**2 - 1) - Tr(G @ X) / (d * (d**2 - 1))) * eye(d**2) + (
         Tr(G @ X) / (d**2 - 1) - Tr(X) / (d * (d**2 - 1))
@@ -240,7 +240,7 @@ def random_state_vector(dim, rank=None):
         else:
             k = rank
 
-        psi_k = max_ent(k, density_matrix=False, normalized=False)
+        psi_k = max_ent(k, as_matrix=False, normalized=False)
         a = dag(
             np.array([np.random.rand(dimA * k)])
             + 1j * np.array([np.random.rand(dimA * k)])

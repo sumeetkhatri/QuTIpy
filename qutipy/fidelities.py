@@ -86,7 +86,7 @@ def ent_fidelity(sigma, d):
     d is the dimension.
     """
 
-    Bell = max_ent(d, density_matrix=True)
+    Bell = max_ent(d, as_matrix=True)
 
     return np.real(Tr(Bell @ sigma))
 
