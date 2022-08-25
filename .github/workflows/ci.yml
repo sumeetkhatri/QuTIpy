@@ -6,19 +6,16 @@ on: [push, pull_request]
 jobs:
   lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.7", "3.8", "3.9", "3.10"]
     steps:
       - name: Checkout Repository
         uses: actions/checkout@v1
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.9
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.9
       - name: Install dependencies
         run: |
-          python${{ matrix.python-version }} -m pip install nox
+          python3.9 -m pip install nox
       - name: Lint the code
         run: nox -s lint
 
