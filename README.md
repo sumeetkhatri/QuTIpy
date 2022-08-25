@@ -41,8 +41,8 @@ To create the qubit [state](https://en.wikipedia.org/wiki/Quantum\_state) ${\dis
 The first argument specifies the dimension, in this case two, and the second argument is the index for the [basis vector](https://en.wikipedia.org/wiki/Basis\_\(linear\_algebra\)) that we want. The output of the above line is the following numpy matrix object:
 
 ```python
-ndarray([[1.],
-        [0.]])
+array([[1.],
+      [0.]])
 ```
 
 Similarly,
@@ -54,8 +54,8 @@ Similarly,
 gives the following output:
 
 ```python
-ndarray([[0.],
-        [1.]])
+array([[0.],
+      [1.]])
 ```
 
 In general, `ket(d,j)`, for `j` between `0` and `d-1`, generates a d-dimensional column vector (as a numpy matrix) in which the jth entry contains a one.
@@ -97,7 +97,7 @@ We can generate a random [quantum state](https://en.wikipedia.org/wiki/Quantum\_
 To generate a random [pure state](https://en.wikipedia.org/wiki/Quantum\_state#Pure\_states) (i.e., state vector) in `d` dimensions:
 
 ```python
->>> RandomPureState(d)
+>>> random_state_vector(d)
 ```
 
 To generate an isotropic state in `d` dimensions:
@@ -168,10 +168,6 @@ The package also contains functions for:
 - Renyi entropies
 - Coherent information and Holevo information for states and channels
 
-
-# Acknowledgements
-
-Thanks to [Mark Wilde](https://www.markwilde.com/) for suggesting the name for the package.
 
 
 
