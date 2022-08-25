@@ -41,7 +41,7 @@ def tests(session):
     session.run("pytest")
 
 
-@nox.session(python=PYTHON_ENV)
+@nox.session(python=PYTHON_ENV[-1])
 def lint(session):
     """Run the lint suite."""
 
