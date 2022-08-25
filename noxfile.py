@@ -22,7 +22,7 @@
 
 import nox
 
-PYTHON_ENV = python = ["3.6", "3.7", "3.8", "3.9"]
+PYTHON_ENV = python = ["3.7", "3.8", "3.9"]
 
 SOURCE_FILES = (
     "setup.py",
