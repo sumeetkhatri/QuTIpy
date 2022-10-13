@@ -34,6 +34,9 @@ jobs:
       - name: Install build tools
         run: |
           python${{ matrix.python-version }} -m pip install --upgrade build
+      - name: Install Dependencies
+        run: |
+          python${{ matrix.python-version }} -m pip install -r requirements.txt
       - name: Build project for distribution
         run: |
           python${{ matrix.python-version }} -m build
