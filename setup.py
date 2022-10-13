@@ -22,6 +22,7 @@
 
 
 from setuptools import find_packages, setup
+from sphinx.setup_command import BuildDoc
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -46,6 +47,16 @@ setup(
     keywords="qutipy quantum sdk",
     license="LGPLv3",
     packages=find_packages(),
+    cmdclass={"build_sphinx": BuildDoc},
+    # these are optional and override conf.py settings
+    command_options={
+        "build_sphinx": {
+            "project": ("setup.py", "QuTIpy"),
+            "version": ("setup.py", "0.1.0a"),
+            "release": ("setup.py", "0.1"),
+            "source_dir": ("setup.py", "docs"),
+        }
+    },
     install_requires=[
         "numpy>=1.21.3",
         "scipy",
