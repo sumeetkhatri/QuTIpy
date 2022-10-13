@@ -22,7 +22,7 @@
 
 
 from setuptools import find_packages, setup
-from sphinx.setup_command import BuildDoc
+# from sphinx.setup_command import BuildDoc
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
@@ -47,7 +47,7 @@ setup(
     keywords="qutipy quantum sdk",
     license="LGPLv3",
     packages=find_packages(),
-    cmdclass={"build_sphinx": BuildDoc},
+    # cmdclass={"build_sphinx": BuildDoc},
     # these are optional and override conf.py settings
     command_options={
         "build_sphinx": {
