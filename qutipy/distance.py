@@ -23,7 +23,7 @@
 import cvxpy as cvx
 import numpy as np
 
-from qutipy.general_functions import eye, trace_norm, partial_trace
+from qutipy.general_functions import eye, partial_trace, trace_norm
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 
 
@@ -70,24 +70,24 @@ def norm_trace_dist(rho, sigma, sdp=False, dual=False, display=False):
         return (1 / 2) * trace_norm(rho - sigma)
 
 
-def norm_diamond_dist(J1,J2,dA,dB,dual=False,display=False):
+def norm_diamond_dist(J1, J2, dA, dB, dual=False, display=False):
 
-    '''
-    Calculates the normalized diamond distance between two channels with 
-    Choi representations J1 and J2. For arbitrary superoperators, one can 
+    """
+    Calculates the normalized diamond distance between two channels with
+    Choi representations J1 and J2. For arbitrary superoperators, one can
     calculate this using the function diamond_norm as follows: (1/2)*diamond_norm(J1,J2,dA,dB).
-    '''
+    """
 
     if not dual:
-        rho=cvx.Variable((dA,dA),hermitian=True)
-        P=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+        rho = cvx.Variable((dA, dA), hermitian=True)
+        P = cvx.Variable((dA * dB, dA * dB), hermitian=True)
 
-        c=[rho>>0,P>>0,P<<cvx.kron(rho,eye(dB)),cvx.trace(rho)==1]
+        c = [rho >> 0, P >> 0, P << cvx.kron(rho, eye(dB)), cvx.trace(rho) == 1]
 
-        f=cvx.trace(P@(J1-J2))
+        f = cvx.trace(P @ (J1 - J2))
 
-        obj=cvx.Maximize(cvx.real(f))
-        prob=cvx.Problem(obj,constraints=c)
+        obj = cvx.Maximize(cvx.real(f))
+        prob = cvx.Problem(obj, constraints=c)
 
         prob.solve(verbose=display)
 
@@ -95,18 +95,16 @@ def norm_diamond_dist(J1,J2,dA,dB,dual=False,display=False):
 
     else:
 
-        mu=cvx.Variable()
-        Z=cvx.Variable((dA,dB),hermitian=True)
+        mu = cvx.Variable()
+        Z = cvx.Variable((dA, dB), hermitian=True)
 
-        Z_A=numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(Z),[2],[dA,dB]))
+        Z_A = numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(Z), [2], [dA, dB]))
 
-        c=[mu>=0,Z>>0,Z>>J1-J2,mu*eye(dA)>>Z_A]
+        c = [mu >= 0, Z >> 0, Z >> J1 - J2, mu * eye(dA) >> Z_A]
 
-        obj=cvx.Minimize(mu)
-        prob=cvx.Problem(obj,constraints=c)
+        obj = cvx.Minimize(mu)
+        prob = cvx.Problem(obj, constraints=c)
 
         prob.solve(verbose=display)
 
         return prob.value
-
-

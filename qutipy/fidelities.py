@@ -23,7 +23,7 @@
 import numpy as np
 from scipy.linalg import sqrtm
 
-from qutipy.channels import choi_representation, apply_channel
+from qutipy.channels import apply_channel, choi_representation
 from qutipy.general_functions import Tr, dag, ket, trace_norm
 from qutipy.states import max_ent
 

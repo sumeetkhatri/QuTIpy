@@ -25,12 +25,7 @@ import itertools
 import numpy as np
 from numpy.linalg import matrix_power
 
-from qutipy.general_functions import (
-    Tr,
-    dag,
-    ket,
-    tensor,
-)
+from qutipy.general_functions import Tr, dag, ket, tensor
 
 
 def discrete_Weyl_X(d):
@@ -171,6 +166,6 @@ def nQudit_Weyl_coeff(X, d, n):
         for t in S:
             t = list(t)
             G = generate_nQudit_X(d, s) @ generate_nQudit_Z(d, t)
-            C[(str(s), str(t))] = (1/d**n)*np.around(Tr(dag(G) @ X), 10)
+            C[(str(s), str(t))] = (1 / d**n) * np.around(Tr(dag(G) @ X), 10)
 
     return C
