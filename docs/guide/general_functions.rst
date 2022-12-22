@@ -77,6 +77,13 @@ Here we have defined the **ket** v for :math:`{\displaystyle |v\rangle } = \begi
 In numpy, defining the same would need one to define the matrix manually, just as shown in the
 `Overview section <../getting-started/overview.md#bra-ket-notation>`__.
 
+
+Partial Trace
+-----------------
+
+
+
+
 Partial Transpose
 -----------------
 

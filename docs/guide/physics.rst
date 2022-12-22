@@ -3,28 +3,12 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+
 .. _qutipy-doc-physics:
 
 Physics
 ===========
 
-Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Aliquam sem
-fringilla ut morbi tincidunt augue interdum. Gravida dictum fusce ut placerat
-orci nulla. Ut tristique et egestas quis ipsum suspendisse. Arcu cursus euismod
-quis viverra nibh cras pulvinar mattis. Imperdiet massa tincidunt nunc pulvinar
-sapien et ligula. Aliquam malesuada bibendum arcu vitae. Pellentesque sit amet
-porttitor eget dolor morbi non arcu risus. At consectetur lorem donec massa sapien
-faucibus.
+[change the title of this to "Quantum mechanics"]
 
-.. _qutipy-doc-hilbert-space:
-
-Hilbert Space
-=============
-
-Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Aliquam sem
-fringilla ut morbi tincidunt augue interdum. Gravida dictum fusce ut placerat
-orci nulla. Ut tristique et egestas quis ipsum suspendisse. Arcu cursus euismod
-quis viverra nibh cras pulvinar mattis. Imperdiet massa tincidunt nunc pulvinar
-sapien et ligula. Aliquam malesuada bibendum arcu vitae. Pellentesque sit amet
-porttitor eget dolor morbi non arcu risus. At consectetur lorem donec massa sapien
-faucibus.
+[basic axioms of quantum mechanics: (1) quantum states (2) measurement (Born rule) (3) Observables (4) Evolution (unitaries and channels)]

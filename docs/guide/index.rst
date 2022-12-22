@@ -17,13 +17,12 @@ This guide is an overview and explains the important features; details are found
    installation
    quickstart
    general_functions
-   .. physics
-   .. mathematics
+   physics
 
 
 Examples
 ---------------
-Examples will be added soon...
+Examples will be added soon... [this should be a dedicated section]
 
 .. Additional examples will be added in the future.
 

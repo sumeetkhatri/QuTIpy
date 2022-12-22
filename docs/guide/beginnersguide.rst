@@ -15,13 +15,11 @@ Welcome to QuTIpy!
 
 
 QuTIpy (**Quantum Theory of Information for Python**; pronounced `/cutiɛ paɪ/`) is an open source
-Python library that’s used for performing calculations with quantum states, channels and protocols.
+Python library that’s used for performing calculations with quantum states, channels and quantum information processing protocols.
 While there are many quantum information theory toolboxes that allow the user to perform basic operations
-such as the `partial transposition <../modules/general-functions.md#firstheading>`_, new tests are
-constantly discovered.
+such as the `partial transposition <../modules/general-functions.md#firstheading>`_, [and partial trace], the focus of QuTIpy is to
+allow you perform these operations in a `simple` and `quick` way.
 
-The core of QuTIpy package is a suite of mathematical functions that make working with quantum states,
-channels and protocols, quick and easy.
 
 Installing QuTIpy
 -----------------
@@ -163,9 +161,9 @@ known collectively as the four "`Bell state`_".
 
 A generalized version of the above `Bell state`_ is explained below,
 
-Using the operators :math:`X`, :math:`Z`, and :math:`ZX`, we define the following set of four entangled two-qubit state vectors :math:`\displaystyle |\phi_{z,x}\rangle = (Z^zX^x \otimes I)|\phi^{+}\rangle` for :math:`z, x \in {0, 1}`.
+Using the operators :math:`X`, :math:`Z`, and :math:`ZX`, we define the following set of four entangled two-qubit state vectors :math:`\displaystyle |\phi_{z,x}\rangle = (Z^zX^x \otimes \mathbb{1})|\phi^{+}\rangle` for :math:`z, x \in {0, 1}`.
 
-To generates a :math:`d`-dimensional Bell State with :math:`0 <= z`, :math:`x <= d-1`, we can simply call the module `Bell_state` that was imported above.
+To generates a :math:`d`-dimensional Bell State with :math:`0 \leq z`, :math:`x \leq d-1`, we can simply call the module `Bell_state` that was imported above.
 
 .. code-block:: python
 
@@ -173,3 +171,18 @@ To generates a :math:`d`-dimensional Bell State with :math:`0 <= z`, :math:`x <=
    # The resultant matrix will be of shape 4x4.
 
    Bell(d=2, z=1, x=1)
+
+
+Random Quantum States
+-----------------------
+
+
+
+Random Unitaries
+-----------------------
+
+
+
+Random Quantum Channels
+--------------------------
+
