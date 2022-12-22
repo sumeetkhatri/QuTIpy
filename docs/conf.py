@@ -49,7 +49,7 @@ extensions = [
     'sphinx.ext.napoleon',
     'sphinx.ext.autosummary',
     'sphinx.ext.intersphinx',
-    # 'sphinx.ext.autosectionlabel',
+    'sphinx.ext.autosectionlabel',
 
 
     'sphinx.ext.coverage',
@@ -59,6 +59,7 @@ extensions = [
     'IPython.sphinxext.ipython_directive',
     'sphinx_panels',
 ]
+autosectionlabel_prefix_document = True
 
 intersphinx_mapping = {
     # 'neps': ('https://numpy.org/neps', None),

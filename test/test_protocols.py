@@ -22,8 +22,8 @@
 
 import numpy as np
 
-from qutipy.channels import choi_representation
 from qutipy.channels import amplitude_damping_channel as damping_channel
+from qutipy.channels import choi_representation
 from qutipy.protocols import (
     apply_ent_swap_GHZ_chain_channel,
     apply_ent_swap_GHZ_channel,

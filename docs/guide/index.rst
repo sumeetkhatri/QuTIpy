@@ -6,11 +6,13 @@
 .. _qutipy-doc-user-guide:
 
 User Guide
-==================================
+==========
 
 This guide is an overview and explains the important features; details are found in Qutipy Reference.
 
 .. toctree::
+   :glob:
+   :titlesonly:
    :maxdepth: 1
 
    whatis
@@ -18,11 +20,11 @@ This guide is an overview and explains the important features; details are found
    quickstart
    general_functions
    physics
-
+   mathematics
 
 Examples
----------------
-Examples will be added soon... [this should be a dedicated section]
+--------
+Examples will be added soon...
 
 .. Additional examples will be added in the future.
 

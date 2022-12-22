@@ -449,7 +449,7 @@ def trace_distance_pure_states(psi, phi):
     Computes the squared trace distance between two pure states psi and phi,
     i.e.,
 
-    || |psi><psi|-|phi><phi| ||_1^2
+    `|| |psi><psi|-|phi><phi| ||_1^2`
 
     """
 

@@ -6,6 +6,7 @@
 
 .. _qutipy-doc-physics:
 
+
 Physics
 ===========
 

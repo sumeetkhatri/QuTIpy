@@ -24,14 +24,13 @@ import numpy as np
 
 from qutipy.channels import (
     BB84_channel,
-    choi_representation,
-    natural_representation ,
     Pauli_channel,
     Pauli_channel_nQubit,
     amplitude_damping_channel,
     apply_channel,
     bit_flip_channel,
     channel_scalar_multiply,
+    choi_representation,
     choi_to_kraus,
     choi_to_natural,
     completely_dephasing_channel,
@@ -44,6 +43,7 @@ from qutipy.channels import (
     generalized_amplitude_damping_channel,
     generate_channel_isometry,
     n_channel_uses,
+    natural_representation,
     phase_damping_channel,
     tensor_channels,
 )
@@ -576,6 +576,7 @@ def test_channel_scalar_multiply():
         np.round(channel_scalar_multiply(H, 0.2), 5)
         == np.array([[0.31623, 0.31623], [0.31623, -0.31623]])
     )
+
 
 def test_Pauli_channel():
     E = Pauli_channel(0.16, 0.04, 0.16)
