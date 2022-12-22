@@ -34,6 +34,9 @@ jobs:
       - name: Install build tools
         run: |
           python${{ matrix.python-version }} -m pip install --upgrade build
+      - name: Install Dependencies
+        run: |
+          python${{ matrix.python-version }} -m pip install -r requirements.txt
       - name: Build project for distribution
         run: |
           python${{ matrix.python-version }} -m build
@@ -80,6 +83,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install setuptools wheel twine
+          python -m pip install -r requirements.txt
       - name: Build source distribution
         run: python setup.py sdist bdist_wheel
       - name: Check with Twine
