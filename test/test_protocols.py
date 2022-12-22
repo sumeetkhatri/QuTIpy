@@ -22,8 +22,8 @@
 
 import numpy as np
 
-from qutipy.channels import Choi_representation
 from qutipy.channels import amplitude_damping_channel as damping_channel
+from qutipy.channels import choi_representation
 from qutipy.protocols import (
     apply_ent_swap_GHZ_chain_channel,
     apply_ent_swap_GHZ_channel,
@@ -397,8 +397,8 @@ def test_apply_ent_swap_GHZ_chain_channel():
 
 
 def test_channel_discrimination():
-    J1 = Choi_representation(damping_channel(0.22), 2)
-    J2 = Choi_representation(damping_channel(0.35), 2)
+    J1 = choi_representation(damping_channel(0.22), 2)
+    J2 = choi_representation(damping_channel(0.35), 2)
     assert (
         0.1993
         < np.round(avg_on(lambda: channel_discrimination(J1, J2, 2, 2, 0.2), 100), 5)

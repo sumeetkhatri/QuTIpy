@@ -44,9 +44,7 @@ from qutipy.pauli import (
     generate_nQubit_Pauli_Z,
 )
 from qutipy.states import max_ent, random_density_matrix, random_state_vector
-from qutipy.weyl import discrete_Weyl_Z, discrete_Weyl
-
-
+from qutipy.weyl import discrete_Weyl, discrete_Weyl_Z
 
 ##################################################################################
 ########################## Channel representations ###############################
@@ -203,7 +201,7 @@ def channel_matrix(K, dA, dB, as_dict=False):
 
     for z in S:
         for x in S:
-            W=discrete_Weyl(d,z,x)
+            W = discrete_Weyl(d, z, x)
             if as_dict:
                 c[(z, x)] = (1 / d) * Tr(dag(W) @ apply_channel(K, W))
             else:
@@ -403,11 +401,10 @@ def diamond_norm(J, dA, dB, display=False):
     return prob.value
 
 
-
-
 ##################################################################################
 ############################# Random channels ####################################
 ##################################################################################
+
 
 def random_CP_map(dA, dB, TP=False, unital=False, return_as="choi"):
     """
@@ -508,6 +505,7 @@ def random_POVM(d, num_elem, via_choi=True):
 ##################################################################################
 ############################## Pauli channels ####################################
 ##################################################################################
+
 
 def Pauli_channel(px, py, pz):
     """
@@ -692,7 +690,7 @@ def depolarizing_channel_nQubits(n, p):
     return Pauli_channel_nQubit(n, p, alt_repr=True)
 
 
-#def channel_nQubit_coeffs(K, n, as_dict=False):
+# def channel_nQubit_coeffs(K, n, as_dict=False):
 #   CONVERT THIS TO A FUNCTION FOR THE EIGENVALUES OF A PAULI CHANNEL
 #    """
 #    Generates the coefficients c_{a,b} such that
@@ -708,7 +706,7 @@ def depolarizing_channel_nQubits(n, p):
 #        c = []
 
 #    S = list(itertools.product(*[range(0, 2)] * n))
-    # print(S)
+# print(S)
 
 #    for a in S:
 #        for b in S:
@@ -722,31 +720,31 @@ def depolarizing_channel_nQubits(n, p):
 #    return c
 
 
-def Pauli_channel_qudit(d,p):
+def Pauli_channel_qudit(d, p):
 
-    '''
-    Generates the Kraus operators, an isometric extension, and a unitary 
+    """
+    Generates the Kraus operators, an isometric extension, and a unitary
     extension of the d-dimensional Pauli channel defined via the discrete
     Weyl operators. The variable p is a list of d^2 probabilities that sum to one.
-    '''
+    """
 
-    K=[]
-    i=0
+    K = []
+    i = 0
 
     for z in range(d):
         for x in range(d):
-            K.append(np.sqrt(p[i])*discrete_Weyl(d,z,x))
-            i+=1
+            K.append(np.sqrt(p[i]) * discrete_Weyl(d, z, x))
+            i += 1
 
-    V,U=generate_channel_isometry(K,d,d)
+    V, U = generate_channel_isometry(K, d, d)
 
-    return K,V,U
-
+    return K, V, U
 
 
 ##################################################################################
 ############################## Other channels ####################################
 ##################################################################################
+
 
 def phase_damping_channel(p):
     """
@@ -788,4 +786,3 @@ def generalized_amplitude_damping_channel(gamma, N):
         A4 = np.sqrt(N) * np.array([[0, 0], [np.sqrt(gamma), 0]])
 
         return [A1, A2, A3, A4]
-
