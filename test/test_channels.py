@@ -25,9 +25,8 @@ import numpy as np
 from qutipy.channels import (
     BB84_channel,
     choi_representation,
-    Natural_representation,
+    natural_representation ,
     Pauli_channel,
-    Pauli_channel_coeffs,
     Pauli_channel_nQubit,
     amplitude_damping_channel,
     apply_channel,
@@ -130,9 +129,9 @@ def test_amplitude_damping_channel():
     assert np.all(np.round(channel[1], 5) == np.array([[0.0, 0.44721], [0.0, 0.0]]))
 
 
-def test_Natural_representation():
+def test_natural_representation():
     assert np.all(
-        np.round(Natural_representation([H]), 8)
+        np.round(natural_representation([H]), 8)
         == np.array(
             [
                 [0.5, 0.5, 0.5, 0.5],
@@ -577,31 +576,6 @@ def test_channel_scalar_multiply():
         np.round(channel_scalar_multiply(H, 0.2), 5)
         == np.array([[0.31623, 0.31623], [0.31623, -0.31623]])
     )
-
-
-def test_Pauli_channel_coeffs():
-    assert np.all(
-        Pauli_channel_coeffs([X], 2)
-        == [
-            374.0,
-            8.0,
-            32.0,
-            0.0,
-            340.0,
-            -8.0,
-            32.0,
-            0.0,
-            238.0,
-            8.0,
-            -32.0,
-            0.0,
-            204.0,
-            -8.0,
-            -32.0,
-            0.0,
-        ]
-    )
-
 
 def test_Pauli_channel():
     E = Pauli_channel(0.16, 0.04, 0.16)
