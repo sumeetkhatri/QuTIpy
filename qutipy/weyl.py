@@ -25,7 +25,7 @@ import itertools
 import numpy as np
 from numpy.linalg import matrix_power
 
-from qutipy.general_functions import (  # NOTE: What does the tensor function does?
+from qutipy.general_functions import (
     Tr,
     dag,
     ket,
@@ -61,12 +61,12 @@ def discrete_Weyl_Z(d):
     return Z
 
 
-def discrete_Weyl(d, a, b):
+def discrete_Weyl(d, z, x):
     """
-    Generates the discrete Weyl operator X^aZ^b.
+    Generates the discrete Weyl operator Z^zX^x.
     """
 
-    return matrix_power(discrete_Weyl_X(d), a) @ matrix_power(discrete_Weyl_Z(d), b)
+    return matrix_power(discrete_Weyl_Z(d), z) @ matrix_power(discrete_Weyl_X(d), x)
 
 
 def generate_nQudit_X(d, indices):
@@ -171,6 +171,6 @@ def nQudit_Weyl_coeff(X, d, n):
         for t in S:
             t = list(t)
             G = generate_nQudit_X(d, s) @ generate_nQudit_Z(d, t)
-            C[(str(s), str(t))] = np.around(Tr(dag(X) @ G), 10)
+            C[(str(s), str(t))] = (1/d**n)*np.around(Tr(dag(G) @ X), 10)
 
     return C

@@ -23,7 +23,7 @@
 import numpy as np
 from scipy.linalg import sqrtm
 
-from qutipy.channels import Choi_representation, apply_channel
+from qutipy.channels import choi_representation, apply_channel
 from qutipy.general_functions import Tr, dag, ket, trace_norm
 from qutipy.states import max_ent
 
@@ -62,7 +62,7 @@ def avg_fidelity(K, dimA):
     of the input space of the channel.
     """
 
-    choi_state = (1.0 / dimA) * Choi_representation(K, dimA)
+    choi_state = (1.0 / dimA) * choi_representation(K, dimA)
 
     return (dimA * ent_fidelity(choi_state, dimA) + 1) / (dimA + 1)
 
@@ -75,7 +75,7 @@ def ent_fidelity_channel(K, d):
 
     Bell = max_ent(d)
 
-    K_choi = (1.0 / d) * Choi_representation(K, d)
+    K_choi = (1.0 / d) * choi_representation(K, d)
 
     return np.real(Tr((Bell) @ K_choi))
 
