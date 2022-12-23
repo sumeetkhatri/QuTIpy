@@ -8,7 +8,10 @@
 Quickstart
 ==========
 
-
+.. meta::
+    :description lang=en:
+        The user guide provides in-depth information on the
+        key concepts of QuTIpy with useful background information and explanation.
 
 Welcome to QuTIpy!
 ------------------
@@ -16,7 +19,7 @@ Welcome to QuTIpy!
 QuTIpy (**Quantum Theory of Information for Python**; pronounced `/cutiɛ paɪ/`) is an open source
 Python library that’s used for performing calculations with quantum states, channels and protocols.
 While there are many quantum information theory toolboxes that allow the user to perform basic operations
-such as the `partial transposition <../modules/general-functions.md#firstheading>`_, new tests are
+such as the `partial transposition <./general_functions.html#partial-transpose>`_, new tests are
 constantly discovered.
 
 The core of QuTIpy package is a suite of mathematical functions that make working with quantum states,
@@ -25,7 +28,7 @@ channels and protocols, quick and easy.
 Installing QuTIpy
 -----------------
 To install QuTIpy, we strongly recommend using a scientific Python distribution. If you’re
-looking for the full instructions for installing NumPy on your operating system, see `Installing NumPy <./guide/installation.html>`_ .
+looking for the full instructions for installing QuTIpy on your operating system, see `Installing QuTIpy <./installation.html>`_ .
 
 If you already have Python, you can install QuTIpy with:
 
