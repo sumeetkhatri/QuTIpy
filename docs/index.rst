@@ -14,6 +14,7 @@ QuTIpy Documentation
    :maxdepth: 2
    :hidden:
 
+   guide/beginnersguide.rst
    guide/index.rst
    contribute.rst
 

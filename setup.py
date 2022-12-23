@@ -65,6 +65,22 @@ setup(
         "cvxpy",
         "pytest",
     ],
+    extras_require={
+        "dev": [
+            "nox",
+            "pytest",
+        ],
+        "docs": [
+            "sphinx",
+            "sphinxemoji",
+            "pydata-sphinx-theme",
+            "numpydoc",
+            "sphinx_panels",
+            "matplotlib",
+            "Ipython",
+            "sphinx-hoverxref",
+        ],
+    },
     classifiers=[
         # License
         "License :: OSI Approved :: GNU Affero General Public License v3",
