@@ -170,19 +170,87 @@ To generates a :math:`d`-dimensional Bell State with :math:`0 \leq z`, :math:`x 
    # This will create a Bell State for a 2 dimensional system.
    # The resultant matrix will be of shape 4x4.
 
-   Bell(d=2, z=1, x=1)
+   bell_state = Bell(d=2, z=1, x=1)
+
+   assert bell_state.shape == (2, 2)
 
 
 Random Quantum States
------------------------
+---------------------
+
+**Density matrices** define classical statistical mixtures of pure quantum states. Whereas,
+**State vectors** define pure quantum states of a system, and, for an isolated system.
+
+Random Quantum States, for either case (Density Matrix or State Vectors), can be easily generated
+through the ``qutipy.states.random_density_matrix`` definition and ``qutipy.states.random_state_vector`` definition.
+
+For Density Matrix,
+
+.. code-block:: python
+
+   # Import the random_density_matrix definition
+   from qutipy.states import random_density_matrix
+
+   # Let's create a random density matrix of shape 3 x 3
+   A = random_density_matrix(dim = 3)
+
+   # The shape of A will be `dim x dim`, i.e. 3 x 3
+   assert A.shape == (3, 3)
 
 
+State Vectors can be generated directly as well using the definition ``random_state_vector``.
+
+.. code-block:: python
+
+   # Import the random_density_matrix definition
+   from qutipy.states import random_state_vector
+
+   # Let's create a pure random state vector of shape 3 x 1
+   A = random_state_vector(dim = 3)
+
+   # The shape of A will be 3 x 1
+   assert A.shape == (3, 1)
+
+   # One can also define the Schmidt rank like this:
+   A = random_state_vector(dim = [2, 4], rank = 2)
+
+   # The shape of A will be 2 x 4
+   assert A.shape == (2, 4)
+
+
+
+Unitary Operators
+-----------------
+
+These are linear operators :math:`U \in L(H)` whose inverses are
+equal to their adjoints, meaning that :math:`U^{\dagger} U = UU^{\dagger} = \mathbb{1}`. Unitary operators
+generalize invertible maps or permutations from classical information theory
+and describe the noiseless evolution of the state of a quantum system.
 
 Random Unitaries
------------------------
+----------------
+
+QuTIpy ships a definition ``qutipy.gates.RandomUnitary`` that generates a Random Unitary of a given specificaiton
+
+.. code-block:: python
+
+   from qutipy.gates import RandomUnitary
+
+   # Creates a random unitary of shape 2 x 2
+   random_unitary = RandomUnitary(2)
+
+   assert random_unitary.shape == (2, 2)
 
 
+Quantum Channels
+----------------
+
+A quantum channel is a communication channel which can transmit quantum information, as well as classical information.
+It is a completely positive, trace-preserving linear map from density matrices to density matrices,
+:math:`\rho \mapsto \sum\limits_i A_i \rho A^{\dagger}_i` with :math:`\sum\limits_i A^{\dagger}_i A_i = \mathbb{I}`.
+
+An alternative definition of a quantum channel is a partial trace of a unitary transformation on a larger Hilbert space.
 
 Random Quantum Channels
---------------------------
+-----------------------
 
