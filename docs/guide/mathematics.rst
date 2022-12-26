@@ -9,13 +9,9 @@
 Mathematics
 ===========
 
-Ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Aliquam sem
-fringilla ut morbi tincidunt augue interdum. Gravida dictum fusce ut placerat
-orci nulla. Ut tristique et egestas quis ipsum suspendisse. Arcu cursus euismod
-quis viverra nibh cras pulvinar mattis. Imperdiet massa tincidunt nunc pulvinar
-sapien et ligula. Aliquam malesuada bibendum arcu vitae. Pellentesque sit amet
-porttitor eget dolor morbi non arcu risus. At consectetur lorem donec massa sapien
-faucibus.
+In this package we work with finite-dimensional quantum systems, which can be described using finite-dimensional Hilbert spaces.
+The mathematics of finite-dimensional Hilbert spaces is essentially linear and matrix analysis. In this section, we provide a summary
+of some basic facts from linear and matrix analysis...
 
 
 .. _qutipy-doc-hilbert-space:
