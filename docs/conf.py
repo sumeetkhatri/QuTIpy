@@ -58,6 +58,7 @@ extensions = [
     'IPython.sphinxext.ipython_console_highlighting',
     'IPython.sphinxext.ipython_directive',
     'sphinx_panels',
+    'sphinxemoji.sphinxemoji',
 ]
 autosectionlabel_prefix_document = True
 
@@ -224,8 +225,8 @@ autosummary_generate = True
 # -----------------------------------------------------------------------------
 _stdauthor = "Written by QuTIpy Community"
 texinfo_documents = [
-  ("contents", 'numpy', 'NumPy Documentation', _stdauthor, 'NumPy',
-   "NumPy: array processing for numbers, strings, records, and objects.",
+  ("contents", 'qutipy', 'QuTIpy Documentation', _stdauthor, 'QuTIpy',
+   "QuTIpy: Quantum Theory of Information for Python.",
    'Programming',
    1),
 ]
