@@ -93,11 +93,7 @@ is possible with classical information processing is also possible with quantum
 information processing. As such, quantum information subsumes classical information
 while allowing for richer possibilities.
 
-The mathematical description of quantum systems can be summarized by the
-following axioms. Each of these axioms is elaborated upon in the section indicated.
-
-
-Quantum systems: A quantum system A is associated with a :hoverxreftooltip:`Hilbert space <qutipy-doc-hilbert-space>` :math:`\mathcal{H}_A`.
+A **quantum system** :math:`A` is associated with a :hoverxreftooltip:`Hilbert space <qutipy-doc-hilbert-space>` :math:`\mathcal{H}_A`.
 The state of the system :math:`A` is described by a density operator, which is a unit-
 trace, positive semi-definite linear operator acting on :math:`\mathcal{H}_A`.
 
@@ -145,7 +141,7 @@ and can be imported as such.
    from qutipy.states import Bell
 
 Bell States
------------
+***********
 A `Bell state`_ is defined as a `maximally entangled quantum state`_ of two qubits.
 It can be described as one of four entangled two qubit quantum states,
 known collectively as the four "`Bell state`_".
@@ -181,7 +177,7 @@ To generates a :math:`d`-dimensional Bell State with :math:`0 \leq z`, :math:`x 
 
 
 Random Quantum States
----------------------
+*********************
 
 **Density matrices** define classical statistical mixtures of pure quantum states. Whereas,
 **State vectors** define pure quantum states of a system, and, for an isolated system.
@@ -218,9 +214,11 @@ State Vectors can be generated directly as well using the definition ``random_st
 
    # One can also define the Schmidt rank like this:
    A = random_state_vector(dim = [2, 4], rank = 2)
+   # In this case, the random_state_vector generates the state_vector for 2 systems,
+   # one with dimension 2 and one with dimension 4.
 
-   # The shape of A will be 2 x 4
-   assert A.shape == (2, 4)
+   # The shape of A will be 8 x 1
+   assert A.shape == (8, 1)
 
 
 
@@ -233,7 +231,7 @@ generalize invertible maps or permutations from classical information theory
 and describe the noiseless evolution of the state of a quantum system.
 
 Random Unitaries
-----------------
+****************
 
 QuTIpy ships a definition ``qutipy.gates.RandomUnitary`` that generates a Random Unitary of a given specificaiton
 
@@ -246,6 +244,8 @@ QuTIpy ships a definition ``qutipy.gates.RandomUnitary`` that generates a Random
 
    assert random_unitary.shape == (2, 2)
 
+Pauli Operators
+***************
 
 Quantum Channels
 ----------------
@@ -257,5 +257,12 @@ It is a completely positive, trace-preserving linear map from density matrices t
 An alternative definition of a quantum channel is a partial trace of a unitary transformation on a larger Hilbert space.
 
 Random Quantum Channels
------------------------
+***********************
 
+Consectetur do officia deserunt magna dolore. Cillum voluptate id ipsum anim culpa duis amet sunt magna ipsum. Minim consequat exercitation elit non aliqua laborum nisi ad velit laboris culpa reprehenderit non.
+
+Id id id adipisicing aute culpa cillum excepteur culpa. Nulla nostrud aute commodo qui consequat aliqua fugiat ullamco. Veniam nostrud fugiat id adipisicing. Reprehenderit aute laborum eiusmod adipisicing commodo aliquip voluptate cillum.
+
+Minim nisi consectetur aliquip aliquip ex ut reprehenderit Lorem sit proident. Quis qui proident deserunt dolore ipsum proident ea esse do deserunt ex exercitation. Ut excepteur fugiat ullamco esse laborum magna tempor qui sunt deserunt voluptate.
+
+Deserunt ipsum qui in velit amet consectetur. Cupidatat anim esse proident et fugiat do irure et ullamco mollit. Non anim tempor dolor in anim aliqua incididunt velit officia excepteur deserunt commodo aliqua aliqua. Ex commodo ex labore consectetur tempor Lorem quis sint voluptate. Reprehenderit aute ullamco fugiat fugiat eu occaecat dolore aliquip et adipisicing Lorem do aliquip officia. Ea laboris non duis fugiat aliquip occaecat labore et reprehenderit magna dolore consectetur Lorem deserunt.

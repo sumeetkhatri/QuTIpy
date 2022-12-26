@@ -135,12 +135,17 @@ It is also known as the row space or coimage of :math:`X`.
 
 |
 
+Injective
+*********
 
 A linear operator :math:`X \in L(H_A, H_B)` is called **injective** (or one-to-one) if, for all
 :math:`|\psi\rangle, |\phi\rangle \in H_A, X|\psi\rangle = X|\phi\rangle` implies
 :math:`| \psi\rangle = | \phi\rangle`. A necessary and sufficient condition for :math:`X` to be
 injective that the kernel of :math:`X` contains only the zero vector (i.e., the column vector in
 which all of the elements are equal to zero), which implies that :math:`dim(ker(X)) = 0`.
+
+Surjective
+**********
 
 A linear operator :math:`X \in L(H_A, H_B)` is called **surjective** (or onto) if, for all
 :math:`|\phi\rangle \in H_B`, there exists :math:`|\psi\rangle \in H_A` such that :math:`X|\psi\rangle = |\phi\rangle`.
@@ -216,6 +221,33 @@ Every linearly independent list of vectors in a finite-dimensional vector space 
 
 Singular Value Decomposition
 ----------------------------
+
+The Singular Value Decomposition (SVD) of a matrix is a factorization of that
+matrix into three matrices. It has some interesting algebraic properties and
+conveys important geometrical and theoretical insights about linear transformations.
+It generalizes the eigen-decomposition of a square normal matrix with an orthonormal
+eigenbasis to any  :math:`m \times n` matrix.
+
+Specifically, the singular value decomposition of an  :math:`m \times n` complex matrix
+:math:`M` is a factorization of the form , :math:`\mathbf{M} = \mathbf {U \Sigma V^{*}}`
+where :math:`U` is an :math:`m \times m` complex unitary matrix, :math:`\mathbf{ \Sigma }`
+is an :math:`m \times n` rectangular diagonal matrix with non-negative real numbers on the
+diagonal, :math:`V` is an :math:`n \times n` complex unitary matrix, and  :math:`\mathbf{V^{*}}`
+is the conjugate transpose of :math:`V`. Such decomposition always exists for any complex matrix.
+If :math:`M` is real, then :math:`U` and :math:`V` can be guaranteed to be real orthogonal matrices.
+
+In other words, SVD, decomposes a matrix :math:`M_{m \times n}` as,
+
+.. math::
+
+   M_{m \times n} = U_{m \times m} \Sigma_{m \times n} V^{T}_{n \times n}
+
+Calculating the SVD consists of finding the eigenvalues and eigenvectors of :math:`MM^T` and :math:`M^TM`.
+The eigenvectors of :math:`M^TM` make up the columns of :math:`V`, the eigenvectors of :math:`MM^T` make
+up the columns of :math:`U`. Also, the singular values in :math:`\Sigma` are square roots of eigenvalues
+from :math:`MM^T` or :math:`M^TM`.  The singular values are the diagonal entries of the :math:`\Sigma`
+matrix and are arranged in descending order.
+
 
 Schmidt Decomposition
 ---------------------

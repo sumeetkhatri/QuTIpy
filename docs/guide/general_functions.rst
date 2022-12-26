@@ -31,6 +31,8 @@ More generally, a **Hilbert space** is a “**complete inner product**” space.
    in *infinite-dimensional spaces*, so all *finite-dimensional
    inner-product spaces* are **Hilbert spaces**.
 
+To read more about Hilber Space, See the `Mathematics - Hilbert Space <./mathematics.html#hilbert-space>`_ .
+
 Bra-Ket Notation
 ----------------
 A **ket** is of the form :math:`{\displaystyle |v\rangle }`. Mathematically it denotes a
@@ -69,14 +71,13 @@ Defining a basis state :math:`{\displaystyle |0\rangle }`, we can use the ``ket`
 
    from qutipy.general_functions import ket
 
-   # Defining a ket 0 in a 2Dimensional Hilbert space,
+   # Defining a ket 0 in a 2 Dimensional Hilbert space,
    # The first argument takes a dimension of the Hilbert space,
    # while the secind argument takes the ket value.
    v = ket(2,0)
 
 Here we have defined the **ket** v for :math:`{\displaystyle |v\rangle } = \begin{bmatrix} 1 \\ 0 \end{bmatrix}`.
-In numpy, defining the same would need one to define the matrix manually, just as shown in the
-`Overview section <../getting-started/overview.md#bra-ket-notation>`__.
+In numpy, defining the same would need one to define the matrix manually.
 
 
 
@@ -87,7 +88,7 @@ The trace of a linear operator X acting on a :math:`d`-
 dimensional Hilbert space can be written as
 
 .. math::
-   Tr[X] = \sum\limits_{i=0}^d-1 \langle i|X|i \rangle
+   Tr[X] = \sum\limits_{i=0}^{d-1} \langle i|X|i \rangle
 
 where :math:`\{ |i\rangle_{i=0}^{d-1} \}` is the standard orthonormal basis. We can interpret the trace as
 the sum of the diagonal elements of the matrix corresponding to :math:`X`` written in the

@@ -30,10 +30,11 @@ QuTIpy Documentation
 `PDF Version <https://sumeetkhatri.files.wordpress.com/2021/08/sc_22aug2021.pdf>`_
 
 **Useful links**:
-:ref:`genindex` | :ref:`modules`
+:ref:`genindex` | `Modules <./modules.html>`_
 
 
-`Installation <https://pypi.org/project/QuTIpy/>`_ |
+`PyPI <https://pypi.org/project/QuTIpy/>`_ |
+`Installation <./guide/installation.html>`_ |
 `Source Repository <https://github.com/sumeetkhatri/QuTIpy>`_ |
 `Issue Tracker <https://github.com/sumeetkhatri/QuTIpy/issues>`_
 
