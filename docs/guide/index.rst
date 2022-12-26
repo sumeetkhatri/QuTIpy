@@ -19,7 +19,7 @@ This guide is an overview and explains the important features; details are found
    installation
    quickstart
    general_functions
-   physics
+   quantum_mechanics
    mathematics
 
 Examples

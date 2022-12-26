@@ -79,9 +79,62 @@ In numpy, defining the same would need one to define the matrix manually, just a
 `Overview section <../getting-started/overview.md#bra-ket-notation>`__.
 
 
-Partial Trace
------------------
 
+Partial Trace
+-------------
+
+The trace of a linear operator X acting on a :math:`d`-
+dimensional Hilbert space can be written as
+
+.. math::
+   Tr[X] = \sum\limits_{i=0}^d-1 \langle i|X|i \rangle
+
+where :math:`\{ |i\rangle_{i=0}^{d-1} \}` is the standard orthonormal basis. We can interpret the trace as
+the sum of the diagonal elements of the matrix corresponding to :math:`X`` written in the
+standard basis.
+
+A **Partial Trace** is a Trace :math:`Tr[B]`, acting on a part of a bipartite quantum state. More
+specifically, given a state :math:`\rho_{AB}` for the bipartite system :math:`AB`, we are often interested
+in determining the state of only one of its subsystems. The partial trace :math:`Tr[B]`,
+which we define formally below, takes a state :math:`\rho_{AB}` acting on the space :math:`H_{AB}`
+and returns a state :math:`\rho_{A} \equiv Tr_B[\rho_{AB}]` acting on the space :math:`H_A`.
+
+The partial trace is therefore the mathematical operation
+used to determine the state of one of the subsystems given the state of a composite
+system comprising two or more subsystems, and it can be thought of as the action
+of “discarding” one of the subsystems.
+
+The partial trace generalizes the notion of marginalizing a joint probability distribution.
+
+Using Partial Trace with QuTIpy is as easy is calling a function definition ``partial_trace`` from ``qutipy.general_functions``.
+
+Let's assume X for, :math:`X = \rho_{AB} = \begin{bmatrix} 1 & 2 & 3 & 4 \\ 5 & \textbf{6} & \textbf{7} & 8 \\ 9 & \textbf{10} & \textbf{11} & 12 \\ 13 & 14 & 15 & 16 \end{bmatrix}`
+
+.. code-block:: python
+
+   import numpy as np
+
+   # Defining the State X
+   X = np.array(
+      [
+         [ 1,  2,  3,  4],
+         [ 5,  6,  7,  8],
+         [ 9, 10, 11, 12],
+         [13, 14, 15, 16]
+      ]
+   )
+
+Now that we have our system, we can calculate the Partial Trace of X, i.e. :math:`\rho_{AB}`.
+Assuming A for, :math:`A = \rho_A \equiv Tr_B[\rho_{AB}]`,
+
+.. code-block:: python
+
+   from qutipy.general_functions import partial_trace
+
+   # Applying Partial Trace over X
+   A = partial_trace(X, [2], [2])
+
+   assert A == 34
 
 
 
@@ -93,7 +146,7 @@ theory due to its connection with entanglement. In fact, it leads to a
 sufficient condition for a bipartite state to be entangled.
 
 Given quantum systems :math:`A` and :math:`B`, the partial transpose
-on :math:`B`is denoted by :math:`T_B\equiv id_A \otimes T_B`, and it is defined as,
+on :math:`B` is denoted by :math:`T_B\equiv id_A \otimes T_B`, and it is defined as,
 
 .. math::
 

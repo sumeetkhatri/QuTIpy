@@ -10,10 +10,17 @@ QuTIpy Documentation
 ####################
 :sup:`QuTIpy (Quantum Theory of Information for Python; pronounced /cutiɛ paɪ/)`
 
+.. meta::
+    :description lang=en:
+        Quantum Theory of Information for Python; pronounced /cutiɛ paɪ/. A package
+        for performing calculations with quantum states, channels and protocols.
+        It is comparable to the QETLAB package for MATLAB/Octave.
+
 .. toctree::
    :maxdepth: 2
    :hidden:
 
+   guide/beginnersguide.rst
    guide/index.rst
    contribute.rst
 
