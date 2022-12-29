@@ -256,10 +256,62 @@ It is a completely positive, trace-preserving linear map from density matrices t
 
 An alternative definition of a quantum channel is a partial trace of a unitary transformation on a larger Hilbert space.
 
+Applying a channel on a state is easy. For example, say, a `Depolarizing Channel`, is a channel
+defined as a one-qubit `Pauli channel` given by :math:`p_x = p_y = p_z = \frac{p}{3}`, can be easily
+implemented as such,
+
+.. code-block:: python
+
+   from qutipy.channels import depolarizing_channel, apply_channel
+
+   # The first element of the channel is the Kraus Operator
+   kraus_op = depolarizing_channel(0.2)[0]
+
+   # Suppose `density_matrix` is a 2 x 2 density matrix,
+   # say, density_matrix = random_density_matrix(dim = 2)
+   evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+
+   assert evolved_density_matrix.shape == (2, 2)
+
+The `Depolarizing Channel` is applied as a `Kraus Operator`, which is a ``list`` type object. It will be much easier
+to visualize the channel with the `Choi Representation` of the `Kraus Operator`, as such,
+
+.. code-block:: python
+
+   from qutipy.channels import choi_representation
+
+   # We represent the Kraus Operator, as Choi representation that will be
+   # a 4 x 4 matrix, representing the operator.
+   representation = choi_representation(kraus_op, 2)
+
+   # representation = array(
+   #    [[□, □, □, □],
+   #     [□, □, □, □],
+   #     [□, □, □, □],
+   #     [□, □, □, □]]
+   # )
+
+   assert representation.shape == (4, 4)
+
 Random Quantum Channels
 ***********************
 
 Consectetur do officia deserunt magna dolore. Cillum voluptate id ipsum anim culpa duis amet sunt magna ipsum. Minim consequat exercitation elit non aliqua laborum nisi ad velit laboris culpa reprehenderit non.
+
+.. code-block:: python
+
+   from qutipy.channels import random_quantum_channel
+
+   # Here we get the  Kraus Operator for a Random Quantum Channel
+   kraus_op = random_quantum_channel(2, 2, return_as="kraus")
+
+   # Suppose `density_matrix` is a 2 x 2 density matrix,
+   # say, density_matrix = random_density_matrix(dim = 2)
+   evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+
+   assert evolved_density_matrix.shape == (2, 2)
+
+
 
 Id id id adipisicing aute culpa cillum excepteur culpa. Nulla nostrud aute commodo qui consequat aliqua fugiat ullamco. Veniam nostrud fugiat id adipisicing. Reprehenderit aute laborum eiusmod adipisicing commodo aliquip voluptate cillum.
 
