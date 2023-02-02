@@ -93,11 +93,7 @@ is possible with classical information processing is also possible with quantum
 information processing. As such, quantum information subsumes classical information
 while allowing for richer possibilities.
 
-The mathematical description of quantum systems can be summarized by the
-following axioms. Each of these axioms is elaborated upon in the section indicated.
-
-
-Quantum systems: A quantum system A is associated with a :hoverxreftooltip:`Hilbert space <qutipy-doc-hilbert-space>` :math:`\mathcal{H}_A`.
+A **quantum system** :math:`A` is associated with a :hoverxreftooltip:`Hilbert space <qutipy-doc-hilbert-space>` :math:`\mathcal{H}_A`.
 The state of the system :math:`A` is described by a density operator, which is a unit-
 trace, positive semi-definite linear operator acting on :math:`\mathcal{H}_A`.
 
@@ -142,10 +138,10 @@ and can be imported as such.
 
 .. code-block:: python
 
-   from qutipy.states import Bell
+   >>> from qutipy.states import Bell
 
 Bell States
------------
+***********
 A `Bell state`_ is defined as a `maximally entangled quantum state`_ of two qubits.
 It can be described as one of four entangled two qubit quantum states,
 known collectively as the four "`Bell state`_".
@@ -171,17 +167,18 @@ Using the operators :math:`X`, :math:`Z`, and :math:`ZX`, we define the followin
 To generates a :math:`d`-dimensional Bell State with :math:`0 \leq z`, :math:`x \leq d-1`, we can simply call the module `Bell_state` that was imported above.
 
 .. code-block:: python
-
-   # This will create a Bell State for a 2 dimensional system.
-   # The resultant matrix will be of shape 4x4.
-
-   bell_state = Bell(d=2, z=1, x=1)
-
-   assert bell_state.shape == (2, 2)
+   >>> from qutipy.states import Bell
+   >>>
+   >>> # This will create a Bell State for a 2 dimensional system.
+   >>> # The resultant matrix will be of shape 4x4.
+   >>> bell_state = Bell(d=2, z=1, x=1)
+   >>>
+   >>> bell_state.shape
+   (2, 2)
 
 
 Random Quantum States
----------------------
+*********************
 
 **Density matrices** define classical statistical mixtures of pure quantum states. Whereas,
 **State vectors** define pure quantum states of a system, and, for an isolated system.
@@ -193,34 +190,39 @@ For Density Matrix,
 
 .. code-block:: python
 
-   # Import the random_density_matrix definition
-   from qutipy.states import random_density_matrix
-
-   # Let's create a random density matrix of shape 3 x 3
-   A = random_density_matrix(dim = 3)
-
-   # The shape of A will be `dim x dim`, i.e. 3 x 3
-   assert A.shape == (3, 3)
+   >>> # Import the random_density_matrix definition
+   >>> from qutipy.states import random_density_matrix
+   >>>
+   >>> # Let's create a random density matrix of shape 3 x 3
+   >>> A = random_density_matrix(dim = 3)
+   >>>
+   >>> # The shape of A will be `dim x dim`, i.e. 3 x 3
+   >>> A.shape
+   (3, 3)
 
 
 State Vectors can be generated directly as well using the definition ``random_state_vector``.
 
 .. code-block:: python
 
-   # Import the random_density_matrix definition
-   from qutipy.states import random_state_vector
-
-   # Let's create a pure random state vector of shape 3 x 1
-   A = random_state_vector(dim = 3)
-
-   # The shape of A will be 3 x 1
-   assert A.shape == (3, 1)
-
-   # One can also define the Schmidt rank like this:
-   A = random_state_vector(dim = [2, 4], rank = 2)
-
-   # The shape of A will be 2 x 4
-   assert A.shape == (2, 4)
+   >>> # Import the random_density_matrix definition
+   >>> from qutipy.states import random_state_vector
+   >>>
+   >>> # Let's create a pure random state vector of shape 3 x 1
+   >>> A = random_state_vector(dim = 3)
+   >>>
+   >>> # The shape of A will be 3 x 1
+   >>> A.shape
+   (3, 1)
+   >>>
+   >>> # One can also define the Schmidt rank like this:
+   >>> A = random_state_vector(dim = [2, 4], rank = 2)
+   >>> # In this case, the random_state_vector generates the state_vector for 2 systems,
+   >>> # one with dimension 2 and one with dimension 4.
+   >>>
+   >>> # The shape of A will be 8 x 1
+   >>> A.shape
+   (8, 1)
 
 
 
@@ -233,19 +235,22 @@ generalize invertible maps or permutations from classical information theory
 and describe the noiseless evolution of the state of a quantum system.
 
 Random Unitaries
-----------------
+****************
 
 QuTIpy ships a definition ``qutipy.gates.RandomUnitary`` that generates a Random Unitary of a given specificaiton
 
 .. code-block:: python
 
-   from qutipy.gates import RandomUnitary
+   >>> from qutipy.gates import RandomUnitary
+   >>>
+   >>> # Creates a random unitary of shape 2 x 2
+   >>> random_unitary = RandomUnitary(2)
+   >>>
+   >>> random_unitary.shape
+   (2, 2)
 
-   # Creates a random unitary of shape 2 x 2
-   random_unitary = RandomUnitary(2)
-
-   assert random_unitary.shape == (2, 2)
-
+Pauli Operators
+***************
 
 Quantum Channels
 ----------------
@@ -256,6 +261,96 @@ It is a completely positive, trace-preserving linear map from density matrices t
 
 An alternative definition of a quantum channel is a partial trace of a unitary transformation on a larger Hilbert space.
 
-Random Quantum Channels
------------------------
+Applying a channel on a state is easy. For example, say, a `Depolarizing Channel`, is a channel
+defined as a one-qubit `Pauli channel` given by :math:`p_x = p_y = p_z = \frac{p}{3}`, can be easily
+implemented as such,
 
+.. code-block:: python
+
+   >>> from qutipy.channels import depolarizing_channel, apply_channel
+   >>>
+   >>> # The first element of the channel is the Kraus Operator
+   >>> kraus_op = depolarizing_channel(0.2)[0]
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)
+
+The `Depolarizing Channel` is applied as a `Kraus Operator`, which is a ``list`` type object. It will be much easier
+to visualize the channel with the `Choi Representation` of the `Kraus Operator`, as such,
+
+.. code-block:: python
+
+   >>> from qutipy.channels import choi_representation
+   >>>
+   >>> # We represent the Kraus Operator, as Choi representation that will be
+   >>> # a 4 x 4 matrix, representing the operator.
+   >>> representation = choi_representation(kraus_op, 2)
+   >>>
+   >>> # representation = array(
+   >>> #    [[□, □, □, □],
+   >>> #     [□, □, □, □],
+   >>> #     [□, □, □, □],
+   >>> #     [□, □, □, □]]
+   >>> # )
+   >>>
+   >>> representation.shape
+   (4, 4)
+
+For starters, a `random quantum channel` can be created with the definition ``qutipy.channels.random_quantum_channel``,
+
+.. code-block:: python
+
+   >>> from qutipy.channels import random_quantum_channel
+   >>>
+   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> kraus_op = random_quantum_channel(2, 2, return_as="kraus")
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)
+
+
+Pauli Channel
+*************
+
+Pauli channel is one of the most common channel, which can be easily implimentd with QuTIpy.
+
+.. code-block:: python
+
+   >>> from qutipy.channels import Pauli_channel
+   >>>
+   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> kraus_op, _, _ = Pauli_channel(px=0.16, py=0.04, pz=0.16)
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)
+
+Amplitude Damping Channel
+*************************
+
+Amplitude Damping channel is one of the most common channels.
+
+.. code-block:: python
+
+   >>> from qutipy.channels import amplitude_damping_channel
+   >>>
+   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> kraus_op = amplitude_damping_channel(0.2)
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)

@@ -129,10 +129,10 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_theme = "pydata_sphinx_theme"
 html_theme_options = {
     "logo": {
-        # "image_light": "logo-light.png",
+        "image_light": "logo.png",
         # "image_dark": "logo-dark.png",
         # "link": "<other page or external link>",
-        "text": "QuTIpy",
+        # "text": "QuTIpy",
     },
     "github_url": "https://github.com/sumeetkhatri/QuTIpy",
     "twitter_url": "https://twitter.com/sumeetkhatri6",
@@ -142,7 +142,9 @@ html_theme_options = {
     "navbar_end": ["theme-switcher", "navbar-icon-links", ],
 
     "external_links": [
-        {"name": "Numpy", "url": "https://numpy.org/numpy-tutorials/"}
+        {"name": "Numpy", "url": "https://numpy.org/numpy-tutorials/"},
+        {"name": "Book", "url": "https://sumeetkhatri.files.wordpress.com/2021/08/sc_22aug2021.pdf"}
+        # {"name": "Principles of Quantum Communication Theory: A Modern Approach", "url": "https://sumeetkhatri.files.wordpress.com/2021/08/sc_22aug2021.pdf"}
     ],
 
     # "analytics_id": "G-XXXXXXXXXX",  #  Provided by Google in your dashboard
@@ -268,7 +270,7 @@ panels_add_boostrap_css = False
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_css_files = ["numpy.css"]
+html_css_files = ["numpy.css", "panels_add_bootstrap_css"]
 html_static_path = ['_static']
 
 
