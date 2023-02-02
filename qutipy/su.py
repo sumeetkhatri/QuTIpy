@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -20,9 +20,11 @@
 # along with this program. If not, see <http://www.gnu.org/licenses/>.
 #
 
+import itertools
+
 import numpy as np
 
-from qutipy.general_functions import Tr, dag, eye, ket
+from qutipy.general_functions import Tr, dag, eye, ket, tensor
 
 
 def coherence_vector_star_product(n1, n2, d):
@@ -113,6 +115,38 @@ def su_generators(d):
     return S
 
 
+def nQudit_su_generator(d, indices):
+    """
+    Generates a tensor product of su(d) generators, as specified by the list 'indices'.
+    Every element of the list 'indices' is a number between 0 and d^2.
+    """
+
+    S = su_generators(d)
+
+    out = 1
+
+    for index in indices:
+        out = tensor(out, S[index])
+
+    return out
+
+
+def nQudit_su_generators(d, n):
+    """
+    Generates a list of all n-fold tensor products of the
+    su(d) generators.
+    """
+
+    S = itertools.product(range(d**2), repeat=n)
+
+    B = []
+
+    for s in S:
+        B.append(nQudit_su_generator(d, s))
+
+    return B
+
+
 def su_structure_constants(d):
     """
     Generates the structure constants corresponding to the su(d)
@@ -132,7 +166,6 @@ def su_structure_constants(d):
     for i in range(1, d**2):
         for j in range(1, d**2):
             for k in range(1, d**2):
-
                 f[(i, j, k)] = (1 / (1j * d**2)) * Tr(
                     S[k] @ (S[i] @ S[j] - S[j] @ S[i])
                 )

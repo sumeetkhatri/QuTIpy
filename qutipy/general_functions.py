@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -142,6 +142,9 @@ def ket(dim, *args):
 
     args = np.array(args)
 
+    if type(dim) == list and len(dim) == 1:
+        dim = dim[0]
+
     if args.size == 1:
         num = args[0]
         out = np.zeros([dim, 1])
@@ -194,7 +197,6 @@ def partial_trace(X, sys, dim):
     elif len(sys) == len(dim):  # If tracing over all systems
         return Tr(X)
     else:
-
         if X.shape[1] == 1:
             X = X @ dag(X)
 

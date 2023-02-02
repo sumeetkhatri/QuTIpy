@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -46,7 +46,6 @@ def avg_fidelity_qubit(K):
     F = 0
 
     for state in states:
-
         F += np.real(Tr((state @ dag(state)) * apply_channel(K, state @ dag(state))))
 
     return (1.0 / 6.0) * F

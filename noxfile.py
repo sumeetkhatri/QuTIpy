@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -22,7 +22,7 @@
 
 import nox
 
-PYTHON_ENV = python = ["3.7", "3.8", "3.9"]
+PYTHON_ENV = python = ["3.7", "3.8", "3.9", "3.10"]
 
 SOURCE_FILES = (
     "setup.py",

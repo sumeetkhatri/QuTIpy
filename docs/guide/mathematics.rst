@@ -11,7 +11,7 @@ Mathematics
 
 In this package we work with finite-dimensional quantum systems, which can be described using finite-dimensional Hilbert spaces.
 The mathematics of finite-dimensional Hilbert spaces is essentially linear and matrix analysis. In this section, we provide a summary
-of some basic facts from linear and matrix analysis...
+of some basic facts from linear and matrix analysis that are helpful for understanding and using QuTIpy.
 
 
 .. _qutipy-doc-hilbert-space:

@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -218,7 +218,6 @@ def hypo_testing_rel_ent(
     """
 
     if not dual:
-
         dim = rho.shape[0]
 
         L = cvx.Variable((dim, dim), hermitian=True)
@@ -243,7 +242,6 @@ def hypo_testing_rel_ent(
                 return -np.log2(prob.value)
 
     elif dual:
-
         dim = rho.shape[0]
 
         Z = cvx.Variable((dim, dim), hermitian=True)

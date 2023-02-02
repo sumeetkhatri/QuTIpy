@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -25,7 +25,8 @@ from numpy.linalg import matrix_power, norm
 
 from qutipy.gates import CZ_ij
 from qutipy.general_functions import SWAP, Tr, dag, eye, ket, syspermute, tensor
-from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
+from qutipy.pauli import generate_nQubit_Pauli
+from qutipy.weyl import discrete_Weyl, discrete_Weyl_X, discrete_Weyl_Z
 
 
 def max_ent(dim, normalized=True, as_matrix=True):
@@ -150,17 +151,17 @@ def isotropic_state(p, d, fidelity=False):
         return p * Bell + (1 - p) * eye(d**2) / d**2
 
 
-def isotropic_twirl_state(X, d):
+def apply_isotropic_twirl(X, d):
     """
     Applies the twirling channel
 
-        X -> ∫ (U ⊗ conj(U))*X*(U ⊗ conj(U)).H dU
+        X -> ∫ (U ⊗ conj(U))*X*(U ⊗ conj(U))^† dU
 
     to the input operator X acting on two d-dimensional systems.
 
     For d=2, this is equivalent to
 
-        X -> (1/24)*sum_i (c_i ⊗ conj(c_i))*X*(c_i ⊗ conj(c_i)).H
+        X -> (1/24)*sum_i (c_i ⊗ conj(c_i))*X*(c_i ⊗ conj(c_i))^†
 
     where the unitaries c_i form the one-qubit Clifford group (because the Clifford
     unitaries constitute a unitary 2-design).
@@ -173,7 +174,7 @@ def isotropic_twirl_state(X, d):
 
     return (Tr(X) / (d**2 - 1) - Tr(G @ X) / (d * (d**2 - 1))) * eye(d**2) + (
         Tr(G @ X) / (d**2 - 1) - Tr(X) / (d * (d**2 - 1))
-    ) @ G
+    ) * G
 
 
 def max_mix(dim):
@@ -314,17 +315,17 @@ def Werner_state(p, d, alt_param=False):
         return p * singlet + (1 - p) * singlet_perp
 
 
-def Werner_twirl_state(X, d):
+def apply_Werner_twirl(X, d):
     """
     Applies the twirling channel
 
-        X -> ∫ (U ⊗ U)*rho*(U ⊗ U).H dU
+        X -> ∫ (U ⊗ U)*rho*(U ⊗ U)^† dU
 
     to the input operator X acting on two d-dimensional systems.
 
     For d=2, this is equivalent to
 
-        X -> (1/24)*sum_i (c_i ⊗ c_i)*X*(c_i ⊗ c_i).H
+        X -> (1/24)*sum_i (c_i ⊗ c_i)*X*(c_i ⊗ c_i)^†
 
     where the unitaries c_i form the one-qubit Clifford group (because the Clifford
     unitaries constitute a unitary 2-design).
@@ -339,6 +340,53 @@ def Werner_twirl_state(X, d):
         Tr(F @ X) / (d**2 - 1) - Tr(X) / (d * (d**2 - 1))
     ) @ F
 
+
+def apply_discrete_Weyl_twirl(X, d, n):
+    """
+    Applies a discrete Weyl twirling channel to the input operator X.
+    The number n is the number of subsystems, and d is the local dimension.
+    So the operator X acts on the vector space (C^d)^{⊗ n}
+
+    For example, if n=2, and accordingly X is a bipartite operator, then
+    the twirling channel is
+
+        X -> \sum_{z,x=0}^{d-1} (W_{z,x} ⊗ W_{z,x}) X (W_{z,x} ⊗ W_{z,x})^†
+
+    For d=2, this is the same as the Pauli twirl -- see the 'Pauli_twirl' function.
+    """
+
+    return np.sum(
+        [
+            tensor([discrete_Weyl(d, z, x), n])
+            @ X
+            @ tensor([dag(discrete_Weyl(d, z, x)), n])
+            for z in range(d)
+            for x in range(d)
+        ],
+        0,
+    )
+
+
+def apply_Pauli_twirl(X, n):
+    """
+    Applies a Pauli twirl to an operator X acting on a system of n-qubits.
+    So the operator X acts on the vector space (C^2)^{⊗ n}.
+
+    For example, if n=3, then the twirling channel is
+
+        X -> \sum_{i=0}^4 (P_i ⊗ P_i ⊗ P_i) X (P_i ⊗ P_i ⊗ P_i)
+    """
+
+    return np.sum(
+        [
+            generate_nQubit_Pauli([i] * n) @ X @ dag(generate_nQubit_Pauli([i] * n))
+            for i in range(4)
+        ],
+        0,
+    )
+
+
+############################################################################
 
 # QuTIpy States Utility
 
@@ -363,7 +411,6 @@ def check_kext(rhoAB, dimA, dimB, k, display=False):
     c = [R - t * eye(dimA * dimB**k) >> 0]
 
     for j in range(2, k + 2):
-
         sys = list(np.setdiff1d(all_sys, [1, j]))
 
         R_ABj = partial_trace(R, sys, dim)

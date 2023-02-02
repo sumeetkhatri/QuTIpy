@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -206,7 +206,6 @@ def test_nQubit_Pauli_coeff():
 
 
 def test_nQubit_quadratures():
-
     quadratures = nQubit_quadratures(2)
     assert np.all(
         quadratures[1]

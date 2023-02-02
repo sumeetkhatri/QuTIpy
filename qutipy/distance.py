@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -36,7 +36,6 @@ def norm_trace_dist(rho, sigma, sdp=False, dual=False, display=False):
 
     if sdp:
         if not dual:
-
             dim = rho.shape[0]
 
             L1 = cvx.Variable((dim, dim), hermitian=True)
@@ -52,7 +51,6 @@ def norm_trace_dist(rho, sigma, sdp=False, dual=False, display=False):
             return (1 / 2) * prob.value
 
         elif dual:
-
             dim = rho.shape[0]
 
             Y1 = cvx.Variable((dim, dim), hermitian=True)
@@ -71,7 +69,6 @@ def norm_trace_dist(rho, sigma, sdp=False, dual=False, display=False):
 
 
 def norm_diamond_dist(J1, J2, dA, dB, dual=False, display=False):
-
     """
     Calculates the normalized diamond distance between two channels with
     Choi representations J1 and J2. For arbitrary superoperators, one can
@@ -94,7 +91,6 @@ def norm_diamond_dist(J1, J2, dA, dB, dual=False, display=False):
         return prob.value
 
     else:
-
         mu = cvx.Variable()
         Z = cvx.Variable((dA, dB), hermitian=True)
 
