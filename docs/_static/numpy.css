@@ -101,3 +101,11 @@ Nat Methods 8, 441 (2011). https://doi.org/10.1038/nmeth.1618
   margin-left: auto;
   margin-right: auto;
 }
+
+.MathJax span.math{
+  display: inline !important;
+}
+
+.bd-sidebar-primary{
+  max-width: 20% !important;
+}

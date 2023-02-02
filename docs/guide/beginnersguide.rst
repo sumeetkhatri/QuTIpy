@@ -138,7 +138,7 @@ and can be imported as such.
 
 .. code-block:: python
 
-   from qutipy.states import Bell
+   >>> from qutipy.states import Bell
 
 Bell States
 ***********
@@ -167,13 +167,14 @@ Using the operators :math:`X`, :math:`Z`, and :math:`ZX`, we define the followin
 To generates a :math:`d`-dimensional Bell State with :math:`0 \leq z`, :math:`x \leq d-1`, we can simply call the module `Bell_state` that was imported above.
 
 .. code-block:: python
-
-   # This will create a Bell State for a 2 dimensional system.
-   # The resultant matrix will be of shape 4x4.
-
-   bell_state = Bell(d=2, z=1, x=1)
-
-   assert bell_state.shape == (2, 2)
+   >>> from qutipy.states import Bell
+   >>>
+   >>> # This will create a Bell State for a 2 dimensional system.
+   >>> # The resultant matrix will be of shape 4x4.
+   >>> bell_state = Bell(d=2, z=1, x=1)
+   >>>
+   >>> bell_state.shape
+   (2, 2)
 
 
 Random Quantum States
@@ -189,36 +190,39 @@ For Density Matrix,
 
 .. code-block:: python
 
-   # Import the random_density_matrix definition
-   from qutipy.states import random_density_matrix
-
-   # Let's create a random density matrix of shape 3 x 3
-   A = random_density_matrix(dim = 3)
-
-   # The shape of A will be `dim x dim`, i.e. 3 x 3
-   assert A.shape == (3, 3)
+   >>> # Import the random_density_matrix definition
+   >>> from qutipy.states import random_density_matrix
+   >>>
+   >>> # Let's create a random density matrix of shape 3 x 3
+   >>> A = random_density_matrix(dim = 3)
+   >>>
+   >>> # The shape of A will be `dim x dim`, i.e. 3 x 3
+   >>> A.shape
+   (3, 3)
 
 
 State Vectors can be generated directly as well using the definition ``random_state_vector``.
 
 .. code-block:: python
 
-   # Import the random_density_matrix definition
-   from qutipy.states import random_state_vector
-
-   # Let's create a pure random state vector of shape 3 x 1
-   A = random_state_vector(dim = 3)
-
-   # The shape of A will be 3 x 1
-   assert A.shape == (3, 1)
-
-   # One can also define the Schmidt rank like this:
-   A = random_state_vector(dim = [2, 4], rank = 2)
-   # In this case, the random_state_vector generates the state_vector for 2 systems,
-   # one with dimension 2 and one with dimension 4.
-
-   # The shape of A will be 8 x 1
-   assert A.shape == (8, 1)
+   >>> # Import the random_density_matrix definition
+   >>> from qutipy.states import random_state_vector
+   >>>
+   >>> # Let's create a pure random state vector of shape 3 x 1
+   >>> A = random_state_vector(dim = 3)
+   >>>
+   >>> # The shape of A will be 3 x 1
+   >>> A.shape
+   (3, 1)
+   >>>
+   >>> # One can also define the Schmidt rank like this:
+   >>> A = random_state_vector(dim = [2, 4], rank = 2)
+   >>> # In this case, the random_state_vector generates the state_vector for 2 systems,
+   >>> # one with dimension 2 and one with dimension 4.
+   >>>
+   >>> # The shape of A will be 8 x 1
+   >>> A.shape
+   (8, 1)
 
 
 
@@ -237,12 +241,13 @@ QuTIpy ships a definition ``qutipy.gates.RandomUnitary`` that generates a Random
 
 .. code-block:: python
 
-   from qutipy.gates import RandomUnitary
-
-   # Creates a random unitary of shape 2 x 2
-   random_unitary = RandomUnitary(2)
-
-   assert random_unitary.shape == (2, 2)
+   >>> from qutipy.gates import RandomUnitary
+   >>>
+   >>> # Creates a random unitary of shape 2 x 2
+   >>> random_unitary = RandomUnitary(2)
+   >>>
+   >>> random_unitary.shape
+   (2, 2)
 
 Pauli Operators
 ***************
@@ -262,59 +267,90 @@ implemented as such,
 
 .. code-block:: python
 
-   from qutipy.channels import depolarizing_channel, apply_channel
-
-   # The first element of the channel is the Kraus Operator
-   kraus_op = depolarizing_channel(0.2)[0]
-
-   # Suppose `density_matrix` is a 2 x 2 density matrix,
-   # say, density_matrix = random_density_matrix(dim = 2)
-   evolved_density_matrix = apply_channel(kraus_op, density_matrix)
-
-   assert evolved_density_matrix.shape == (2, 2)
+   >>> from qutipy.channels import depolarizing_channel, apply_channel
+   >>>
+   >>> # The first element of the channel is the Kraus Operator
+   >>> kraus_op = depolarizing_channel(0.2)[0]
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)
 
 The `Depolarizing Channel` is applied as a `Kraus Operator`, which is a ``list`` type object. It will be much easier
 to visualize the channel with the `Choi Representation` of the `Kraus Operator`, as such,
 
 .. code-block:: python
 
-   from qutipy.channels import choi_representation
+   >>> from qutipy.channels import choi_representation
+   >>>
+   >>> # We represent the Kraus Operator, as Choi representation that will be
+   >>> # a 4 x 4 matrix, representing the operator.
+   >>> representation = choi_representation(kraus_op, 2)
+   >>>
+   >>> # representation = array(
+   >>> #    [[□, □, □, □],
+   >>> #     [□, □, □, □],
+   >>> #     [□, □, □, □],
+   >>> #     [□, □, □, □]]
+   >>> # )
+   >>>
+   >>> representation.shape
+   (4, 4)
 
-   # We represent the Kraus Operator, as Choi representation that will be
-   # a 4 x 4 matrix, representing the operator.
-   representation = choi_representation(kraus_op, 2)
-
-   # representation = array(
-   #    [[□, □, □, □],
-   #     [□, □, □, □],
-   #     [□, □, □, □],
-   #     [□, □, □, □]]
-   # )
-
-   assert representation.shape == (4, 4)
-
-Random Quantum Channels
-***********************
-
-Consectetur do officia deserunt magna dolore. Cillum voluptate id ipsum anim culpa duis amet sunt magna ipsum. Minim consequat exercitation elit non aliqua laborum nisi ad velit laboris culpa reprehenderit non.
+For starters, a `random quantum channel` can be created with the definition ``qutipy.channels.random_quantum_channel``,
 
 .. code-block:: python
 
-   from qutipy.channels import random_quantum_channel
+   >>> from qutipy.channels import random_quantum_channel
+   >>>
+   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> kraus_op = random_quantum_channel(2, 2, return_as="kraus")
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)
 
-   # Here we get the  Kraus Operator for a Random Quantum Channel
-   kraus_op = random_quantum_channel(2, 2, return_as="kraus")
 
-   # Suppose `density_matrix` is a 2 x 2 density matrix,
-   # say, density_matrix = random_density_matrix(dim = 2)
-   evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+Pauli Channel
+*************
 
-   assert evolved_density_matrix.shape == (2, 2)
+Pauli channel is one of the most common channel, which can be easily implimentd with QuTIpy.
 
+.. code-block:: python
 
+   >>> from qutipy.channels import Pauli_channel
+   >>>
+   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> kraus_op, _, _ = Pauli_channel(px=0.16, py=0.04, pz=0.16)
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)
 
-Id id id adipisicing aute culpa cillum excepteur culpa. Nulla nostrud aute commodo qui consequat aliqua fugiat ullamco. Veniam nostrud fugiat id adipisicing. Reprehenderit aute laborum eiusmod adipisicing commodo aliquip voluptate cillum.
+Amplitude Damping Channel
+*************************
 
-Minim nisi consectetur aliquip aliquip ex ut reprehenderit Lorem sit proident. Quis qui proident deserunt dolore ipsum proident ea esse do deserunt ex exercitation. Ut excepteur fugiat ullamco esse laborum magna tempor qui sunt deserunt voluptate.
+Amplitude Damping channel is one of the most common channels.
 
-Deserunt ipsum qui in velit amet consectetur. Cupidatat anim esse proident et fugiat do irure et ullamco mollit. Non anim tempor dolor in anim aliqua incididunt velit officia excepteur deserunt commodo aliqua aliqua. Ex commodo ex labore consectetur tempor Lorem quis sint voluptate. Reprehenderit aute ullamco fugiat fugiat eu occaecat dolore aliquip et adipisicing Lorem do aliquip officia. Ea laboris non duis fugiat aliquip occaecat labore et reprehenderit magna dolore consectetur Lorem deserunt.
+.. code-block:: python
+
+   >>> from qutipy.channels import amplitude_damping_channel
+   >>>
+   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> kraus_op = amplitude_damping_channel(0.2)
+   >>>
+   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
+   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
+   >>>
+   >>> evolved_density_matrix.shape
+   (2, 2)

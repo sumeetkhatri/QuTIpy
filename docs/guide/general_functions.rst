@@ -21,7 +21,7 @@ directly to the case of separable, *infinite-dimensional Hilbert
 spaces*, especially for operationally-defined tasks and information
 quantities.
 
-A :math:`d`-dimensional Hilbert space :math:`(1 \le d < \infty)` is defined to
+A **d**-dimensional Hilbert space :math:`(1 \le d < \infty)` is defined to
 be a complex vector space equipped with an inner product. We use the notation
 :math:`{\displaystyle |\psi\rangle}` to denote a vector in :math:`\mathcal{H}`.
 More generally, a **Hilbert space** is a “**complete inner product**” space.
@@ -69,12 +69,14 @@ Defining a basis state :math:`{\displaystyle |0\rangle }`, we can use the ``ket`
 
 .. code:: python
 
-   from qutipy.general_functions import ket
-
-   # Defining a ket 0 in a 2 Dimensional Hilbert space,
-   # The first argument takes a dimension of the Hilbert space,
-   # while the secind argument takes the ket value.
-   v = ket(2,0)
+   >>> from qutipy.general_functions import ket
+   >>>
+   >>> # Defining a ket 0 in a 2 Dimensional Hilbert space,
+   >>> # The first argument takes a dimension of the Hilbert space,
+   >>> # while the secind argument takes the ket value.
+   >>> v = ket(2,0)
+   array([[1.],
+          [0.]])
 
 Here we have defined the **ket** v for :math:`{\displaystyle |v\rangle } = \begin{bmatrix} 1 \\ 0 \end{bmatrix}`.
 In numpy, defining the same would need one to define the matrix manually.
@@ -113,29 +115,30 @@ Let's assume X for, :math:`X = \rho_{AB} = \begin{bmatrix} 1 & 2 & 3 & 4 \\ 5 & 
 
 .. code-block:: python
 
-   import numpy as np
-
-   # Defining the State X
-   X = np.array(
-      [
-         [ 1,  2,  3,  4],
-         [ 5,  6,  7,  8],
-         [ 9, 10, 11, 12],
-         [13, 14, 15, 16]
-      ]
-   )
+   >>> import numpy as np
+   >>>
+   >>> # Defining the State X
+   >>> X = np.array(
+   >>>    [
+   >>>       [ 1,  2,  3,  4],
+   >>>       [ 5,  6,  7,  8],
+   >>>       [ 9, 10, 11, 12],
+   >>>       [13, 14, 15, 16]
+   >>>    ]
+   >>> )
 
 Now that we have our system, we can calculate the Partial Trace of X, i.e. :math:`\rho_{AB}`.
 Assuming A for, :math:`A = \rho_A \equiv Tr_B[\rho_{AB}]`,
 
 .. code-block:: python
 
-   from qutipy.general_functions import partial_trace
-
-   # Applying Partial Trace over X
-   A = partial_trace(X, [2], [2])
-
-   assert A == 34
+   >>> from qutipy.general_functions import partial_trace
+   >>>
+   >>> # Applying Partial Trace over X
+   >>> A = partial_trace(X, [2], [2])
+   >>>
+   >>> A
+   34
 
 
 
@@ -162,21 +165,28 @@ Defining a state ``X`` with [ … ]
 
 .. code:: python
 
-   import numpy as np
-
-   X = np.array(
-       [
-           [ 1,  2,  3,  4],
-           [ 5,  6,  7,  8],
-           [ 9, 10, 11, 12],
-           [13, 14, 15, 16]
-       ]
-   )
+   >>> import numpy as np
+   >>>
+   >>> X = np.array(
+   >>>     [
+   >>>         [ 1,  2,  3,  4],
+   >>>         [ 5,  6,  7,  8],
+   >>>         [ 9, 10, 11, 12],
+   >>>         [13, 14, 15, 16]
+   >>>     ]
+   >>> )
 
 Now we can apply the ``partial_transpose`` function over our state ``X``:
 
 .. code:: python
 
-   from qutipy.general_functions import partial_transpose
+   >>> from qutipy.general_functions import partial_transpose
+   >>>
+   >>> pt = partial_transpose(X, [2], [2, 2])
+   >>> pt
+   array([[ 1,  5,  3,  7],
+          [ 2,  6,  4,  8],
+          [ 9, 13, 11, 15],
+          [10, 14, 12, 16]])
 
-   pt = partial_transpose(X, [1], X.shape)
+
