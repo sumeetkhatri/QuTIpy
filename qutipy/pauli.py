@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -96,6 +96,20 @@ def generate_nQubit_Pauli(indices):
             out = tensor(out, Sz)
 
     return out
+
+
+def nQubit_Pauli_basis(n):
+    """
+    Generates a list of all n-qubit Pauli operators.
+    """
+
+    S = list(itertools.product([0, 1, 2, 3], repeat=n))
+
+    B = []
+    for s in S:
+        B.append(generate_nQubit_Pauli(s))
+
+    return B
 
 
 def nQubit_cov_matrix(X, n):

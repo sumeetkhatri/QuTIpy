@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -157,7 +157,6 @@ def generate_Clifford_group(n, display=False):
     G = Clifford_group_generators(n)
 
     def in_list(L, elem):
-
         # Last modified: 27 June 2019
         """
         Checks if the given unitary elem is in the list L.
@@ -177,7 +176,6 @@ def generate_Clifford_group(n, display=False):
     generated = False
 
     while not generated:
-
         tmp = []
         num_added = 0
 

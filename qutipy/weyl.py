@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -64,6 +64,19 @@ def discrete_Weyl(d, z, x):
     return matrix_power(discrete_Weyl_Z(d), z) @ matrix_power(discrete_Weyl_X(d), x)
 
 
+def discrete_Weyl_basis(d):
+    """
+    Generates a list of all d^2 discrete-Weyl operators.
+    """
+
+    B = []
+    for z in range(d):
+        for x in range(d):
+            B.append(discrete_Weyl(d, z, x))
+
+    return B
+
+
 def generate_nQudit_X(d, indices):
     """
     Generates a tensor product of discrete Weyl-X operators. indices is a
@@ -96,6 +109,23 @@ def generate_nQudit_Z(d, indices):
         out = tensor(out, matrix_power(Z, index))
 
     return out
+
+
+def nQudit_discrete_Weyl_basis(d, n):
+    """
+    Generates a list of all n-fold tensor products of the
+    discrete Weyl operators acting in d dimensions.
+    """
+
+    S = list(itertools.product(range(d), repeat=n))
+
+    B = []
+
+    for s1 in S:
+        for s2 in S:
+            B.append(generate_nQudit_Z(d, s1) @ generate_nQudit_X(d, s2))
+
+    return B
 
 
 def nQudit_cov_matrix(X, d, n):

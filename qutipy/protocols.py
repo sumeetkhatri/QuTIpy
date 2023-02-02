@@ -1,7 +1,7 @@
 #               This file is part of the QuTIpy package.
 #                https://github.com/sumeetkhatri/QuTIpy
 #
-#                   Copyright (c) 2022 Sumeet Khatri.
+#                   Copyright (c) 2023 Sumeet Khatri.
 #                       --.- ..- - .. .--. -.--
 #
 #
@@ -42,7 +42,7 @@ from qutipy.general_functions import (
 )
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 from qutipy.pauli import generate_nQubit_Pauli_Z
-from qutipy.states import Bell, graph_state, isotropic_twirl_state
+from qutipy.states import Bell, apply_isotropic_twirl, graph_state
 from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
 
 
@@ -59,9 +59,7 @@ def state_discrimination(
     """
 
     if sdp:
-
         if not dual:
-
             dim = rho.shape[0]
 
             M = cvx.Variable((dim, dim), hermitian=True)
@@ -85,7 +83,6 @@ def state_discrimination(
                 return p_err
 
         elif dual:
-
             dim = rho.shape[0]
 
             W = cvx.Variable((dim, dim), hermitian=True)
@@ -141,7 +138,6 @@ def apply_teleportation_chain_channel(rho, n, dA=2, dR=2, dB=2):
 
     for z_indices in indices:
         for x_indices in indices:
-
             Bell_zx = Bell(dB, z_indices[0], x_indices[0])
             for j in range(1, n):
                 Bell_zx = tensor(Bell_zx, Bell(dB, z_indices[j], x_indices[j]))
@@ -172,7 +168,6 @@ def post_graph_state_dist_fidelity(A_G, n, rho):
     f = 0
 
     for x_n in X_n:
-
         x_n = np.array([x_n]).T  # Turn x_n into a column vector matrix
 
         z_n = A_G * x_n
@@ -345,9 +340,7 @@ def channel_discrimination(
     """
 
     if sdp:
-
         if not dual:
-
             # Need the following syspermute because the cvxpy kron function
             # requires a constant in the first argument
             J0 = syspermute(J0, [2, 1], [dimA, dimB])
@@ -380,7 +373,6 @@ def channel_discrimination(
                 return p_err
 
         elif dual:
-
             mu = cvx.Variable()
             W = cvx.Variable((dimA * dimB, dimA * dimB), hermitian=True)
 
@@ -455,7 +447,7 @@ def entanglement_distillation(
             K0 @ rho_in @ dag(K0) + K1 @ rho_in @ dag(K1), [2, 4], [2, 2, 2, 2]
         )
         if twirl_after:
-            rho_out = isotropic_twirl_state(rho_out, 2)
+            rho_out = apply_isotropic_twirl(rho_out, 2)
         if normalize:
             rho_out = rho_out / Tr(rho_out)
 
@@ -557,7 +549,6 @@ def post_teleportation_chain_fidelity(rho, n, dA=2):
 
     for z_indices in indices:
         for x_indices in indices:
-
             z_sum = np.mod(sum(z_indices), dA)
             x_sum = np.mod(sum(x_indices), dA)
 
