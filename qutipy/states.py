@@ -338,7 +338,7 @@ def apply_Werner_twirl(X, d):
 
     return (Tr(X) / (d**2 - 1) - Tr(F @ X) / (d * (d**2 - 1))) * eye(d**2) + (
         Tr(F @ X) / (d**2 - 1) - Tr(X) / (d * (d**2 - 1))
-    ) @ F
+    ) * F
 
 
 def apply_discrete_Weyl_twirl(X, d, n):
