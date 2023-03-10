@@ -50,7 +50,6 @@ def generate_all_kets(dims):
     Generates the tensor-product orthonormal basis corresponding to vector spaces
     with dimensions in the list dims.
 
-    ------------------------
     Example:
 
         generate_all_kets([2,3]) returns a list containing

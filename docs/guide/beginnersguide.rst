@@ -167,6 +167,7 @@ Using the operators :math:`X`, :math:`Z`, and :math:`ZX`, we define the followin
 To generates a :math:`d`-dimensional Bell State with :math:`0 \leq z`, :math:`x \leq d-1`, we can simply call the module `Bell_state` that was imported above.
 
 .. code-block:: python
+
    >>> from qutipy.states import Bell
    >>>
    >>> # This will create a Bell State for a 2 dimensional system.
@@ -251,6 +252,90 @@ QuTIpy ships a definition ``qutipy.gates.RandomUnitary`` that generates a Random
 
 Pauli Operators
 ***************
+
+The `Pauli matrices`_, also called the Pauli spin matrices,
+are complex matrices that arise in Pauli's treatment of spin in quantum mechanics. They are defined by:
+
+.. math::
+
+   \sigma_1 = \sigma_x = \begin{bmatrix} 0 && 1 \\ 1 && 0 \end{bmatrix}
+
+   \sigma_2 = \sigma_y = \begin{bmatrix} 0 && -i \\ i && 0 \end{bmatrix}
+
+   \sigma_3 = \sigma_z = \begin{bmatrix} 1 && 0 \\ 0 && -1 \end{bmatrix}
+
+In `quantum mechanics`_, pauli matrices occur in the `Pauli equation`_ which takes into account the
+interaction of the `spin`_ of a particle with an external `electromagnetic field`_.
+
+.. note::
+
+   `Pauli matrices`_ also represent the interaction states of two polarization filters for horizontal
+   / vertical polarization, 45º polarization, and circular polarization.
+
+
+Each Pauli matrix is `Hermitian`_, and together with the identity matrix :math:`I`, the Pauli matrices
+form a `basis`_ for the real `vector space`_ of :math:`2 \times 2`  Hermitian matrices. This means that
+any :math:`2 \times 2`  `Hermitian matrix`_ can be written in a unique way as a linear combination of
+Pauli matrices, with all coefficients being real numbers.
+
+.. note::
+
+   The identity matrix :math:`I` is sometimes considered as the zero :math:`^{th}` Pauli matrix or
+   :math:`\sigma_0`.
+
+
+The Pauli matrices are important in the context of quantum mechanics, and `quantum information`_
+more generally, as they can be used to describe the quantum states, as well as the evolution of the
+quantum states, of 2 Dimensional quantum systems, called `qubits`_. They are also involved in fundamental
+quantum information processing protocols such as `quantum teleportation`_.
+
+Suppose an example, for :ref:`qutipy-doc-tensor-product` of 3 Pauli-X (:math:`\sigma_1` or :math:`\sigma_x`)
+
+.. math::
+
+   \sigma_x( 111 ) = \sigma_x \otimes \sigma_x \otimes \sigma_x
+
+To define :math:`X = \sigma_x( 111 )` using numpy, one need to define the entire matrix.
+
+.. code:: python
+
+   >>> import numpy as np
+   >>>
+   >>> # Define Pauli-X for [ 1 1 1 ] using numpy
+   >>> X = np.array([
+   >>>       [0, 0, 0, 0, 0, 0, 0, 1],
+   >>>       [0, 0, 0, 0, 0, 0, 1, 0],
+   >>>       [0, 0, 0, 0, 0, 1, 0, 0],
+   >>>       [0, 0, 0, 0, 1, 0, 0, 0],
+   >>>       [0, 0, 0, 1, 0, 0, 0, 0],
+   >>>       [0, 0, 1, 0, 0, 0, 0, 0],
+   >>>       [0, 1, 0, 0, 0, 0, 0, 0],
+   >>>       [1, 0, 0, 0, 0, 0, 0, 0]
+   >>> ])
+
+These kind of definition for :math:`X = \sigma_x( 111 )` can be obtained easily using QuTIpy.
+
+.. code:: python
+
+   >>> from qutipy.Pauli import generate_nQubit_Pauli_X
+   >>>
+   >>> # Define Pauli-X for [ 1 1 1 ] using qutipy
+   >>> X = generate_nQubit_Pauli_X([1, 1, 1])
+
+
+.. _Pauli matrices: https://en.wikipedia.org/wiki/Pauli\_matrices
+.. _quantum mechanics: https://en.wikipedia.org/wiki/Quantum\_mechanics
+.. _Pauli equation: https://en.wikipedia.org/wiki/Pauli\_equation
+.. _spin: https://en.wikipedia.org/wiki/Spin\_\(physics\)
+.. _electromagnetic field: https://en.wikipedia.org/wiki/Electromagnetic\_field
+
+.. _Hermitian: https://en.wikipedia.org/wiki/Hermitian\_matrix
+.. _basis: https://en.wikipedia.org/wiki/Basis\_\(linear\_algebra\)
+.. _vector space: https://en.wikipedia.org/wiki/Vector\_space
+.. _Hermitian matrix: https://en.wikipedia.org/wiki/Hermitian\_matrix
+.. _quantum information: https://en.wikipedia.org/wiki/Quantum\_information
+.. _qubits: https://en.wikipedia.org/wiki/Qubit
+.. _quantum teleportation: https://en.wikipedia.org/wiki/Quantum\_teleportation
 
 Quantum Channels
 ----------------

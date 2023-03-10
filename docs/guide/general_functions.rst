@@ -82,12 +82,39 @@ Here we have defined the **ket** v for :math:`{\displaystyle |v\rangle } = \begi
 In numpy, defining the same would need one to define the matrix manually.
 
 
+Tensor Product
+--------------
+
+The :ref:`qutipy-doc-tensor-product` is a way of combining two mathematical objects to
+create a new object that captures their combined properties.
+
+More specifically, given two vector spaces :math:`V` and :math:`W`, the tensor product
+:math:`V \otimes W` is a new vector space that represents all possible combinations of
+linear combinations of elements from :math:`V` and :math:`W` .
+
+.. code-block:: python
+
+   >>> from qutipy.general_functions import tensor
+   >>>
+   >>> V = np.array([[ 1,  2,  3,  4],
+   >>>               [ 5,  6,  7,  8],
+   >>>               [ 9, 10, 11, 12],
+   >>>               [13, 14, 15, 16]])
+   >>>
+   >>> W = np.array([[2, 4]])
+   >>>
+   >>> tensor(V, W)
+
+   array([[ 2,  4,  4,  8,  6, 12,  8, 16],
+          [10, 20, 12, 24, 14, 28, 16, 32],
+          [18, 36, 20, 40, 22, 44, 24, 48],
+          [26, 52, 28, 56, 30, 60, 32, 64]])
+
 
 Partial Trace
 -------------
 
-The trace of a linear operator X acting on a :math:`d`-
-dimensional Hilbert space can be written as
+The trace of a linear operator X acting on a :math:`d`-dimensional Hilbert space can be written as
 
 .. math::
    Tr[X] = \sum\limits_{i=0}^{d-1} \langle i|X|i \rangle

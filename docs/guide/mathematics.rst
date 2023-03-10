@@ -151,6 +151,8 @@ A linear operator :math:`X \in L(H_A, H_B)` is called **surjective** (or onto) i
 :math:`|\phi\rangle \in H_B`, there exists :math:`|\psi\rangle \in H_A` such that :math:`X|\psi\rangle = |\phi\rangle`.
 A necessary and sufficient condition for :math:`X` to be surjective is that :math:`rank(X) = d_B`.
 
+.. _qutipy-doc-tensor-product:
+
 Tensor product
 --------------
 
@@ -163,12 +165,8 @@ for the product operation :math:`\otimes`, and no other relations are assumed to
 
 The tensor product of (finite dimensional) vector spaces has dimension equal to the product of the dimensions of the two factors:
 
-
 .. math::
    dim ⁡ ( V \otimes W ) = dim ⁡ V \times dim ⁡ W.
-
-
-
 
 Given two linear operators :math:`X \in L(H_A, H_B)` and :math:`Y \in L(H_A, H_B)`, their tensor
 product :math:`X \otimes Y` is a linear operator in :math:`L(H_A \otimes H_{A′} , H_B \otimes H_{B′} )` such that
@@ -210,6 +208,8 @@ which is a matrix generalization of the “stack-and-multiply” procedure:
       {\alpha}_1 \cdot {\beta}_2
    \end{pmatrix}
 
+.. _qutipy-doc-basis-expansion:
+
 Basis Expansion
 ---------------
 
@@ -218,6 +218,8 @@ a finite linear combination of elements of :math:`B`. The coefficients of this l
 of the vector with respect to :math:`B`. The elements of a basis are called basis vectors.
 
 Every linearly independent list of vectors in a finite-dimensional vector space :math:`V` can be extended to a basis of :math:`V`.
+
+.. _qutipy-doc-singular-value-decomposition:
 
 Singular Value Decomposition
 ----------------------------
@@ -248,6 +250,7 @@ up the columns of :math:`U`. Also, the singular values in :math:`\Sigma` are squ
 from :math:`MM^T` or :math:`M^TM`.  The singular values are the diagonal entries of the :math:`\Sigma`
 matrix and are arranged in descending order.
 
+.. _qutipy-doc-schmidt-decomposition:
 
 Schmidt Decomposition
 ---------------------
