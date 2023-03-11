@@ -208,7 +208,7 @@ def random_density_matrix(dim, *args):
     return rho / Tr(rho)
 
 
-def random_state_vector(dim, rank=None):
+def random_state_vector(dim, rank=None, as_matrix=False):
     """
     Generates a random pure state.
 
@@ -231,7 +231,10 @@ def random_state_vector(dim, rank=None):
 
         psi = psi / norm(psi)
 
-        return psi
+        if as_matrix:
+            return psi@dag(psi)
+        else:
+            return psi
     else:
         dimA = dim[0]
         dimB = dim[1]
@@ -257,7 +260,10 @@ def random_state_vector(dim, rank=None):
 
         psi = psi / norm(psi)
 
-        return psi
+        if as_matrix:
+            return psi@dag(psi)
+        else:
+            return psi
 
 
 def singlet_state(d, perp=False):

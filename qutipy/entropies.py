@@ -210,7 +210,7 @@ def entropy(rho):
 
 
 def hypo_testing_rel_ent(
-    rho, sigma, eps, dual=False, log=False, display=False, return_all=False
+    rho, sigma, eps, dual=False, log=False, display=False, return_all=False, prec=1e-7
 ):
     """
     Calculates the eps-hypothesis testing relative entropy of the two states
@@ -228,7 +228,7 @@ def hypo_testing_rel_ent(
         obj = cvx.Minimize(cvx.real(cvx.trace(L @ sigma)))
         prob = cvx.Problem(obj, constraints=c)
 
-        prob.solve(verbose=display, eps=1e-7)
+        prob.solve(verbose=display, eps=prec)
 
         if not log:
             if return_all:
@@ -252,7 +252,7 @@ def hypo_testing_rel_ent(
         obj = cvx.Maximize(cvx.real(mu * (1 - eps) - cvx.trace(Z)))
 
         prob = cvx.Problem(obj, c)
-        prob.solve(verbose=display, eps=1e-7)
+        prob.solve(verbose=display, eps=prec)
 
         if not log:
             if return_all:
