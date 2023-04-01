@@ -160,7 +160,8 @@ def post_graph_state_dist_fidelity(A_G, n, rho):
     """
     Finds the fidelity of the output state of the graph state distribution channel
     with respect to the graph state |G>, where A_G is the adjacency matrix of the
-    graph G and n is the number of vertices of G.
+    graph G and n is the number of vertices of G. The input state rho is a state of
+    2*n qubits.
     """
 
     X_n = list(itertools.product(*[range(2)] * n))

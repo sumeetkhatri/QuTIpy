@@ -220,8 +220,8 @@ def transfer_matrix(K, dA, dB, basis="W", as_dict=False):
         Binput = generate_linear_op_basis(dA, basis=basis)
         Boutput = generate_linear_op_basis(dB, basis=basis)
 
-        for j in Binput:
-            for i in Boutput:
+        for j in range(len(Binput)):
+            for i in range(len(Boutput)):
                 if as_dict:
                     c[(i, j)] = (1 / dB) * Tr(
                         dag(Boutput[i]) @ apply_channel(K, Binput[j])
