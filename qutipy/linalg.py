@@ -23,7 +23,7 @@
 import math
 
 import numpy as np
-from numpy.linalg import matrix_rank, norm
+from numpy.linalg import matrix_rank, norm, eig
 
 from qutipy.general_functions import dag, eye, tensor
 from qutipy.pauli import nQubit_Pauli_basis
@@ -78,6 +78,8 @@ def vec(X):
     stacking the columns of X. The result is a bipartite vector
     of dimension d2*d1, i.e., in the tensor product space
     C^(d2) ⊗ C^(d1).
+
+    TODO: Rewrite this function using numpy reshaping functions
     """
 
     [d1, d2] = X.shape
@@ -92,9 +94,11 @@ def vec_inverse(v, d1, d2):
     Take a bipartite vector v of dimension d1*d2, i.e., in the
     tensor product space C^(d1) ⊗ C^(d2), and transforms it
     into a matrix of size d2 x d1.
+
+    TODO: rewrite this function using numpy reshaping functions.
     """
 
-    gamma = max_ent(d1, normalized=False, density_matrix=False)
+    gamma = max_ent(d1, normalized=False, as_matrix=False)
 
     return tensor(dag(gamma), eye(d2)) @ tensor(eye(d1), v)
 
@@ -145,3 +149,51 @@ def generate_linear_op_basis(d, basis="w", local_dimension=2):
             return "The dimension must be an exponent of the local dimension!\n"
     else:
         return "Improper basis choice!\n"
+    
+
+def eigenvalues(X):
+    """
+    Returns the eigenvalues of a square matrix X.
+    """
+
+    return eig(X)[0]
+
+
+def eigenvectors(X):
+    """
+    Returns the eigenvectors of a square matrix X.
+    """
+
+    d=X.shape[0]
+
+    E=eig(X)[0] # The eigenvalues
+    V=eig(X)[1] # The eigenvectors
+
+    # The eigenvectors are given by the columns of V, i.e., V[:,i].
+    # We take these and reshape them to column vectors.
+
+    v=[np.reshape(V[:,i],[d,1]) for i in range(len(E))]
+
+    return v
+
+
+def eigensystem(X):
+    """
+    Returns the eigenvalues and eigenvectors of a square matrix X.
+    """
+
+    d=X.shape[0]
+
+    E=eig(X)[0] # The eigenvalues
+    V=eig(X)[1] # The eigenvectors
+
+    # The eigenvectors are given by the columns of V, i.e., V[:,i].
+    # We take these and reshape them to column vectors.
+
+    v=[np.reshape(V[:,i],[d,1]) for i in range(len(E))]
+
+    return [(E[i],v[i]) for i in range(len(E))]
+
+
+
+

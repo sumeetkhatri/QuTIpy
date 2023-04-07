@@ -26,7 +26,7 @@ from numpy.linalg import matrix_power, norm
 from scipy.linalg import fractional_matrix_power, logm
 from scipy.optimize import minimize
 
-from qutipy.channels import apply_channel
+from qutipy.channels import apply_channel, largest_inner_product_channels
 from qutipy.general_functions import Tr, dag, eye, ket, partial_trace, tensor
 
 
@@ -338,3 +338,17 @@ def min_output_entropy(K, dim, display=True):
     opt = minimize(objfunc, x_init, options={"disp": display})
 
     return opt.fun
+
+
+def conditional_min_entropy(P_AB, dA, dB, condition="B", display=False, prec=1e-7):
+    """
+    Computes the conditional min-entropy of the positive semi-defnite operator P_AB.
+    When condition='B', the conditioned system is the second tensor factor, otherwise
+    it is first.
+    """
+
+    return -np.log2(
+        largest_inner_product_channels(
+            P_AB, dA, dB, input=condition, display=display, prec=prec
+        )
+    )
