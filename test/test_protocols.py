@@ -335,7 +335,7 @@ def test_apply_teleportation_chain_channel():
 
 
 def test_post_graph_state_dist_fidelity():
-    fidility = np.round(
+    fidelity = np.round(
         avg_on(
             lambda: post_graph_state_dist_fidelity(
                 np.array([[1, 0], [0, 1]]), 2, np.round(random_density_matrix(16), 6)
@@ -344,7 +344,7 @@ def test_post_graph_state_dist_fidelity():
         ),
         3,
     )
-    assert 0.245 < fidility < 0.255
+    assert 0.245 < fidelity < 0.255
 
 
 def test_post_teleportation_fidelity():

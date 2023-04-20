@@ -84,7 +84,7 @@ def vec(X):
 
     [d1, d2] = X.shape
 
-    gamma = max_ent(d2, normalized=False, density_matrix=False)
+    gamma = max_ent(d2, normalized=False, as_matrix=False)
 
     return tensor(eye(d2), X) @ gamma
 
