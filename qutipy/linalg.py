@@ -23,7 +23,7 @@
 import math
 
 import numpy as np
-from numpy.linalg import matrix_rank, norm, eig
+from numpy.linalg import eig, matrix_rank, norm
 
 from qutipy.general_functions import dag, eye, tensor
 from qutipy.pauli import nQubit_Pauli_basis
@@ -149,7 +149,7 @@ def generate_linear_op_basis(d, basis="w", local_dimension=2):
             return "The dimension must be an exponent of the local dimension!\n"
     else:
         return "Improper basis choice!\n"
-    
+
 
 def eigenvalues(X):
     """
@@ -164,15 +164,15 @@ def eigenvectors(X):
     Returns the eigenvectors of a square matrix X.
     """
 
-    d=X.shape[0]
+    d = X.shape[0]
 
-    E=eig(X)[0] # The eigenvalues
-    V=eig(X)[1] # The eigenvectors
+    E = eig(X)[0]  # The eigenvalues
+    V = eig(X)[1]  # The eigenvectors
 
     # The eigenvectors are given by the columns of V, i.e., V[:,i].
     # We take these and reshape them to column vectors.
 
-    v=[np.reshape(V[:,i],[d,1]) for i in range(len(E))]
+    v = [np.reshape(V[:, i], [d, 1]) for i in range(len(E))]
 
     return v
 
@@ -182,18 +182,14 @@ def eigensystem(X):
     Returns the eigenvalues and eigenvectors of a square matrix X.
     """
 
-    d=X.shape[0]
+    d = X.shape[0]
 
-    E=eig(X)[0] # The eigenvalues
-    V=eig(X)[1] # The eigenvectors
+    E = eig(X)[0]  # The eigenvalues
+    V = eig(X)[1]  # The eigenvectors
 
     # The eigenvectors are given by the columns of V, i.e., V[:,i].
     # We take these and reshape them to column vectors.
 
-    v=[np.reshape(V[:,i],[d,1]) for i in range(len(E))]
+    v = [np.reshape(V[:, i], [d, 1]) for i in range(len(E))]
 
-    return [(E[i],v[i]) for i in range(len(E))]
-
-
-
-
+    return [(E[i], v[i]) for i in range(len(E))]

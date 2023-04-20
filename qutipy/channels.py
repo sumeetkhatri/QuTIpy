@@ -62,8 +62,8 @@ def choi_representation(K, dA, L=None, adjoint=False):
 
     Gamma = max_ent(dA, normalized=False)
 
-    if L==None:
-        return apply_superoperator(K,K,Gamma,[2],[dA,dA])
+    if L == None:
+        return apply_superoperator(K, K, Gamma, [2], [dA, dA])
     else:
         return apply_superoperator(K, L, Gamma, [2], [dA, dA])
 
@@ -252,7 +252,7 @@ def apply_channel(K, rho, sys=None, dim=None, adjoint=False):
     channel.
     """
 
-    return apply_superoperator(K,K,rho,sys,dim,adjoint)
+    return apply_superoperator(K, K, rho, sys, dim, adjoint)
 
 
 def apply_superoperator(K, L, rho, sys=None, dim=None, adjoint=False):
@@ -427,10 +427,10 @@ def diamond_norm(K, dA, dB, L=None, display=False, choi=False):
     """
 
     if choi:
-        J=K
+        J = K
     else:
-        J=choi_representation(K,dA,L)
-    
+        J = choi_representation(K, dA, L)
+
     J = syspermute(J, [2, 1], [dA, dB])
 
     X = cvx.Variable((dA * dB, dA * dB), complex=True)
@@ -454,7 +454,7 @@ def diamond_norm(K, dA, dB, L=None, display=False, choi=False):
     return prob.value
 
 
-def completely_bounded_norm(K,dA,dB,L=None,display=False):
+def completely_bounded_norm(K, dA, dB, L=None, display=False):
     """
     Computes the completely bounded norm of the superoperator defined by the
     Kraus operators in the lists K and L.
@@ -467,15 +467,15 @@ def completely_bounded_norm(K,dA,dB,L=None,display=False):
     K_tmp = K
     K = []
     K = [dag(K_tmp[i]) for i in range(len(K_tmp))]
-    
-    if L==None:
-        return diamond_norm(K,dB,dA,display=display)
+
+    if L == None:
+        return diamond_norm(K, dB, dA, display=display)
     else:
         L_tmp = L
         L = []
         L = [dag(L_tmp[i]) for i in range(len(L_tmp))]
 
-        return diamond_norm(K,dB,dA,L,display=display)
+        return diamond_norm(K, dB, dA, L, display=display)
 
 
 ##################################################################################
@@ -864,7 +864,9 @@ def generalized_amplitude_damping_channel(gamma, N):
         return [A1, A2, A3, A4]
 
 
-def largest_inner_product_channels(X_AB, dA, dB, input="A", display=False, return_chan=False, prec=1e-7):
+def largest_inner_product_channels(
+    X_AB, dA, dB, input="A", display=False, return_chan=False, prec=1e-7
+):
     """
     Determines the largest inner product of the input Hermitian operator
     X_AB with respect to the set of all quantum channels, described in
@@ -903,7 +905,9 @@ def largest_inner_product_channels(X_AB, dA, dB, input="A", display=False, retur
         return prob.value
 
 
-def smallest_inner_product_channels(X_AB, dA, dB, input="A", display=False, return_chan=False, prec=1e-7):
+def smallest_inner_product_channels(
+    X_AB, dA, dB, input="A", display=False, return_chan=False, prec=1e-7
+):
     """
     Determines the smallest inner product of the input Hermitian operator
     X_AB with respect to the set of all quantum channels, described in
@@ -942,7 +946,9 @@ def smallest_inner_product_channels(X_AB, dA, dB, input="A", display=False, retu
         return prob.value
 
 
-def largest_inner_product_CPTNI(X_AB, dA, dB, input="A", display=False, return_chan=False, dual=False, prec=1e-7):
+def largest_inner_product_CPTNI(
+    X_AB, dA, dB, input="A", display=False, return_chan=False, dual=False, prec=1e-7
+):
     """
     Determines the largest inner product of the input Hermitian operator
     X_AB with respect to the set of all completely positive trace non-increasing
@@ -965,14 +971,14 @@ def largest_inner_product_CPTNI(X_AB, dA, dB, input="A", display=False, return_c
         X_AB = syspermute(X_AB, [2, 1], [dA, dB])
 
     if dual:
-        Y=cvx.Variable((d[input],d[input]),hermitian=True)
+        Y = cvx.Variable((d[input], d[input]), hermitian=True)
 
-        c=[Y>>0,cvx.kron(Y,eye(d[output]))>>X_AB]
-        
-        obj=cvx.Minimize(cvx.real(cvx.trace(Y)))
-        prob=cvx.Problem(obj,constraints=c)
+        c = [Y >> 0, cvx.kron(Y, eye(d[output])) >> X_AB]
 
-        prob.solve(verbose=display,eps=prec)
+        obj = cvx.Minimize(cvx.real(cvx.trace(Y)))
+        prob = cvx.Problem(obj, constraints=c)
+
+        prob.solve(verbose=display, eps=prec)
 
         if return_chan:
             return prob.value, Y.value
