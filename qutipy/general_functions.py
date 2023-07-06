@@ -484,3 +484,31 @@ def unitary_distance(U, V):
     d = U.shape[0]
 
     return 1 - (1 / d) * np.abs(Tr(U @ dag(V)))
+
+
+def random_hermitian_operator(d, normal=False, PSD=False):
+    """
+    Generates a random dxd Hermitian operator. If normal=True, then the matrix elements
+    are sampled independently from the standard normal distribution. Otherwise, they
+    are sampled independently from the uniform distribution between 0 and 1.
+    """
+
+    if normal:
+        X = np.random.randn(d, d) + 1j * np.random.randn(d, d)
+    else:
+        X = np.random.rand(d, d) + 1j * np.random.rand(d, d)
+
+    if PSD:
+        return X @ dag(X)
+    else:
+        return (1 / 2) * (X + dag(X))
+
+
+def random_PSD_operator(d, normal=False):
+    """
+    Generates a random dxd positive semi-definite operator. If normal=True, then the matrix
+    elements are sampled independently from the standard normal distribution. Otherwise,
+    they are sampled independently from the uniform distribution between 0 and 1.
+    """
+
+    return random_hermitian_operator(d, normal=normal, PSD=True)

@@ -395,7 +395,10 @@ def channel_discrimination(
 
     else:
         p_err = (1 / 2) * (
-            1 - diamond_norm(p * J0 - (1 - p) * J1, dimA, dimB, display=display)
+            1
+            - diamond_norm(
+                p * J0 - (1 - p) * J1, dimA, dimB, display=display, choi=True
+            )
         )
         if succ:
             return 1 - p_err

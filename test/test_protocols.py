@@ -344,7 +344,7 @@ def test_post_graph_state_dist_fidelity():
         ),
         3,
     )
-    assert 0.23 < fidelity < 0.26
+    assert 0.245 < fidelity < 0.255
 
 
 def test_post_teleportation_fidelity():

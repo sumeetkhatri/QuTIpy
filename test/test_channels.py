@@ -234,7 +234,7 @@ def test_depolarizing_channel_n_uses():
 def test_diamond_norm():
     assert (
         np.round(
-            diamond_norm(choi_representation(amplitude_damping_channel(0.2), 2), 2, 2),
+            diamond_norm(amplitude_damping_channel(0.2), 2, 2),
             5,
         )
         == 1

@@ -51,10 +51,10 @@ from qutipy.weyl import discrete_Weyl, discrete_Weyl_Z
 ##################################################################################
 
 
-def choi_representation(K, dA):
+def choi_representation(K, dA, L=None, adjoint=False):
     """
-    Calculates the Choi representation of the map with Kraus operators K.
-    dA is the dimension of the input space of the channel.
+    Calculates the Choi representation of the superoperator with Kraus operators K
+    and L. dA is the dimension of the input space of the channel.
 
     The Choi represenatation is defined with the channel acting on the second
     half of the maximally entangled vector.
@@ -62,7 +62,10 @@ def choi_representation(K, dA):
 
     Gamma = max_ent(dA, normalized=False)
 
-    return apply_channel(K, Gamma, [2], [dA, dA])
+    if L == None:
+        return apply_superoperator(K, K, Gamma, [2], [dA, dA])
+    else:
+        return apply_superoperator(K, L, Gamma, [2], [dA, dA])
 
 
 def natural_representation(K):
@@ -249,20 +252,37 @@ def apply_channel(K, rho, sys=None, dim=None, adjoint=False):
     channel.
     """
 
+    return apply_superoperator(K, K, rho, sys, dim, adjoint)
+
+
+def apply_superoperator(K, L, rho, sys=None, dim=None, adjoint=False):
+    """
+    Applies the superoperator with Kraus operators in K and L to the state rho on
+    systems specified by the list sys. The dimensions of the subsystems of
+    rho are given by dim. The lists K and L should have the same length.
+
+    If adjoint is True, then this function applies the adjoint of the given
+    superoperator.
+    """
+
     if isinstance(rho, cvx.Variable):
         rho = cvxpy_to_numpy(rho)
-        rho_out = apply_channel(K, rho, sys, dim, adjoint)
+        rho_out = apply_superoperator(K, L, rho, sys, dim, adjoint)
         return numpy_to_cvxpy(rho_out)
 
     if adjoint:
         K_tmp = K
+        L_tmp = L
         K = []
+        L = []
         K = [dag(K_tmp[i]) for i in range(len(K_tmp))]
+        L = [dag(L_tmp[i]) for i in range(len(L_tmp))]
 
     if sys is None:  # Applying the channel to the full state.
-        return np.sum([K[i] @ rho @ dag(K[i]) for i in range(len(K))], 0)
+        return np.sum([K[i] @ rho @ dag(L[i]) for i in range(len(K))], 0)
     else:  # Applying the channel to subsystems
         A = []
+        B = []
         n = len(
             dim
         )  # [2, 2, _2, _2] Total number of systems corresponding to the state rho
@@ -275,15 +295,19 @@ def apply_channel(K, rho, sys=None, dim=None, adjoint=False):
         for index in indices:
             l = 0
             X = 1
+            Y = 1
             for i in range(n):
                 if i + 1 in sys:
                     X = tensor(X, K[index[l]])
+                    Y = tensor(Y, L[index[l]])
                     l += 1
                 else:
                     X = tensor(X, eye(dim[i]))
+                    Y = tensor(Y, eye(dim[i]))
             A.append(X)
+            B.append(Y)
 
-        return np.sum([A[i] @ rho @ dag(A[i]) for i in range(len(A))], 0)
+        return np.sum([A[i] @ rho @ dag(B[i]) for i in range(len(A))], 0)
 
 
 def compose_channels(C):
@@ -377,9 +401,9 @@ def channel_scalar_multiply(K, x):
     return K_new
 
 
-def diamond_norm(J, dA, dB, display=False):
+def diamond_norm(K, dA, dB, L=None, display=False, choi=False):
     """
-    Computes the diamond norm of a superoperator with Choi representation J.
+    Computes the diamond norm of a superoperator with Kraus operators in the list K.
     dA is the dimension of the input space of the channel, and dB is the
     dimension of the output space.
 
@@ -393,14 +417,19 @@ def diamond_norm(J, dA, dB, display=False):
     """
     The Choi representation J in the above paper is defined using a different
     convention:
-        J=(N⊗ I)(|Phi^+><Phi^+|).
+        J=(N ⊗ I)(|Phi^+><Phi^+|).
     In other words, the channel N acts on the first half of the maximally-
     entangled state, while the convention used throughout this code stack
     is
-        J=(I⊗ N)(|Phi^+><Phi^+|).
+        J=(I ⊗ N)(|Phi^+><Phi^+|).
     We thus use syspermute to convert to the form used in the aforementioned
     paper.
     """
+
+    if choi:
+        J = K
+    else:
+        J = choi_representation(K, dA, L)
 
     J = syspermute(J, [2, 1], [dA, dB])
 
@@ -423,6 +452,30 @@ def diamond_norm(J, dA, dB, display=False):
     prob.solve(verbose=display, eps=1e-7)
 
     return prob.value
+
+
+def completely_bounded_norm(K, dA, dB, L=None, display=False):
+    """
+    Computes the completely bounded norm of the superoperator defined by the
+    Kraus operators in the lists K and L.
+
+    We use here the fact that, for every superoperator, its completely bounded
+    norm is given by the diamond norm of its adjoint. This follows straightforwardly
+    from definitions.
+    """
+
+    K_tmp = K
+    K = []
+    K = [dag(K_tmp[i]) for i in range(len(K_tmp))]
+
+    if L == None:
+        return diamond_norm(K, dB, dA, display=display)
+    else:
+        L_tmp = L
+        L = []
+        L = [dag(L_tmp[i]) for i in range(len(L_tmp))]
+
+        return diamond_norm(K, dB, dA, L, display=display)
 
 
 ##################################################################################
@@ -809,3 +862,143 @@ def generalized_amplitude_damping_channel(gamma, N):
         A4 = np.sqrt(N) * np.array([[0, 0], [np.sqrt(gamma), 0]])
 
         return [A1, A2, A3, A4]
+
+
+def largest_inner_product_channels(
+    X_AB, dA, dB, input="A", display=False, return_chan=False, prec=1e-7
+):
+    """
+    Determines the largest inner product of the input Hermitian operator
+    X_AB with respect to the set of all quantum channels, described in
+    terms of their Choi representation. (X_AB does not have to be Hermitian)
+
+    The input variable specifies the input system of the channel. If
+    input='A', then the first tensor factor is the input system and
+    the second tensor factor is the output system; otherwise, if
+    input='B', then the second tensor factor is the input system and
+    the first tensor factor is the output system.
+    """
+
+    d = {"A": dA, "B": dB}
+
+    if input == "A":
+        output = "B"
+    else:
+        output = "A"
+        X_AB = syspermute(X_AB, [2, 1], [dA, dB])
+
+    C = cvx.Variable((d[input] * d[output], d[input] * d[output]), hermitian=True)
+    c = [
+        C >> 0,
+        numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
+        == eye(d[input]),
+    ]
+
+    obj = cvx.Maximize(cvx.real(cvx.trace(dag(X_AB) @ C)))
+    prob = cvx.Problem(obj, constraints=c)
+
+    prob.solve(verbose=display, eps=prec)
+
+    if return_chan:
+        return prob.value, C.value
+    else:
+        return prob.value
+
+
+def smallest_inner_product_channels(
+    X_AB, dA, dB, input="A", display=False, return_chan=False, prec=1e-7
+):
+    """
+    Determines the smallest inner product of the input Hermitian operator
+    X_AB with respect to the set of all quantum channels, described in
+    terms of their Choi representation. (X_AB does not have to be Hermitian.)
+
+    The input variable specifies the input system of the channel. If
+    input='A', then the first tensor factor is the input system and
+    the second tensor factor is the output system; otherwise, if
+    input='B', then the second tensor factor is the input system and
+    the first tensor factor is the output system.
+    """
+
+    d = {"A": dA, "B": dB}
+
+    if input == "A":
+        output = "B"
+    else:
+        output = "A"
+        X_AB = syspermute(X_AB, [2, 1], [dA, dB])
+
+    C = cvx.Variable((d[input] * d[output], d[input] * d[output]), hermitian=True)
+    c = [
+        C >> 0,
+        numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
+        == eye(d[input]),
+    ]
+
+    obj = cvx.Minimize(cvx.real(cvx.trace(dag(X_AB) @ C)))
+    prob = cvx.Problem(obj, constraints=c)
+
+    prob.solve(verbose=display, eps=prec)
+
+    if return_chan:
+        return prob.value, C.value
+    else:
+        return prob.value
+
+
+def largest_inner_product_CPTNI(
+    X_AB, dA, dB, input="A", display=False, return_chan=False, dual=False, prec=1e-7
+):
+    """
+    Determines the largest inner product of the input Hermitian operator
+    X_AB with respect to the set of all completely positive trace non-increasing
+    maps, described in terms of their Choi representation.
+    (X_AB does not have to be Hermitian)
+
+    The input variable specifies the input system of the channel. If
+    input='A', then the first tensor factor is the input system and
+    the second tensor factor is the output system; otherwise, if
+    input='B', then the second tensor factor is the input system and
+    the first tensor factor is the output system.
+    """
+
+    d = {"A": dA, "B": dB}
+
+    if input == "A":
+        output = "B"
+    else:
+        output = "A"
+        X_AB = syspermute(X_AB, [2, 1], [dA, dB])
+
+    if dual:
+        Y = cvx.Variable((d[input], d[input]), hermitian=True)
+
+        c = [Y >> 0, cvx.kron(Y, eye(d[output])) >> X_AB]
+
+        obj = cvx.Minimize(cvx.real(cvx.trace(Y)))
+        prob = cvx.Problem(obj, constraints=c)
+
+        prob.solve(verbose=display, eps=prec)
+
+        if return_chan:
+            return prob.value, Y.value
+        else:
+            return prob.value
+
+    else:
+        C = cvx.Variable((d[input] * d[output], d[input] * d[output]), hermitian=True)
+        c = [
+            C >> 0,
+            numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
+            << eye(d[input]),
+        ]
+
+        obj = cvx.Maximize(cvx.real(cvx.trace(dag(X_AB) @ C)))
+        prob = cvx.Problem(obj, constraints=c)
+
+        prob.solve(verbose=display, eps=prec)
+
+        if return_chan:
+            return prob.value, C.value
+        else:
+            return prob.value
