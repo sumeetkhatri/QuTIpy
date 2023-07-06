@@ -27,7 +27,7 @@ QuTIpy Documentation
 **Version**: |version|
 
 **Download Book**:
-`PDF Version <https://sumeetkhatri.files.wordpress.com/2021/08/sc_22aug2021.pdf>`_
+`PDF Version <https://sumeetkhatri.files.wordpress.com/2023/01/pqct-khatri-wilde.pdff>`_
 
 **Useful links**:
 :ref:`genindex` | `Modules <./modules.html>`_
