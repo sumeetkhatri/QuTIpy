@@ -232,7 +232,7 @@ def random_state_vector(dim, rank=None, as_matrix=False):
         psi = psi / norm(psi)
 
         if as_matrix:
-            return psi@dag(psi)
+            return psi @ dag(psi)
         else:
             return psi
     else:
@@ -261,7 +261,7 @@ def random_state_vector(dim, rank=None, as_matrix=False):
         psi = psi / norm(psi)
 
         if as_matrix:
-            return psi@dag(psi)
+            return psi @ dag(psi)
         else:
             return psi
 
