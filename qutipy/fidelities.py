@@ -94,5 +94,5 @@ def fidelity(rho, sigma):
     """
     Returns the fidelity between the states rho and sigma.
     """
-
-    return trace_norm(sqrtm(rho) @ sqrtm(sigma)) ** 2
+    prod = sqrtm(rho) @ sqrtm(sigma)
+    return trace_norm(prod.astype("complex128")) ** 2

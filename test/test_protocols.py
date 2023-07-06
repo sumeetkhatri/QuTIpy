@@ -338,7 +338,7 @@ def test_post_graph_state_dist_fidelity():
     fidelity = np.round(
         avg_on(
             lambda: post_graph_state_dist_fidelity(
-                np.array([[1, 0], [0, 1]]), 2, np.round(random_density_matrix(16), 6)
+                np.array([[1, 0], [0, 1]]), 2, random_density_matrix(16)
             ),
             1000,
         ),
@@ -348,20 +348,20 @@ def test_post_graph_state_dist_fidelity():
 
 
 def test_post_teleportation_fidelity():
-    avg_fidility = np.round(
+    avg_fidelity = np.round(
         avg_on(lambda: post_teleportation_fidelity(random_density_matrix(16)), 1000), 3
     )
-    assert 0.244 < avg_fidility <= 0.256
+    assert 0.244 < avg_fidelity <= 0.256
 
 
 def test_post_ent_swap_GHZ_chain_fidelity():
-    avg_fidility = np.round(
+    avg_fidelity = np.round(
         avg_on(
             lambda: post_ent_swap_GHZ_chain_fidelity(random_density_matrix(64), 2), 1000
         ),
         3,
     )
-    assert 0.058 < avg_fidility <= 0.065
+    assert 0.058 < avg_fidelity <= 0.065
 
 
 def test_apply_ent_swap_GHZ_channel():
