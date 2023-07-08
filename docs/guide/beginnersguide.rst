@@ -405,17 +405,24 @@ For starters, a `random quantum channel` can be created with the definition ``qu
 Pauli Channel
 *************
 
-Pauli channel is one of the most common channel, which can be easily implimentd with QuTIpy.
+Pauli channel is one of the most common channel, where the kraus operator are proportional to
+that of the the pauli operators, i.e.
+
+.. math::
+   \rho 7 → p_I \rho + p_X X\rho X + p_Y Y\rho Y + p_ZZ\rho Z
+
+where :math:`p_I, p_X, p_Y , p_Z \ge 0, p_I + p_X + p_Y + p_Z = 1`
 
 .. code-block:: python
 
    >>> from qutipy.channels import Pauli_channel
    >>>
-   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> # Here we define the  Kraus Operator for the Pauli Quantum Channel
    >>> kraus_op, _, _ = Pauli_channel(px=0.16, py=0.04, pz=0.16)
    >>>
-   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
-   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> # Suppose exists a `density_matrix` of dimension 2, i.e. a 2 x 2 density matrix,
+   >>> # let's assume the density_matrix for, `density_matrix = random_density_matrix(dim = 2)`
+   >>> # then we can apply the pauli channel on the state as follows,
    >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
    >>>
    >>> evolved_density_matrix.shape
@@ -424,17 +431,27 @@ Pauli channel is one of the most common channel, which can be easily implimentd 
 Amplitude Damping Channel
 *************************
 
-Amplitude Damping channel is one of the most common channels.
+Amplitude Damping channel is one of the most common channels. The amplitude damping
+channel with decay parameter :math:`\gamma \in [0, 1]` is the channel :math:`\mathcal{A}_\gamma` given by
+:math:`\mathcal{A}_\gamma(\rho) = A_1 \rho A_1^{\dagger} + A_2 \rho A_2^{\dagger}`, with the two Kraus
+operators :math:`A_1` and :math:`A_2` defined as,
+
+.. math::
+   A_1 = \sqrt{\gamma}|0\rangle\langle 1|, \\
+   A_2 = |0\rangle\langle 0| + \sqrt{1-\gamma}|1\rangle\langle 1|
+
+It is straightforward to verify that :math:`A_1^{\dagger} A_1 + A_2^{\dagger} A_2 = \mathbb{1}`, so that :math:`\mathcal{A}_\gamma` is indeed trace preserving.
 
 .. code-block:: python
 
    >>> from qutipy.channels import amplitude_damping_channel
    >>>
-   >>> # Here we get the  Kraus Operator for a Random Quantum Channel
+   >>> # Here we generate the  Kraus Operator for Amplitude Damping Quantum Channel
    >>> kraus_op = amplitude_damping_channel(0.2)
    >>>
-   >>> # Suppose `density_matrix` is a 2 x 2 density matrix,
-   >>> # say, density_matrix = random_density_matrix(dim = 2)
+   >>> # Suppose exists a `density_matrix` of dimension 2, i.e. a 2 x 2 density matrix,
+   >>> # let's assume the density_matrix for, `density_matrix = random_density_matrix(dim = 2)`
+   >>> # then we can apply the amplitude damping channel on the state as follows,
    >>> evolved_density_matrix = apply_channel(kraus_op, density_matrix)
    >>>
    >>> evolved_density_matrix.shape

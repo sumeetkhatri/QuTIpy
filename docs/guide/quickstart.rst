@@ -165,7 +165,6 @@ This is a generalized version of the above `Bell state`_ , that we defined
 using the operators :math:`X` , :math:`Z` , and :math:`ZX` , where the two-qubit
 `maximally entangled quantum state`_ vectors is represented as
 
-.. class:: center
 :math:`\displaystyle |\phi_{z,x}\rangle = (Z^zX^x \otimes I)|\phi^{+}\rangle` for :math:`z, x \in {0, 1}` .
 
 Above, we generated a :math:`d` -dimensional Bell State with :math:`0 <= z` , :math:`x <= d-1` .
@@ -215,3 +214,19 @@ together with the identity matrix :math:`I` , the Pauli matrices form a
 real `vector space <https://en.wikipedia.org/wiki/Vector_space>`__ of 2 :math:`\times` 2 Hermitian matrices.
 This means that any 2 :math:`\times` 2 `Hermitian matrix <https://en.wikipedia.org/wiki/Hermitian_matrix>`__ can be
 written in a unique way as a linear combination of Pauli matrices, with all coefficients being real numbers.
+
+.. code:: python
+
+   >>> from qutipy.pauli import generate_nQubit_Pauli_X
+   >>> # This will create a pauli_x operator
+   >>> px = generate_nQubit_Pauli_X([1])
+   >>> px
+   array([[0, 1],
+          [1, 0]])
+   >>> # This will create a tensor product of pauli_x operators
+   >>> px = generate_nQubit_Pauli_X([0, 1])
+   >>> px
+   array([[0., 1., 0., 0.],
+          [1., 0., 0., 0.],
+          [0., 0., 0., 1.],
+          [0., 0., 1., 0.]])
