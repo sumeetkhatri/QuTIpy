@@ -21,13 +21,14 @@ QuTIpy Documentation
    :hidden:
 
    guide/beginnersguide.rst
+   guide/quickstart.rst
    guide/index.rst
    contribute.rst
 
 **Version**: |version|
 
 **Download Book**:
-`PDF Version <https://sumeetkhatri.files.wordpress.com/2023/01/pqct-khatri-wilde.pdff>`_
+`PDF Version <https://sumeetkhatri.files.wordpress.com/2023/01/pqct-khatri-wilde.pdf>`_
 
 **Useful links**:
 :ref:`genindex` | `Modules <./modules.html>`_

@@ -230,3 +230,51 @@ written in a unique way as a linear combination of Pauli matrices, with all coef
           [1., 0., 0., 0.],
           [0., 0., 0., 1.],
           [0., 0., 1., 0.]])
+
+
+.. code:: python
+
+   >>> I = generate_nQubit_Pauli([0])
+   >>> I
+   array([[1., 0.],
+          [0., 1.]])
+
+.. code:: python
+
+   >>> X = generate_nQubit_Pauli([1])
+   >>> X
+   array([[0., 1.],
+          [1., 0.]])
+
+.. code:: python
+
+   >>> Y = generate_nQubit_Pauli([2])
+   >>> Y
+   array([[0.j, -1.j],
+          [1.j,  0.j]])
+
+.. code:: python
+
+   >>> Z = generate_nQubit_Pauli([3])
+   >>> Z
+   array([[ 1,  0],
+          [ 0, -1]])
+
+.. code:: python
+
+   >>> ZZ = generate_nQubit_Pauli([3, 3])
+   >>> ZZ
+   array([[ 1,  0,  0,  0],
+          [ 0, -1,  0,  0],
+          [ 0,  0, -1,  0],
+          [ 0,  0,  0,  1]])
+
+
+.. code:: python
+
+   >>> ZI = generate_nQubit_Pauli([3, 1])
+   >>> ZI
+   array([[ 0,  1,  0,  0],
+          [ 1,  0,  0,  0],
+          [ 0,  0,  0, -1],
+          [ 0,  0, -1,  0]])
