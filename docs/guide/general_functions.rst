@@ -70,7 +70,6 @@ Defining a basis state :math:`{\displaystyle |0\rangle }`, we can use the ``ket`
 .. code:: python
 
    >>> from qutipy.general_functions import ket
-   >>>
    >>> # Defining a ket 0 in a 2 Dimensional Hilbert space,
    >>> # The first argument takes a dimension of the Hilbert space,
    >>> # while the secind argument takes the ket value.
@@ -95,14 +94,11 @@ linear combinations of elements from :math:`V` and :math:`W` .
 .. code-block:: python
 
    >>> from qutipy.general_functions import tensor
-   >>>
    >>> V = np.array([[ 1,  2,  3,  4],
    >>>               [ 5,  6,  7,  8],
    >>>               [ 9, 10, 11, 12],
    >>>               [13, 14, 15, 16]])
-   >>>
    >>> W = np.array([[2, 4]])
-   >>>
    >>> tensor(V, W)
 
    array([[ 2,  4,  4,  8,  6, 12,  8, 16],
@@ -138,12 +134,11 @@ The partial trace generalizes the notion of marginalizing a joint probability di
 
 Using Partial Trace with QuTIpy is as easy is calling a function definition ``partial_trace`` from ``qutipy.general_functions``.
 
-Let's assume X for, :math:`X = \rho_{AB} = \begin{bmatrix} 1 & 2 & 3 & 4 \\ 5 & \textbf{6} & \textbf{7} & 8 \\ 9 & \textbf{10} & \textbf{11} & 12 \\ 13 & 14 & 15 & 16 \end{bmatrix}`
+Let's assume X for, :math:`X = \rho_{AB} = \begin{bmatrix} 1 & 2 & 3 & 4 \\ 5 & 6 & 7 & 8 \\ 9 & 10 & 11 & 12 \\ 13 & 14 & 15 & 16 \end{bmatrix}`
 
 .. code-block:: python
 
    >>> import numpy as np
-   >>>
    >>> # Defining the State X
    >>> X = np.array(
    >>>    [
@@ -157,15 +152,17 @@ Let's assume X for, :math:`X = \rho_{AB} = \begin{bmatrix} 1 & 2 & 3 & 4 \\ 5 & 
 Now that we have our system, we can calculate the Partial Trace of X, i.e. :math:`\rho_{AB}`.
 Assuming A for, :math:`A = \rho_A \equiv Tr_B[\rho_{AB}]`,
 
+.. figure:: ../_static/_imgs/partial_trace.png
+
 .. code-block:: python
 
    >>> from qutipy.general_functions import partial_trace
-   >>>
-   >>> # Applying Partial Trace over X
-   >>> A = partial_trace(X, [2], [2])
-   >>>
+   >>> # Applying Partial Trace over X, which is a bipartite state
+   >>> # with 2 the dimension of system A and 2 the dimension of system B,
+   >>> A = partial_trace(X, [2], [2, 2])
    >>> A
-   34
+   array([[ 7, 11],
+          [23, 27]])
 
 
 
@@ -188,12 +185,11 @@ on :math:`B` is denoted by :math:`T_B\equiv id_A \otimes T_B`, and it is defined
 transpose of a matrix. The transposition may be taken on any subset of
 the subsystems on which the matrix acts.
 
-Defining a state ``X`` with [ … ]
+Let us define a matrix ``X`` as follows:
 
 .. code:: python
 
    >>> import numpy as np
-   >>>
    >>> X = np.array(
    >>>     [
    >>>         [ 1,  2,  3,  4],
@@ -203,12 +199,11 @@ Defining a state ``X`` with [ … ]
    >>>     ]
    >>> )
 
-Now we can apply the ``partial_transpose`` function over our state ``X``:
+Now we can apply the ``partial_transpose`` function over our matrix ``X``:
 
 .. code:: python
 
    >>> from qutipy.general_functions import partial_transpose
-   >>>
    >>> pt = partial_transpose(X, [2], [2, 2])
    >>> pt
    array([[ 1,  5,  3,  7],

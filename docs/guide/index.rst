@@ -18,24 +18,17 @@ This guide is an overview and explains the important features; details are found
    whatis
    installation
    quickstart
-   general_functions
-   quantum_mechanics
    mathematics
+   quantum_mechanics
+   general_functions
+   states
 
 Examples
 --------
-Examples will be added soon...
 
-.. Additional examples will be added in the future.
+.. toctree::
+   :maxdepth: 1
 
+   examples/quantum_channels
 
-.. .. toctree::
-..    :maxdepth: 3
-
-..    examples
-
-.. .. toctree::
-..    :maxdepth: 1
-..    :hidden:
-
-..    reference
+More examples will be added soon...

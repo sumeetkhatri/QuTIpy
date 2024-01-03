@@ -143,8 +143,8 @@ html_theme_options = {
 
     "external_links": [
         {"name": "Numpy", "url": "https://numpy.org/numpy-tutorials/"},
-        {"name": "Book", "url": "https://sumeetkhatri.files.wordpress.com/2021/08/sc_22aug2021.pdf"}
-        # {"name": "Principles of Quantum Communication Theory: A Modern Approach", "url": "https://sumeetkhatri.files.wordpress.com/2021/08/sc_22aug2021.pdf"}
+        {"name": "Book", "url": "https://sumeetkhatri.files.wordpress.com/2023/01/pqct-khatri-wilde.pdf"}
+        # {"name": "Principles of Quantum Communication Theory: A Modern Approach", "url": "https://sumeetkhatri.files.wordpress.com/2023/01/pqct-khatri-wilde.pdf"}
     ],
 
     # "analytics_id": "G-XXXXXXXXXX",  #  Provided by Google in your dashboard

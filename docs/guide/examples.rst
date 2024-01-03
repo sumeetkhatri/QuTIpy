@@ -10,10 +10,25 @@ Examples
 
 Lorem ipsum
 -----------
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Lacus sed viverra tellus in hac habitasse platea dictumst. Consectetur lorem donec massa sapien faucibus et molestie ac. Est ullamcorper eget nulla facilisi etiam dignissim diam quis enim. Hac habitasse platea dictumst vestibulum rhoncus est pellentesque. Magnis dis parturient montes nascetur. Feugiat nisl pretium fusce id velit ut tortor pretium. Amet mattis vulputate enim nulla aliquet porttitor lacus luctus. Ultricies lacus sed turpis tincidunt id aliquet risus feugiat in. Interdum consectetur libero id faucibus nisl tincidunt eget nullam non. Nec feugiat in fermentum posuere urna nec. Bibendum enim facilisis gravida neque. Et netus et malesuada fames ac. Sit amet est placerat in. Aliquam sem et tortor consequat id porta nibh. Tincidunt nunc pulvinar sapien et ligula. Aenean pharetra magna ac placerat vestibulum lectus mauris ultrices. Lectus sit amet est placerat in egestas erat imperdiet sed. Leo vel fringilla est ullamcorper eget nulla facilisi. Ultrices eros in cursus turpis massa tincidunt.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
+labore et dolore magna aliqua. Lacus sed viverra tellus in hac habitasse platea dictumst.
+Consectetur lorem donec massa sapien faucibus et molestie ac. Est ullamcorper eget nulla facilisi
+etiam dignissim diam quis enim. Hac habitasse platea dictumst vestibulum rhoncus est pellentesque.
+Magnis dis parturient montes nascetur. Feugiat nisl pretium fusce id velit ut tortor pretium. Amet
+mattis vulputate enim nulla aliquet porttitor lacus luctus. Ultricies lacus sed turpis tincidunt
+id aliquet risus feugiat in. Interdum consectetur libero id faucibus nisl tincidunt eget nullam
+non. Nec feugiat in fermentum posuere urna nec. Bibendum enim facilisis gravida neque. Et netus et
+malesuada fames ac. Sit amet est placerat in. Aliquam sem et tortor consequat id porta nibh.
+Tincidunt nunc pulvinar sapien et ligula. Aenean pharetra magna ac placerat vestibulum lectus
+mauris ultrices. Lectus sit amet est placerat in egestas erat imperdiet sed. Leo vel fringilla est
+ullamcorper eget nulla facilisi. Ultrices eros in cursus turpis massa tincidunt.
+
 
 Ornare massa
 ------------
+
+`Quantum Channels <examples/qutipy-doc-example-quantum-channels>`_
+
 Ornare massa eget egestas purus viverra. Donec et odio pellentesque diam volutpat. Nisi porta lorem mollis aliquam ut porttitor leo a. Tempor nec feugiat nisl pretium fusce. Rhoncus est pellentesque elit ullamcorper dignissim cras. Penatibus et magnis dis parturient montes nascetur ridiculus mus mauris. Nunc consequat interdum varius sit amet mattis vulputate enim. Bibendum est ultricies integer quis auctor. Porttitor eget dolor morbi non arcu. Dolor sed viverra ipsum nunc aliquet. Sapien et ligula ullamcorper malesuada proin libero nunc consequat. Ut ornare lectus sit amet est placerat in.
 
 Amet est placerat
