@@ -23,6 +23,7 @@
 import numpy as np
 from scipy.linalg import sqrtm
 
+from qutipy.linalg import Sqrtm
 from qutipy.channels import apply_channel, choi_representation
 from qutipy.general_functions import Tr, dag, ket, trace_norm
 from qutipy.states import max_ent
@@ -94,5 +95,5 @@ def fidelity(rho, sigma):
     """
     Returns the fidelity between the states rho and sigma.
     """
-    prod = sqrtm(rho) @ sqrtm(sigma)
-    return trace_norm(prod.astype("complex128")) ** 2
+
+    return trace_norm(Sqrtm(rho) @ Sqrtm(sigma)) ** 2

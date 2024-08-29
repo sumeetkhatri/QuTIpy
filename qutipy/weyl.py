@@ -23,9 +23,9 @@
 import itertools
 
 import numpy as np
-from numpy.linalg import matrix_power
+from numpy.linalg import matrix_power, inv
 
-from qutipy.general_functions import Tr, dag, ket, tensor
+from qutipy.general_functions import Tr, dag, ket, tensor, eye
 
 
 def discrete_Weyl_X(d):
@@ -36,7 +36,7 @@ def discrete_Weyl_X(d):
     X = ket(d, 1) @ dag(ket(d, 0))
 
     for i in range(1, d):
-        X = X + ket(d, (i + 1) % d) @ dag(ket(d, i))
+        X = X + ket(d, np.mod(i + 1,d)) @ dag(ket(d, i))
 
     return X
 
@@ -199,3 +199,53 @@ def nQudit_Weyl_coeff(X, d, n):
             C[(str(s), str(t))] = (1 / d**n) * np.around(Tr(dag(G) @ X), 10)
 
     return C
+
+
+def flip_sign(d):
+    """
+    Generates the operator that flips the sign of the standard basis
+    elements in d dimension, i.e., it does
+        |i> --> |-i>,
+    where the negation is performed modulo d.
+    """
+
+    P = ket(d, 0) @ dag(ket(d, 0))
+
+    for i in range(1, d):
+        P = P + ket(d, np.mod(-i,d)) @ dag(ket(d, i))
+
+    return P
+
+
+def CNOT_qudit(d,alt=False):
+    """
+    Generates the qudit CNOT gate, which we define as
+        |i>|j> --> |i>|i-j>,
+    where the subtraction is performed modulo d.
+
+    If alt=True, then we use the definition
+        |i>|j> --> |i>|i+j>,
+    where the addition is performed modulo d.
+
+    Both definitions come from:
+        'Efficient bipartite quantum state purification in 
+        arbitrary dimensional Hilbert spaces', Alber et al.,
+        J. Phys. A: Math. Gen. 34, 8821 (2001), arXiv:quant-ph/0102035
+    """
+
+    P=flip_sign(d)
+
+    C=tensor(ket(d,0)@dag(ket(d,0)),eye(d))
+
+    X=discrete_Weyl_X(d)
+
+    for i in range(1,d):
+        Xi=matrix_power(X,i)
+        if alt:
+            C+=tensor(ket(d,i)@dag(ket(d,i)),Xi)
+        else:    
+            C+=tensor(ket(d,i)@dag(ket(d,i)),Xi@P)
+
+    return C
+
+

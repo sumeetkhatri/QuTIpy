@@ -23,10 +23,11 @@
 import itertools
 
 import cvxpy
+import cvxpy as cvx
 import numpy as np
 from numpy.linalg import norm
 
-from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
+from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy  
 
 
 def dag(X):
@@ -206,8 +207,8 @@ def partial_trace(X, sys, dim):
             dim[s - 1] for s in sys
         ]  # Dimensions of the system to be traced over
         dims_keep = [dim[s - 1] for s in list(set(total_sys) - set(sys))]
-        dim_sys = np.product(dims_sys)
-        dim_keep = np.product(dims_keep)
+        dim_sys = np.prod(dims_sys)
+        dim_keep = np.prod(dims_keep)
 
         perm = sys + list(set(total_sys) - set(sys))
         X = syspermute(X, perm, dim)
@@ -298,11 +299,11 @@ def partial_transpose(X, sys, dim):
     if isinstance(dim[0], tuple) or isinstance(dim[0], list):
         dim_row = [dim[i][0] for i in range(n)]
         dim_col = [dim[i][1] for i in range(n)]
-        dim_total = (np.product(dim_row), np.product(dim_col))
+        dim_total = (np.prod(dim_row), np.prod(dim_col))
     elif isinstance(dim[0], int):
         dim_row = dim
         dim_col = dim
-        dim_total = (np.product(dim), np.product(dim))
+        dim_total = (np.prod(dim), np.prod(dim))
 
     X_new = np.reshape(X_reshape, dim_total)
 
@@ -323,21 +324,12 @@ def permute_tensor_factors(perm, dims):
 
     dim = np.prod(dims)
 
-    W = np.zeros((dim, dim), dtype=complex)
+    W = np.zeros((dim, dim))
 
     for ket in K:
         W = W + syspermute(ket, perm, dims) @ dag(ket)
 
     return W
-
-
-def spectral_norm(X):
-    """
-    Finds the spectral norm (also known as the operator norm and the Schatten
-    infinity-norm) of the matrix X. (The largest singular value of X.)
-    """
-
-    return norm(X, ord=2)
 
 
 def SWAP(sys, dim):
@@ -348,7 +340,7 @@ def SWAP(sys, dim):
     For example, SWAP([1,2],[2,2]) generates the two-qubit swap matrix.
     """
 
-    dim_total = np.product(dim)
+    dim_total = np.prod(dim)
 
     n = len(dim)
     sys_rest = list(np.setdiff1d(range(1, n + 1), sys))
@@ -462,12 +454,115 @@ def trace_distance_pure_states(psi, phi):
     return 1 - Tr(psi @ phi)
 
 
-def trace_norm(X):
+def spectral_norm(X,sdp=False,dual=False):
     """
-    Finds the trace norm of the matrix X. (Sum of the singular values.)
+    Finds the spectral norm (also known as the operator norm and the Schatten
+    infinity-norm) of the matrix X. (The largest singular value of X.)
+
+    If sdp=True, then it calculate the spectral norm using a semi-definite
+    program. If in addition dual=True, then it uses the dual formulation
+    of the SDP. In both cases, the function returns values for the SDP
+    variables that achieve the specral norm.
+
+    Note that, here, X can be an arbitrary complex matrix -- not necessarily
+    Hermitian, and not necessarily square.
     """
 
-    return norm(X, ord="nuc")
+    if not sdp:
+        return norm(X, ord=2)
+    else:
+        d1=X.shape[0]
+        d2=X.shape[1]
+
+        if dual:
+            t=cvx.Variable()
+            A=cvx.bmat([[t*eye(d1),X],[dag(X),t*eye(d2)]])
+
+            c=[A>>0]
+
+            obj=cvx.Minimize(t)
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(eps=1e-7)
+
+            return prob.value
+        else:
+            #Z=cvx.Variable((d2,d2),hermitian=True)
+
+            #c=[Z>>0,cvx.trace(Z)<=1]
+
+            #obj=cvx.Maximize(cvx.real(cvx.trace(dag(X)@X@Z)))
+            #prob=cvx.Problem(obj,constraints=c)
+
+            #prob.solve(eps=1e-7)
+
+            #return np.sqrt(prob.value),Z.value
+            Z=cvx.Variable((d2,d1),complex=True)
+            U=cvx.Variable((d2,d2),complex=True)
+            V=cvx.Variable((d1,d1),complex=True)
+            
+            A=cvx.bmat([[U,Z.H],[Z,V]])
+            
+            c=[A>>0,(1/2)*cvx.real(cvx.trace(U+V))<=1]
+
+            obj=cvx.Maximize(cvx.real(cvx.trace(dag(X)@Z)))
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(eps=1e-7)
+
+            return prob.value, Z.value, U.value, V.value
+
+
+def trace_norm(X,sdp=False,dual=False):
+    """
+    Finds the trace norm of the matrix X. (Sum of the singular values.)
+
+    If sdp=True, then it calculates the trace norm using a semi-definite
+    program. If in additiona dual=True, then it uses the dual formulation
+    of the SDP. In both cases, the function returns values for the 
+    SDP variables that achieve the trace norm.
+
+    Note that, here, X can be an arbitrary complex matrix -- not necessarily
+    Hermitian, and not necessarily square.
+    """
+
+    if not sdp:
+        return norm(X, ord="nuc")
+    else:
+        d1=X.shape[0]
+        d2=X.shape[1]
+        
+        if dual:
+            
+            U=cvx.Variable((d2,d2),complex=True)
+            V=cvx.Variable((d1,d1),complex=True)
+            
+            A=cvx.bmat([[U,dag(X)],[X,V]])
+            
+            c=[A>>0]
+            
+            obj=cvx.Minimize((1/2)*cvx.real(cvx.trace(U)+cvx.trace(V)))
+            prob=cvx.Problem(obj,constraints=c)
+            
+            prob.solve(eps=1e-7)
+            
+            return prob.value,U.value,V.value
+            
+        else:
+            
+            Z=cvx.Variable((d1,d2),complex=True)
+
+            A=cvx.bmat([[eye(d1),Z],[Z.H,eye(d2)]])
+
+            c=[A>>0]
+
+            obj=cvx.Maximize(cvx.real(cvx.trace(dag(X)@Z)))
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(eps=1e-7)
+
+            return prob.value, Z.value
+
 
 
 def unitary_distance(U, V):

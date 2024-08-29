@@ -25,29 +25,48 @@ import math
 import numpy as np
 from numpy.linalg import eig, matrix_rank, norm
 
-from qutipy.general_functions import dag, eye, tensor
+from scipy.linalg import sqrtm
+
+from qutipy.general_functions import dag, eye, tensor, ket
 from qutipy.pauli import nQubit_Pauli_basis
-from qutipy.states import max_ent
+#from qutipy.states import max_ent
 from qutipy.su import nQudit_su_generators, su_generators
 from qutipy.weyl import discrete_Weyl_basis, nQudit_discrete_Weyl_basis
 
 
-def gram_schmidt(states, dim, normalize=True):
+def gamma(dim, as_matrix=True):
     """
-    Performs the Gram-Schmidt orthogonalization procedure on the given states
-    (or simply vectors). dim is the dimension of the vectors.
+    Generates the dim-dimensional *unnormalized) maximally entangled vector,
+    which is defined as
+
+    (|0>|0>+|1>|1>+...+|d-1>|d-1>).
+
+    If as_matrix=True, then the function returns the state as a density matrix.
+    """
+
+    Gamma = np.sum([ket(dim, [i, i]) for i in range(dim)], 0)
+    if as_matrix:
+        return Gamma @ dag(Gamma)
+    else:
+        return Gamma
+    
+
+def gram_schmidt(vectors, dim, normalize=True):
+    """
+    Performs the Gram-Schmidt orthogonalization procedure on the given 
+    vectors. dim is the dimension of the vectors.
     """
 
     e = []
     u = []
-    u.append(states[0])
-    e.append(states[0] / norm(states[0]))
+    u.append(vectors[0])
+    e.append(vectors[0] / norm(vectors[0]))
 
-    for k in range(1, len(states)):
+    for k in range(1, len(vectors)):
         S = np.array(np.zeros([dim, 1]), dtype=complex)
         for j in range(k):
-            S += proj(u[j], states[k])
-        u.append(states[k] - S)
+            S += proj(u[j], vectors[k])
+        u.append(vectors[k] - S)
         e.append(u[k] / norm(u[k]))
 
     if normalize:
@@ -84,9 +103,9 @@ def vec(X):
 
     [d1, d2] = X.shape
 
-    gamma = max_ent(d2, normalized=False, as_matrix=False)
+    Gamma = gamma(d2, as_matrix=False)
 
-    return tensor(eye(d2), X) @ gamma
+    return tensor(eye(d2), X) @ Gamma
 
 
 def vec_inverse(v, d1, d2):
@@ -94,13 +113,13 @@ def vec_inverse(v, d1, d2):
     Take a bipartite vector v of dimension d1*d2, i.e., in the
     tensor product space C^(d1) ⊗ C^(d2), and transforms it
     into a matrix of size d2 x d1.
-
-    TODO: rewrite this function using numpy reshaping functions.
     """
 
-    gamma = max_ent(d1, normalized=False, as_matrix=False)
+    ### TODO: rewrite this function using numpy reshaping functions.
 
-    return tensor(dag(gamma), eye(d2)) @ tensor(eye(d1), v)
+    Gamma = gamma(d1, as_matrix=False)
+
+    return tensor(dag(Gamma), eye(d2)) @ tensor(eye(d1), v)
 
 
 def generate_linear_op_basis(d, basis="w", local_dimension=2):
@@ -193,3 +212,16 @@ def eigensystem(X):
     v = [np.reshape(V[:, i], [d, 1]) for i in range(len(E))]
 
     return [(E[i], v[i]) for i in range(len(E))]
+
+
+def Sqrtm(X):
+    """
+    Takes the matrix square root.
+
+    We need this right now to set the datatype
+    of the output of scipy's sqrtm to np.complex128.
+    """
+
+    return sqrtm(X).astype(np.complex128)
+
+

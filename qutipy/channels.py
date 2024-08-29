@@ -35,37 +35,56 @@ from qutipy.general_functions import (
     partial_trace,
     syspermute,
     tensor,
+    random_hermitian_operator,
+    random_PSD_operator,
+    SWAP
 )
-from qutipy.linalg import generate_linear_op_basis, gram_schmidt, vec
+
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 from qutipy.pauli import (
     generate_nQubit_Pauli,
     generate_nQubit_Pauli_X,
     generate_nQubit_Pauli_Z,
 )
-from qutipy.states import max_ent, random_density_matrix, random_state_vector
+from qutipy.states import max_ent, random_density_matrix, random_state_vector, generate_Bell_basis
 from qutipy.weyl import discrete_Weyl, discrete_Weyl_Z
+from qutipy.linalg import generate_linear_op_basis, gram_schmidt, vec, Sqrtm
 
 ##################################################################################
 ########################## Channel representations ###############################
 ##################################################################################
 
 
-def choi_representation(K, dA, L=None, adjoint=False):
+def choi_representation(K, dA, L=None, adjoint=False, normalized=False):
     """
-    Calculates the Choi representation of the superoperator with Kraus operators K
+    Returns the Choi representation of the superoperator with Kraus operators K
     and L. dA is the dimension of the input space of the channel.
 
     The Choi represenatation is defined with the channel acting on the second
     half of the maximally entangled vector.
     """
 
-    Gamma = max_ent(dA, normalized=False)
+    Gamma = max_ent(dA, normalized=normalized)
 
     if L == None:
         return apply_superoperator(K, K, Gamma, [2], [dA, dA])
     else:
         return apply_superoperator(K, L, Gamma, [2], [dA, dA])
+    
+
+def choi_state(K,dA,L=None,adjoint=False):
+    """
+    Returns the normalized Choi representation of the superoperator
+    with Kraus operators K and L. dA is the dimension of the input
+    space of the channel. If the superopertor is a channel, then this
+    returns the Choi state of the channel.
+
+    The Choi represenatation is defined with the channel acting on the second
+    half of the maximally entangled vector.
+    """
+
+    return choi_representation(K,dA,L=L,adjoint=adjoint,normalized=True)
+    
 
 
 def natural_representation(K):
@@ -241,6 +260,24 @@ def transfer_matrix(K, dA, dB, basis="W", as_dict=False):
 ########################### General functions ####################################
 ##################################################################################
 
+def adjoint_superoperator(K,L):
+    """
+    Determines the adjoint of the superoperator defined by its operator-sum
+    representation, with K and L being the lists containing the corresponding
+    operators.
+    """
+
+    return [dag(K[i]) for i in range(len(K))], [dag(L[i]) for i in range(len(L))]
+
+
+def adjoint_channel(K):
+    """
+    Determines the adjoint of the quantum channel defined by its Kraus operators,
+    contained in the list K.
+    """
+
+    return adjoint_superoperator(K,K)[0]
+
 
 def apply_channel(K, rho, sys=None, dim=None, adjoint=False):
     """
@@ -343,7 +380,7 @@ def tensor_channels(C):
     """
     Takes the tensor product of the channels in C.
 
-    C is a set of sets of Kraus operators.
+    C is a list of lists of Kraus operators.
     """
 
     lengths = []
@@ -401,11 +438,18 @@ def channel_scalar_multiply(K, x):
     return K_new
 
 
-def diamond_norm(K, dA, dB, L=None, display=False, choi=False):
+def diamond_norm(K, dA, dB, L=None, display=False, choi=False, dual=False, HP=False, return_var=False):
     """
     Computes the diamond norm of a superoperator with Kraus operators in the list K.
     dA is the dimension of the input space of the channel, and dB is the
     dimension of the output space.
+
+    The function can be used to calculate the diamond norm of an arbitrary superoperator,
+    not just a completely-positive map. In that case, the lists K and L 
+    contain operators forming an operator-sum decomposition of the map.
+
+    You can set HP=True if the map is Hermiticity preserving, in which case
+    one can evaluate a slightly simpler SDP in order to get the diamond norm.
 
     The form of the SDP used comes from Theorem 3.1 of:
 
@@ -414,82 +458,194 @@ def diamond_norm(K, dA, dB, L=None, display=False, choi=False):
             by John Watrous
     """
 
-    """
-    The Choi representation J in the above paper is defined using a different
-    convention:
-        J=(N ⊗ I)(|Phi^+><Phi^+|).
-    In other words, the channel N acts on the first half of the maximally-
-    entangled state, while the convention used throughout this code stack
-    is
-        J=(I ⊗ N)(|Phi^+><Phi^+|).
-    We thus use syspermute to convert to the form used in the aforementioned
-    paper.
-    """
-
     if choi:
         J = K
     else:
         J = choi_representation(K, dA, L)
 
-    J = syspermute(J, [2, 1], [dA, dB])
+    if dual:
+        if HP:
+            t=cvx.Variable()
+            C=cvx.Variable((dA*dB,dA*dB),hermitian=True)
 
-    X = cvx.Variable((dA * dB, dA * dB), complex=True)
-    rho0 = cvx.Variable((dA, dA), PSD=True)
-    rho1 = cvx.Variable((dA, dA), PSD=True)
+            c=[t>=0,C>>0,cvx.partial_trace(C,[dA,dB],1)==t*eye(dA),-C<<J,J<<C]
 
-    M = cvx.bmat([[cvx.kron(eye(dB), rho0), X], [X.H, cvx.kron(eye(dB), rho1)]])
+            obj=cvx.Minimize(t)
+            prob=cvx.Problem(obj,constraints=c)
 
-    c = []
-    c += [M >> 0, cvx.trace(rho0) == 1, cvx.trace(rho1) == 1]
+            prob.solve(eps=1e-7,verbose=display)
 
-    obj = cvx.Maximize(
-        (1 / 2) * cvx.real(cvx.trace(dag(J) @ X))
-        + (1 / 2) * cvx.real(cvx.trace(J @ X.H))
-    )
+            if return_var:
+                return prob.value, C.value
+            else:
+                return prob.value
+            
+        else:
+            Y0=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+            Y1=cvx.Variable((dA*dB,dA*dB),hermitian=True)
 
-    prob = cvx.Problem(obj, constraints=c)
+            M=cvx.bmat([[Y0,-J],[-dag(J),Y1]])
 
-    prob.solve(verbose=display, eps=1e-7)
+            c=[Y0>>0,Y1>>0,M>>0]
 
-    return prob.value
+            obj=cvx.Minimize((1/2)*cvx.norm(cvx.partial_trace(Y0,[dA,dB],1))+(1/2)*cvx.norm(cvx.partial_trace(Y1,[dA,dB],1)))
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(eps=1e-7,verbose=display)
+
+            if return_var:
+                return prob.value, Y0.value, Y1.value
+            else:
+                return prob.value
+
+    else:
+        if HP:
+            X1=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+            X2=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+            sigma=cvx.Variable((dA,dA),hermitian=True)
+
+            c=[X1>>0,X2>>0,X1+X2==cvx.kron(sigma,eye(dB)),sigma>>0,cvx.trace(sigma)==1]
+
+            obj=cvx.Maximize(cvx.real(cvx.trace(J@(X1-X2))))
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(eps=1e-7,verbose=display)
+
+            if return_var:
+                return prob.value, X1.value, X2.value, sigma.value
+            else:
+                return prob.value
+
+        else:
+            X = cvx.Variable((dA * dB, dA * dB), complex=True)
+            rho0 = cvx.Variable((dA, dA), hermitian=True)
+            rho1 = cvx.Variable((dA, dA), hermitian=True)
+
+            M = cvx.bmat([[cvx.kron(rho0,eye(dB)), X], [X.H, cvx.kron(rho1,eye(dB))]])
+
+            c = [rho0>>0,rho1>>0,M >> 0, cvx.trace(rho0) == 1, cvx.trace(rho1) == 1]
+
+            obj = cvx.Maximize(
+                (1 / 2) * cvx.real(cvx.trace(dag(J) @ X))
+                + (1 / 2) * cvx.real(cvx.trace(J @ X.H))
+            )
+
+            prob = cvx.Problem(obj, constraints=c)
+
+            prob.solve(eps=1e-7,verbose=display)
+
+            if return_var:
+                return prob.value, X.value, rho0.value, rho1.value
+            else:
+                return prob.value
 
 
-def completely_bounded_norm(K, dA, dB, L=None, display=False):
+def completely_bounded_norm(K, dA, dB, L=None, display=False, choi=False):
     """
     Computes the completely bounded norm of the superoperator defined by the
-    Kraus operators in the lists K and L.
+    operators in the lists K and L that form an operator-sum decomposition
+    of the map.
 
     We use here the fact that, for every superoperator, its completely bounded
     norm is given by the diamond norm of its adjoint. This follows straightforwardly
     from definitions.
     """
 
-    K_tmp = K
-    K = []
-    K = [dag(K_tmp[i]) for i in range(len(K_tmp))]
+    if choi:
+        F=SWAP([1,2],[dA,dB])
+        K=F@K.T@F
+    else:
+        K_tmp = K
+        K = []
+        K = [dag(K_tmp[i]) for i in range(len(K_tmp))]
 
     if L == None:
-        return diamond_norm(K, dB, dA, display=display)
+        return diamond_norm(K, dB, dA, display=display, choi=choi)
     else:
         L_tmp = L
         L = []
         L = [dag(L_tmp[i]) for i in range(len(L_tmp))]
 
-        return diamond_norm(K, dB, dA, L, display=display)
+        return diamond_norm(K, dB, dA, L, display=display, choi=choi)
+
+
+def diamond_distance_channels(K1,K2,dA,dB,choi=False,display=False,return_var=False,dual=False):
+    '''
+    Computes the diamond norm distance (1/2)||K1-K2||_◇
+    between two quantum channels, where K1 and K2 are the
+    Kraus (or Choi, if choi=True) representations of the
+    channels. Note that here the maps have to be channels,
+    i.e., completely positive and trace preserving.
+
+    The SDP we use comes from Section 4 of:
+        'Semidefinite Programs for Completely Bounded Norms',
+        John Watrous, Theory of Computing 5, 217 (2009).
+    '''
+
+    if choi:
+        C1=K1
+        C2=K2
+    else:
+        C1=choi_representation(K1,dA)
+        C2=choi_representation(K2,dA)
+    
+    if dual:
+        Z=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+
+        c=[Z>>0,Z>>C1-C2]
+
+        obj=cvx.Minimize(cvx.norm(cvx.partial_trace(Z,[dA,dB],1)))
+        prob=cvx.Problem(obj,constraints=c)
+
+        prob.solve(eps=1e-9,verbose=display)
+
+        if return_var:
+            return prob.value,Z.value
+        else:
+            return prob.value
+    else:
+        W=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+        rho=cvx.Variable((dA,dA),hermitian=True)
+
+        c=[W>>0,rho>>0,W<<cvx.kron(rho,eye(dB)),cvx.trace(rho)==1]
+
+        obj=cvx.Maximize(cvx.real(cvx.trace((C1-C2)@W)))
+        prob=cvx.Problem(obj,constraints=c)
+
+        prob.solve(eps=1e-9,verbose=display)
+
+        if return_var:
+            return prob.value,W.value,rho.value
+        else:
+            return prob.value
 
 
 ##################################################################################
 ############################# Random channels ####################################
 ##################################################################################
 
+def random_HP_map(dA,dB,normal=False,CP=False):
+    """
+    Generates a random Hermiticity-preserving (HP) map with input dimension
+    dA and output dimension dB.
 
-def random_CP_map(dA, dB, TP=False, unital=False, return_as="choi"):
+    We generate the CP map via a randomly-chosen bipartite Hermitian operator
+    that represents the Choi matrix of the map.
+    """
+
+    if CP:
+        return random_CP_map(dA,dB,normal=normal)
+    else:
+        return random_hermitian_operator(dA*dB,normal=normal)
+
+
+def random_CP_map(dA, dB, normal=False, TP=False, unital=False, return_as="choi"):
     """
     Generates a random completely-positive (CP) map with input dimension dA
     and output dimension dB.
 
-    We generate the CP map via a randomly-chosen bipartite quantum state that
-    represents the Choi state of the map.
+    We generate the CP map via a randomly-chosen bipartite positive semi-definite
+    operator that represents the Choi matrix of the map.
 
     The return_as optional argument can be either:
         - 'choi' (default)
@@ -498,19 +654,19 @@ def random_CP_map(dA, dB, TP=False, unital=False, return_as="choi"):
         - 'stinespring'
     """
 
-    C_AB = random_density_matrix(dA * dB)
+    C_AB = random_PSD_operator(dA * dB,normal=normal)
 
     if not TP and not unital:
         C_AB = C_AB
 
     elif TP and not unital:
         C_A = partial_trace(C_AB, [2], [dA, dB])
-        C_A_inv_sq = tensor(inv(sqrtm(C_A)), eye(dB))
+        C_A_inv_sq = tensor(inv(Sqrtm(C_A)), eye(dB))
         C_AB = C_A_inv_sq @ C_AB @ C_A_inv_sq
 
     elif not TP and unital:
         C_B = partial_trace(C_AB, [1], [dA, dB])
-        C_B_inv_sq = tensor(eye(dA), inv(sqrtm(C_B)))
+        C_B_inv_sq = tensor(eye(dA), inv(Sqrtm(C_B)))
         C_AB = C_B_inv_sq @ C_AB @ C_B_inv_sq
 
     elif TP and unital:
@@ -584,11 +740,16 @@ def random_POVM(d, num_elem, via_choi=True):
 ##################################################################################
 
 
-def Pauli_channel(px, py, pz):
+def Pauli_channel(p):
     """
     Generates the Kraus operators, an isometric extension, and a unitary
-    extension of the one-qubit Pauli channel specified by the parameters px, py, pz.
+    extension of the one-qubit Pauli channel specified by the parameters px, py, pz
+    in the list p, where px=[0], py=p[1], pz=p[2].
     """
+
+    px=p[0]
+    py=p[1]
+    pz=p[2]
 
     pI = 1 - px - py - pz
 
@@ -608,7 +769,7 @@ def depolarizing_channel(p):
     For 0<=p<=1, this returns the one-qubit Pauli channel given by px=py=pz=p/3.
     """
 
-    return Pauli_channel(p / 3.0, p / 3.0, p / 3.0)
+    return Pauli_channel([p / 3.0, p / 3.0, p / 3.0])
 
 
 def depolarizing_channel_n_uses(p, n, rho, m):
@@ -662,7 +823,7 @@ def bit_flip_channel(p):
     Generates the channel rho -> (1-p)*rho+p*X*rho*X.
     """
 
-    return Pauli_channel(p, 0, 0)
+    return Pauli_channel([p, 0, 0])
 
 
 def dephasing_channel(p, d=2):
@@ -676,7 +837,7 @@ def dephasing_channel(p, d=2):
     """
 
     if d == 2:
-        return Pauli_channel(0, 0, p)
+        return Pauli_channel([0, 0, p])
     else:
         K = [np.sqrt(p[k]) * matrix_power(discrete_Weyl_Z(d), k) for k in range(d)]
         return K
@@ -707,7 +868,7 @@ def BB84_channel(Q):
 
     """
 
-    return Pauli_channel(Q - Q**2, Q**2, Q - Q**2)
+    return Pauli_channel([Q - Q**2, Q**2, Q - Q**2])
 
 
 def Pauli_channel_nQubit(n, p, alt_repr=False):
@@ -817,6 +978,41 @@ def Pauli_channel_qudit(d, p):
     return K, V, U
 
 
+def Pauli_twirl_channel(K,d,input='kraus',output='kraus',n_qubit=False):
+    '''
+    Generates the Pauli-twirled version of a channel with Kraus operators
+    in the set K. This can be achieved by taking the Bell-basis elements
+    of the Choi representation.
+
+    The input and output dimensions of the channel should both be equal
+    to d.
+
+    The input can either be the Kraus operators or the Choi representation;
+    same for the output.
+
+    If n_qubit=True, then we should have d=2^n, such that we use the
+    n-qubit Pauli operators to do the twirling.
+    '''
+
+    if input=='kraus':
+        C=choi_representation(K,d)
+    elif input=='choi':
+        C=K
+    else:
+        return('The input should be either the Kraus or Choi representation!')
+
+    B=generate_Bell_basis(d,n_qubit=n_qubit)
+    
+    C_twirl=np.sum([Tr(b@dag(b)@C)*b@dag(b) for b in B],0)
+
+    if output=='choi':
+        return C_twirl
+    elif output=='kraus':
+        return choi_to_kraus(C_twirl,d,d)
+    else:
+        return('The output should be indicated as either the Kraus or Choi representation!')
+
+
 ##################################################################################
 ############################## Other channels ####################################
 ##################################################################################
@@ -844,6 +1040,33 @@ def amplitude_damping_channel(gamma):
     return [A1, A2]
 
 
+def T1_T2_channel(T1,T2):
+    """
+    Generates the qubit channel corresponding to T1 and 
+    T2 noise. Specifically, this is a concatenation of
+    the amplitude damping and phase damping channels,
+    such that:
+
+        gamma = 1-exp(-1/T1),
+        sqrt((1-gamma)*p) = exp(-1/T2).
+
+    For a reference, see:
+        Ghosh et al., "Surface code with decoherence: An analysis of three
+        superconducting architectures", Phys. Rev. A 86, 062318 (2012),
+        arXiv:1210.5799
+
+    T1 and T2 should be specified in dimensionless time units.
+    """
+
+    gamma=1-np.exp(-1/T1)
+    p = np.exp(-2/T2)/(1-gamma)
+
+    #print(gamma,p)
+
+    return compose_channels([amplitude_damping_channel(gamma),phase_damping_channel(p)])
+
+
+
 def generalized_amplitude_damping_channel(gamma, N):
     """
     Generates the generalized amplitude damping channel.
@@ -862,6 +1085,16 @@ def generalized_amplitude_damping_channel(gamma, N):
         A4 = np.sqrt(N) * np.array([[0, 0], [np.sqrt(gamma), 0]])
 
         return [A1, A2, A3, A4]
+
+
+###############################################################################
+########################## General Functions ##################################
+###############################################################################
+
+### TODO: add functions for the closest Pauli channel, closest unital channel.
+### For this, make use of the simpler SDP for the diamond norm distance of
+### two quantum channels, because then we can extract the optimal variables
+### in order to learn something.
 
 
 def largest_inner_product_channels(
@@ -890,8 +1123,9 @@ def largest_inner_product_channels(
     C = cvx.Variable((d[input] * d[output], d[input] * d[output]), hermitian=True)
     c = [
         C >> 0,
-        numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
-        == eye(d[input]),
+        cvx.partial_trace(C,[d[input],d[output]],1)==eye(d[input])
+        #numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
+        #== eye(d[input]),
     ]
 
     obj = cvx.Maximize(cvx.real(cvx.trace(dag(X_AB) @ C)))
@@ -931,8 +1165,9 @@ def smallest_inner_product_channels(
     C = cvx.Variable((d[input] * d[output], d[input] * d[output]), hermitian=True)
     c = [
         C >> 0,
-        numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
-        == eye(d[input]),
+        cvx.partial_trace(C,[d[input],d[output]],1)==eye(d[input])
+        #numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
+        #== eye(d[input]),
     ]
 
     obj = cvx.Minimize(cvx.real(cvx.trace(dag(X_AB) @ C)))
@@ -989,8 +1224,9 @@ def largest_inner_product_CPTNI(
         C = cvx.Variable((d[input] * d[output], d[input] * d[output]), hermitian=True)
         c = [
             C >> 0,
-            numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
-            << eye(d[input]),
+            cvx.partial_trace(C,[d[input],d[output]],1)<<eye(d[input])
+            #numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(C), [2], [d[input], d[output]]))
+            #<< eye(d[input]),
         ]
 
         obj = cvx.Maximize(cvx.real(cvx.trace(dag(X_AB) @ C)))
@@ -1002,3 +1238,94 @@ def largest_inner_product_CPTNI(
             return prob.value, C.value
         else:
             return prob.value
+        
+
+def closest_unital_channel(K,d,choi=False,display=False,return_var=False):
+    """
+    For a channel given by the Kraus operators in K, this returns the closest
+    channel (in diamond distance) to that channel.
+
+    Note that, in this case, the input and output dimensions have to be the same,
+    equal to d.
+    """
+
+    if choi:
+        C=K
+    else:
+        C=choi_representation(K,d)
+
+    Z=cvx.Variable((d**2,d**2),hermitian=True)
+    D=cvx.Variable((d**2,d**2),hermitian=True)
+
+    c=[Z>>0,D>>0,Z>>C-D,cvx.partial_trace(D,[d,d],0)==eye(d),cvx.partial_trace(D,[d,d],1)==eye(d)]
+
+    obj=cvx.Minimize(cvx.norm(cvx.partial_trace(Z,[d,d],1)))
+    prob=cvx.Problem(obj,constraints=c)
+
+    prob.solve(eps=1e-7,verbose=display)
+
+    closest_chan=D.value
+    #if choi:
+    #    closest_chan=D.value
+    #else:
+    #    closest_chan=choi_to_kraus(D.value,d,d) ### choi_to_kraus function needs to be fixed!!
+
+    if return_var:
+        return prob.value,closest_chan,Z.value
+    else:
+        return prob.value,closest_chan
+
+
+def closest_Pauli_channel(K,d,n_qubit=False,choi=False,display=False,return_var=False):
+    """
+    For a channel given by the Kraus operators in K, this returns the closest
+    channel (in diamond distance) to that channel.
+
+    Note that, in this case, the input and output dimensions have to be the same,
+    equal to d.
+
+    For d=2^n, we can set n_qubit=True, and then we would find the closest Pauli
+    channel in the n-qubit Pauli operator representation.
+    """
+
+    if choi:
+        C=K
+    else:
+        C=choi_representation(K,d)
+
+    Z=cvx.Variable((d**2,d**2),hermitian=True)
+    
+    p={}
+
+    if n_qubit:
+        n=int(np.log2(d))  # The number of qubits
+        S=list(itertools.product([0, 1], repeat=n))
+    else:
+        S=list(range(d))
+    
+    for s1 in S:
+        for s2 in S:
+            p[(s1,s2)]=cvx.Variable()
+    
+    B=generate_Bell_basis(d,n_qubit=n_qubit,as_dict=True)
+    D=cvx.sum([p[(s1,s2)]*(B[(s1,s2)]@dag(B[(s1,s2)]))*d for s1 in S for s2 in S],0)
+
+    c=[p[(s1,s2)]>=0 for s1 in S for s2 in S]+[p[(s1,s2)]<=1 for s1 in S for s2 in S]+[cvx.sum([p[(s1,s2)] for s1 in S for s2 in S])==1]
+    c+=[Z>>0,Z>>C-D]
+
+    obj=cvx.Minimize(cvx.norm(cvx.partial_trace(Z,[d,d],1)))
+    prob=cvx.Problem(obj,constraints=c)
+
+    prob.solve(eps=1e-7,verbose=display)
+
+    closest_chan=D.value
+    #if choi:
+    #    closest_chan=D.value
+    #else:
+    #    closest_chan=choi_to_kraus(D.value,d,d) ### choi_to_kraus function needs to be fixed!!
+
+    if return_var:
+        return prob.value,closest_chan,[p[(s1,s2)].value for s1 in S for s2 in S],Z.value
+    else:
+        return prob.value,closest_chan,[p[(s1,s2)].value for s1 in S for s2 in S]
+

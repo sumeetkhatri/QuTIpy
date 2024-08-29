@@ -21,8 +21,9 @@
 #
 
 import numpy as np
-from numpy.linalg import eig, norm
-from scipy.linalg import expm, logm
+from numpy.linalg import eig, norm, matrix_power
+from scipy.linalg import expm, logm, sqrtm
+from scipy.special import binom
 
 from . import channels as channels
 from . import clifford as Clifford
@@ -32,13 +33,13 @@ from . import fermions as fermions
 from . import fidelities as fidelities
 from . import gates as gates
 from . import general_functions as general_functions
-from . import linalg as linalg
 from . import misc as misc
 from . import pauli as Pauli
 from . import protocols as protocols
 from . import states as states
 from . import su as su
 from . import weyl as Weyl
+from . import linalg as linalg
 from .channels import *
 from .clifford import *
 from .distance import *

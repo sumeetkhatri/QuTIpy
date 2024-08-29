@@ -42,71 +42,92 @@ from qutipy.general_functions import (
 )
 from qutipy.misc import cvxpy_to_numpy, numpy_to_cvxpy
 from qutipy.pauli import generate_nQubit_Pauli_Z
-from qutipy.states import Bell, apply_isotropic_twirl, graph_state
-from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z
+from qutipy.states import bell, apply_isotropic_twirl, graph_state
+from qutipy.weyl import discrete_Weyl_X, discrete_Weyl_Z, CNOT_qudit
 
 
 def state_discrimination(
-    rho, sigma, p, succ=False, sdp=False, dual=False, display=False
+    S, p, err=False, dual=False, display=False, return_meas=False
 ):
     """
-    Calculates the optimal error probability for quantum state discrimination, with prior
-    probability p for the state rho.
+    Calculates the optimal success probability for multiple quantum state discrimination,
+    where S is a list of states and p is a list of probablities, such that p[i] is
+    the probability of having the state S[i]. More generally, S can be list of
+    positive semi-definite operators (not necessarily unit trace).
 
-    If succ=True, then this function returns the optimal success probability instead.
-    If sdp=True, then this function calculates the optimal value (error or success
-    probability) using an SDP.
+    If err=True, then this function returns the optimal error probability instead.
     """
 
-    if sdp:
+    d=S[0].shape[0]
+    N=len(S)
+
+    if return_meas==True:
+        dual=False
+
+    # In the binary case, use the known closed-form expression for the
+    # success probability in terms of the trace norm
+    if len(S)==2:
+        p_succ=(1/2)*(p[0]*Tr(S[0])+p[1]*Tr(S[1])+trace_norm(p*S[0]-(1-p)*S[1]))
+        if err:
+            return 1-p_succ
+        else:
+            return p_succ
+    else:
         if not dual:
-            dim = rho.shape[0]
+            M={}
 
-            M = cvx.Variable((dim, dim), hermitian=True)
+            for i in range(N):
+                M[i]=cvx.Variable((d,d),hermitian=True)
 
-            c = [M >> 0, eye(dim) - M >> 0]
+            c=[M[i]>>0 for i in range(N)]+[eye(d)-M[i]>>0 for i in range(N)]
 
-            obj = cvx.Minimize(
-                cvx.real(
-                    p * cvx.trace((eye(dim) - M) @ rho) + (1 - p) * cvx.trace(M @ sigma)
-                )
+            P=M[0]
+            for i in range(1,N):
+                P=P+M[i]
+
+            c+=[P==eye(d)]
+
+            f=sum([p[i]*cvx.trace(S[i]@M[i]) for i in range(N)])
+
+            obj = cvx.Maximize(
+                cvx.real(f)
             )
             prob = cvx.Problem(obj, constraints=c)
 
-            prob.solve(verbose=display, eps=1e-7)
+            prob.solve(verbose=display, eps=1e-9)
 
-            p_err = prob.value
+            p_succ = prob.value
 
-            if succ:
-                return 1 - p_err
+            if err:
+                if return_meas:
+                    return 1-p_succ,[M[i].value for i in range(N)]
+                else:
+                    return 1 - p_succ
             else:
-                return p_err
+                if return_meas:
+                    return p_succ,[M[i].value for i in range(N)]
+                else:
+                    return p_succ
 
         elif dual:
-            dim = rho.shape[0]
 
-            W = cvx.Variable((dim, dim), hermitian=True)
+            W = cvx.Variable((d, d), hermitian=True)
 
-            c = [W << p * rho, W << (1 - p) * sigma]
+            c=[W>>p[i]*S[i] for i in range(N)]
 
-            obj = cvx.Maximize(cvx.real(cvx.trace(W)))
+            obj = cvx.Minimize(cvx.real(cvx.trace(W)))
             prob = cvx.Problem(obj, constraints=c)
 
-            prob.solve(verbose=display, eps=1e-7)
+            prob.solve(verbose=display, eps=1e-9)
 
-            p_err = prob.value
+            p_succ = prob.value
 
-            if succ:
-                return 1 - p_err
+            if err:
+                return 1 - p_succ
             else:
-                return p_err
+                return p_succ
 
-    else:
-        p_err = (1 / 2) * (1 - trace_norm(p * rho - (1 - p) * sigma))
-        if succ:
-            return 1 - p_err
-        else:
-            return p_err
+### TODO: function for minimax state discrimination
 
 
 def apply_teleportation_chain_channel(rho, n, dA=2, dR=2, dB=2):
@@ -138,9 +159,9 @@ def apply_teleportation_chain_channel(rho, n, dA=2, dR=2, dB=2):
 
     for z_indices in indices:
         for x_indices in indices:
-            Bell_zx = Bell(dB, z_indices[0], x_indices[0])
+            Bell_zx = bell(z_indices[0], x_indices[0],dB)
             for j in range(1, n):
-                Bell_zx = tensor(Bell_zx, Bell(dB, z_indices[j], x_indices[j]))
+                Bell_zx = tensor(Bell_zx, bell(z_indices[j], x_indices[j],dB))
 
             z_sum = np.mod(sum(z_indices), dB)
             x_sum = np.mod(sum(x_indices), dB)
@@ -174,10 +195,10 @@ def post_graph_state_dist_fidelity(A_G, n, rho):
         z_n = A_G * x_n
         z_n = np.mod(z_n, 2)
 
-        bell = Bell(2, z_n[0, 0], x_n[0, 0], as_matrix=True)
+        bell = bell(z_n[0, 0], x_n[0, 0], 2, as_matrix=True)
 
         for k in range(1, n):
-            bell = tensor(bell, Bell(2, z_n[k, 0], x_n[k, 0], as_matrix=True))
+            bell = tensor(bell, bell(z_n[k, 0], x_n[k, 0], 2, as_matrix=True))
 
         bell = syspermute(
             bell,
@@ -202,8 +223,8 @@ def post_teleportation_fidelity(rho, dA=2):
             fidelity(
                 rho,
                 tensor(
-                    Bell(dA, z, x, as_matrix=True),
-                    Bell(dA, z, x, as_matrix=True),
+                    bell(z, x, dA, as_matrix=True),
+                    bell(z, x, dA, as_matrix=True),
                 ),
             )
             for z in range(dA)
@@ -227,10 +248,10 @@ def post_ent_swap_GHZ_chain_fidelity(rho, n):
 
         s = np.mod(sum(index), 2)
 
-        Bell_z = Bell(2, s, 0, as_matrix=True)
+        Bell_z = bell(s, 0, 2, as_matrix=True)
 
         for z in index:
-            Bell_z = tensor(Bell_z, Bell(2, z, 0, as_matrix=True))
+            Bell_z = tensor(Bell_z, bell(z, 0, 2, as_matrix=True))
 
         f = f + fidelity(Bell_z, rho)
 
@@ -326,84 +347,139 @@ def apply_ent_swap_GHZ_chain_channel(rho, n):
 
 
 def channel_discrimination(
-    J0, J1, dimA, dimB, p, succ=False, sdp=False, dual=False, display=False
+    C, dA, dB, P, err=False, dual=False, display=False
 ):
     """
-    Calculates the optimal error probability for quantum channel discrimination, with prior
-    probability p for the channel with Choi representation J1.
+    Calculates the optimal success probability for multiple quantum channel
+    discrimination, in the Bayesian setting. The list C contains the Choi
+    representations of the channels, and the list p contain the prior probabilities,
+    with p[i] being the probability of having the channel C[i]. dA and dB are
+    the input and output dimensions, respectively, of the channels.
 
-    J0 and J1 are the Choi representations of the two channels. dimA and dimB are the input
-    and output dimensions, respectively, of the channels.
-
-    If succ=True, then this function returns the optimal success probability instead.
-    If sdp=True, then this function calculates the optimal value (error or success
-    probability) using an SDP.
+    If err=True, then this function returns the optimal error probability instead.
     """
-
-    if sdp:
-        if not dual:
-            # Need the following syspermute because the cvxpy kron function
-            # requires a constant in the first argument
-            J0 = syspermute(J0, [2, 1], [dimA, dimB])
-            J1 = syspermute(J1, [2, 1], [dimA, dimB])
-
-            Q0 = cvx.Variable((dimA * dimB, dimA * dimB), hermitian=True)
-            Q1 = cvx.Variable((dimA * dimB, dimA * dimB), hermitian=True)
-            rho = cvx.Variable((dimA, dimA), hermitian=True)
-
-            c = [
-                Q0 >> 0,
-                Q1 >> 0,
-                rho >> 0,
-                cvx.real(cvx.trace(rho)) == 1,
-                Q0 + Q1 == cvx.kron(eye(dimB), rho),
-            ]
-
-            obj = cvx.Minimize(
-                cvx.real(p * cvx.trace(Q1 @ J0) + (1 - p) * cvx.trace(Q0 @ J1))
-            )
-            prob = cvx.Problem(obj, constraints=c)
-
-            prob.solve(verbose=display, eps=1e-7)
-
-            p_err = prob.value
-
-            if succ:
-                return 1 - p_err
-            else:
-                return p_err
-
-        elif dual:
-            mu = cvx.Variable()
-            W = cvx.Variable((dimA * dimB, dimA * dimB), hermitian=True)
-
-            WA = numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(W), [2], [dimA, dimB]))
-
-            c = [W << p * J0, W << (1 - p) * J1, mu * eye(dimA) << WA]
-
-            obj = cvx.Maximize(mu)
-            prob = cvx.Problem(obj, constraints=c)
-
-            prob.solve(verbose=display, eps=1e-7)
-
-            p_err = prob.value
-
-            if succ:
-                return 1 - p_err
-            else:
-                return p_err
-
-    else:
-        p_err = (1 / 2) * (
+    
+    if len(C)==2:
+        p_succ = (1 / 2) * (
             1
-            - diamond_norm(
-                p * J0 - (1 - p) * J1, dimA, dimB, display=display, choi=True
+            + diamond_norm(
+                P[0] * C[0] - P[1] * C[1], dA, dB, display=display, choi=True
             )
         )
-        if succ:
-            return 1 - p_err
+        if err:
+            return 1 - p_succ
         else:
-            return p_err
+            return p_succ
+
+    else:
+
+        n=len(C)
+
+        if not dual:
+
+            Q={}
+            for i in range(n):
+                Q[i]=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+
+            sigma=cvx.Variable((dA,dA),hermitian=True)
+
+            c=[Q[i]>>0 for i in range(n)]+[sigma>>0,cvx.trace(sigma)==1]
+            c+=[cvx.sum([Q[i] for i in range(n)])==cvx.kron(sigma,eye(dB))]
+
+            obj=cvx.Maximize(cvx.sum([P[i]*cvx.real(cvx.trace(Q[i]@C[i])) for i in range(n)]))
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(verbose=display,eps=1e-9)
+
+            p_succ=prob.value
+
+            if err:
+                return 1 - p_succ
+            else:
+                return p_succ
+
+        elif dual:
+
+            l = cvx.Variable()
+            Y = cvx.Variable((dA * dB, dA * dB), hermitian=True)
+
+            YA = numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(Y), [2], [dA, dB]))
+
+            c=[l>=0]+[Y>>P[i]*C[i] for i in range(n)]+[Y>>0,YA==l*eye(dA)]
+
+            obj = cvx.Minimize(l)
+            prob = cvx.Problem(obj, constraints=c)
+
+            prob.solve(verbose=display, eps=1e-9)
+
+            p_succ = prob.value
+
+            if err:
+                return 1 - p_succ
+            else:
+                return p_succ
+
+
+def channel_discrimination_minimax(C,dA,dB,err=False, dual=False, display=False):
+
+    """
+    Calculates the optimal success probability for multiple quantum channel
+    discrimination, in the minimax setting. The list C contains the Choi
+    representations of the channels. dA and dB are the input and output
+    dimensions, respectively, of the channels.
+
+    If err=True, then this function returns the optimal error probability instead.
+    """
+
+    n=len(C)
+
+    if not dual:
+
+        q=cvx.Variable()
+        P={}
+        for i in range(n):
+            P[i]=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+        sigma=cvx.Variable((dA,dA),hermitian=True)
+
+        c=[q>=0]+[q<=cvx.real(cvx.trace(P[i]@C[i])) for i in range(n)]+[P[i]>>0 for i in range(n)]
+        c+=[cvx.sum([P[i] for i in range(n)])==cvx.kron(sigma,eye(dB))]
+        c+=[sigma>>0,cvx.trace(sigma)==1]
+
+        obj=cvx.Maximize(q)
+        prob=cvx.Problem(obj,constraints=c)
+
+        prob.solve(verbose=display,eps=1e-7)
+
+        p_succ=prob.value
+
+        if err:
+            return 1-p_succ
+        else:
+            return p_succ        
+
+    else:
+
+        l=cvx.Variable()
+        P=cvx.Variable(n)
+        Y=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+
+        YA=numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(Y),[2],[dA,dB]))
+
+        c=[l>=0]+[Y>>P[i]*C[i] for i in range(n)]+[p>=0 for p in P]+[cvx.sum(P)==1]+[Y>>0,YA==l*eye(dA)]
+
+        obj=cvx.Minimize(l)
+
+        prob=cvx.Problem(obj,constraints=c)
+
+        prob.solve(verbose=display,eps=1e-7)
+
+        p_succ=prob.value
+
+        if err:
+            return 1-p_succ
+        else:
+            return p_succ
+
 
 
 def post_ent_swap_GHZ_fidelity(rho):
@@ -412,57 +488,80 @@ def post_ent_swap_GHZ_fidelity(rho):
     with respect to the three-party GHZ state.
     """
 
-    Phi = [Bell(2, z, 0, as_matrix=True) for z in range(2)]
+    Phi = [bell(z, 0, 2, as_matrix=True) for z in range(2)]
 
     return sum([fidelity(tensor(Phi[z], Phi[z]), rho) for z in range(2)])
 
 
 def entanglement_distillation(
-    rho1, rho2, outcome=1, twirl_after=False, normalize=False
+    rho1, rho2, d, outcome=1, twirl_before=False, twirl_after=False, normalize=True, return_prob=True
 ):
     """
     Applies a particular entanglement distillation channel to the two two-qubit states
-    rho1 and rho2. [PRL 76, 722 (1996)]
+    rho1 and rho2. [PRL 76, 722 (1996); see also PRL 77, 2818 (1996)] (if d=2).
+    
+    If d>2, then we apply an analogous protocol, which can be
+    found in [PRA 59, 4206 (1999); see also J. Phys. A: Math. Gen. 34, 8821 (2001)].
+    In this case, rho1 and rho2 are two two-qudit states.
 
     The channel is probabilistic. If the variable outcome=1, then the function returns
     the two-qubit state conditioned on the success of the distillation protocol.
     """
 
-    CNOT = CNOT_ij(1, 2, 2)
-    proj0 = ket(2, 0) @ dag(ket(2, 0))
-    proj1 = ket(2, 1) @ dag(ket(2, 1))
+    if d==2:
+        CNOT=CNOT_ij(3,4,4)@CNOT_ij(1,2,4)
+    else:
+        CNOT=tensor(CNOT_qudit(d),CNOT_qudit(d))
 
-    P0 = tensor(eye(2), proj0, eye(2), proj0)
-    P1 = tensor(eye(2), proj1, eye(2), proj1)
-    P2 = eye(16) - P0 - P1
-    C = tensor(CNOT, CNOT)
-    K0 = P0 * C
-    K1 = P1 * C
-    K2 = P2 * C
+    K={}
+
+    for i in range(d):
+        for j in range(d):
+            K[(i,j)]=tensor(eye(d),dag(ket(d,i)),eye(d),dag(ket(d,j)))@CNOT
+    
+    #K00=tensor(eye(2),dag(ket(2,0)),eye(2),dag(ket(2,0)))@CNOT
+    #K01=tensor(eye(2),dag(ket(2,0)),eye(2),dag(ket(2,1)))@CNOT
+    #K10=tensor(eye(2),dag(ket(2,1)),eye(2),dag(ket(2,0)))@CNOT
+    #K11=tensor(eye(2),dag(ket(2,1)),eye(2),dag(ket(2,1)))@CNOT
+
+    if twirl_before:
+        rho1=apply_isotropic_twirl(rho1,d)
+        rho2=apply_isotropic_twirl(rho2,d)
 
     rho_in = syspermute(
-        tensor(rho1, rho2), [1, 3, 2, 4], [2, 2, 2, 2]
+        tensor(rho1, rho2), [1, 3, 2, 4], [d, d, d, d]
     )  # rho_in==rho_{A1A2B1B2}
 
-    if outcome == 1:
+    if outcome == 1:  ## When the protocol is successful
         # rho_out is unnormalized. The trace of rho_out is equal to the success
         # probability.
-        rho_out = partial_trace(
-            K0 @ rho_in @ dag(K0) + K1 @ rho_in @ dag(K1), [2, 4], [2, 2, 2, 2]
-        )
+        
+        rho_out=np.sum([K[(i,i)]@rho_in@dag(K[(i,i)]) for i in range(d)],0)
+
+        if return_prob:
+            prob=Tr(rho_out)
+        
         if twirl_after:
-            rho_out = apply_isotropic_twirl(rho_out, 2)
+            rho_out = apply_isotropic_twirl(rho_out, d)
         if normalize:
             rho_out = rho_out / Tr(rho_out)
 
     elif outcome == 0:
         # rho_out is unnormalized. The trace of rho_out is equal to the failure
         # probability.
-        rho_out = partial_trace(K2 @ rho_in @ dag(K2), [2, 4], [2, 2, 2, 2])
+        
+        rho_out=np.sum([K[(i,j)]@rho_in@dag(K[(i,j)]) for i in range(d) for j in range(d) if i!=j],0)
+
+        if return_prob:
+            prob=Tr(rho_out)
+        
         if normalize:
             rho_out = rho_out / Tr(rho_out)
 
-    return rho_out
+    if return_prob:
+        return rho_out,prob
+    else:
+        return rho_out
 
 
 def apply_graph_state_dist_channel(A_G, n, rho):
@@ -524,9 +623,9 @@ def apply_teleportation_channel(rho, dA=2, dR1=2, dR2=2, dB=2):
 
     rho_out = np.sum(
         [
-            tensor(eye(dA), dag(Bell(dR1, z, x)), Z[z] @ X[x])
+            tensor(eye(dA), dag(bell(z, x, dR1)), Z[z] @ X[x])
             @ rho
-            @ tensor(eye(dA), Bell(dR1, z, x), dag(X[x]) @ dag(Z[z]))
+            @ tensor(eye(dA), bell(z, x, dR1), dag(X[x]) @ dag(Z[z]))
             for z in range(dB)
             for x in range(dB)
         ],
@@ -556,14 +655,15 @@ def post_teleportation_chain_fidelity(rho, n, dA=2):
             z_sum = np.mod(sum(z_indices), dA)
             x_sum = np.mod(sum(x_indices), dA)
 
-            Bell_tot = Bell(dA, z_sum, x_sum, as_matrix=True)
+            Bell_tot = bell(z_sum, x_sum, dA, as_matrix=True)
 
             for j in range(n):
                 Bell_tot = tensor(
                     Bell_tot,
-                    Bell(dA, z_indices[j], x_indices[j], as_matrix=True),
+                    bell(z_indices[j], x_indices[j], dA, as_matrix=True),
                 )
 
-            f += fidelity(rho, Bell_tot)
+            #f += fidelity(rho, Bell_tot)
+            f+=Tr(Bell_tot@rho)
 
     return f

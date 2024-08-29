@@ -71,31 +71,42 @@ def generate_nQubit_Pauli_Z(indices):
     return out
 
 
-def generate_nQubit_Pauli(indices):
+def generate_nQubit_Pauli(indices,alt=False):
     """
     Generates a tensor product of Pauli operators for n qubits. indices is a list
     of indices i specifying the Pauli operator for each tensor factor. i=0 is the identity, i=1 is sigma_x,
     i=2 is sigma_y, and i=3 is sigma_z.
+
+    If alt=True, then we define the operators in terms of products of the n-qubit X and Z operators.
+    In this case, the variables 'indices' should be a list of two lists:
+        [[z1,z2,...,zn],[x1,x2,...xn]],
+    such that every zi and xi is either 0 or 1.
     """
 
-    Id = eye(2)
-    Sx = np.array([[0, 1], [1, 0]])
-    Sy = np.array([[0, -1j], [1j, 0]])
-    Sz = np.array([[1, 0], [0, -1]])
+    if alt:
+        z=indices[0]
+        x=indices[1]
 
-    out = 1
+        return generate_nQubit_Pauli_Z(z)@generate_nQubit_Pauli_X(x)
+    else:
+        Id = eye(2)
+        Sx = np.array([[0, 1], [1, 0]])
+        Sy = np.array([[0, -1j], [1j, 0]])
+        Sz = np.array([[1, 0], [0, -1]])
 
-    for index in indices:
-        if index == 0:
-            out = tensor(out, Id)
-        elif index == 1:
-            out = tensor(out, Sx)
-        elif index == 2:
-            out = tensor(out, Sy)
-        elif index == 3:
-            out = tensor(out, Sz)
+        out = 1
 
-    return out
+        for index in indices:
+            if index == 0:
+                out = tensor(out, Id)
+            elif index == 1:
+                out = tensor(out, Sx)
+            elif index == 2:
+                out = tensor(out, Sy)
+            elif index == 3:
+                out = tensor(out, Sz)
+
+        return out
 
 
 def nQubit_Pauli_basis(n):

@@ -21,12 +21,18 @@
 #
 
 import numpy as np
-from numpy.linalg import matrix_power, norm
+from numpy.linalg import matrix_power, norm, inv
+
+import itertools
+
+from math import factorial
+from sympy.combinatorics.permutations import Permutation
 
 from qutipy.gates import CZ_ij
 from qutipy.general_functions import SWAP, Tr, dag, eye, ket, syspermute, tensor
 from qutipy.pauli import generate_nQubit_Pauli
-from qutipy.weyl import discrete_Weyl, discrete_Weyl_X, discrete_Weyl_Z
+from qutipy.weyl import discrete_Weyl, discrete_Weyl_X, discrete_Weyl_Z, discrete_Weyl_basis
+from qutipy.linalg import Sqrtm, vec, vec_inverse
 
 
 def max_ent(dim, normalized=True, as_matrix=True):
@@ -55,24 +61,103 @@ def max_ent(dim, normalized=True, as_matrix=True):
             return Gamma
 
 
-def Bell(d, z, x, as_matrix=False):
+def bell(z, x, d=2, as_matrix=False, normalized=True, n_qubit=False):
     """
     Generates a d-dimensional Bell state with 0 <= z,x <= d-1. These are defined as
 
     |Phi_{z,x}> = (Z(z)X(x) ⊗ I)|Phi^+>
 
+    If n_qubit=True, then we should have that d=2^n, such that we can define 
+    the Bell states in terms of the n-qubit Pauli operators instead. Then
+    z and x should be lists, each of size n, each consisting of zeros 
+    and ones. 
     """
 
-    Bell = max_ent(d, as_matrix=as_matrix)
+    Bell = max_ent(d, as_matrix=as_matrix, normalized=normalized)
 
-    W_zx = matrix_power(discrete_Weyl_Z(d), z) @ matrix_power(discrete_Weyl_X(d), x)
+    if not n_qubit:
+        W_zx = matrix_power(discrete_Weyl_Z(d), z) @ matrix_power(discrete_Weyl_X(d), x)
 
-    if as_matrix:
-        out = tensor(W_zx, eye(d)) @ Bell @ tensor(dag(W_zx), eye(d))
-        return out
+        if as_matrix:
+            return tensor(W_zx, eye(d)) @ Bell @ tensor(dag(W_zx), eye(d))
+        else:
+            return tensor(W_zx, eye(d)) @ Bell
     else:
-        out = tensor(W_zx, eye(d)) @ Bell
-        return out
+        n=int(np.log2(d))  # The number of qubits
+        
+        P_zx=generate_nQubit_Pauli([z,x],alt=True)
+
+        if as_matrix:
+            return tensor(P_zx,eye(d))@Bell@tensor(dag(P_zx),eye(d))
+        else:
+            return tensor(P_zx,eye(d))@Bell
+
+
+def generate_Bell_basis(d,n_qubit=False,linop=False,as_dict=False):
+    '''
+    Generates a list of all two-qudit Bell states, where
+    d is the dimension of each qudit.
+
+    If n_qubit=True, then we should have d=2^n, such that
+    we can use the n-qubit Pauli operators to generate 
+    the Bell states.
+
+    If linop=True, then this generates a list of operators
+    corresponding to the basis of linear operators acting
+    on two qudits.
+    '''
+
+    if as_dict:
+        B={}
+    else:
+        B=[]
+
+    if n_qubit:
+        n=int(np.log2(d))  # The number of qubits
+        S=list(itertools.product([0, 1], repeat=n))
+    else:
+        S=list(range(d))
+    
+    for s1 in S:
+        for s2 in S:
+            if as_dict:
+                B[(s1,s2)]=bell(s1,s2,d,n_qubit=n_qubit)
+            else:
+                B.append(bell(s1,s2,d,n_qubit=n_qubit))
+
+    if not linop:
+        return B
+    else:
+        if as_dict:
+            Bop={}
+            for s1 in S:
+                for s2 in S:
+                    for s3 in S:
+                        for s4 in S:
+                            Bop[(s1,s2,s3,s4)]=B[(s1,s2)]@dag(B[(s3,s4)])
+            return Bop
+        else:
+            return [b1@dag(b2) for b1 in B for b2 in B]
+
+
+def Bell_diagonal_state(d,p,n_qubit=False):
+    """
+    Generates a two-qudit Bell-diagonal state, with local dimension d.
+
+    If n_qubit=True, then we should have d=2^n, and then we use the
+    Bell states defined by the n-qubit Pauli operators.
+
+    The variable p is a dictionary of d^2 probabilities, specified
+    in the form p[(s1,s2)].
+    """
+
+    if n_qubit:
+        n=int(np.log2(d))  # The number of qubits
+        S=list(itertools.product([0, 1], repeat=n))
+    else:
+        S=list(range(d))
+
+    return np.sum([p[(s1,s2)]*bell(s1,s2,d,as_matrix=True,n_qubit=n_qubit) for s1 in S for s2 in S],0)
 
 
 def GHZ(dim, n, as_matrix=True):
@@ -264,6 +349,23 @@ def random_state_vector(dim, rank=None, as_matrix=False):
             return psi @ dag(psi)
         else:
             return psi
+        
+
+def random_probability_distribution(d,as_dict=False,index_set=None):
+    """
+    Generates a random (discrete) probability distribution on d elements.
+    Makes use of the random density matrix function.
+    """
+
+    rho=random_density_matrix(d)
+
+    if as_dict:
+        if index_set==None:
+            index_set=range(1,d+1)
+        return dict(zip(index_set,np.real(np.diag(rho))))
+    else:
+        return np.real(np.diag(rho))
+
 
 
 def singlet_state(d, perp=False):
@@ -358,7 +460,7 @@ def apply_discrete_Weyl_twirl(X, d, n):
 
         X -> \sum_{z,x=0}^{d-1} (W_{z,x} ⊗ W_{z,x}) X (W_{z,x} ⊗ W_{z,x})^†
 
-    For d=2, this is the same as the Pauli twirl -- see the 'Pauli_twirl' function.
+    For d=2, this is the same as the Pauli twirl -- see the 'apply_Pauli_twirl' function.
     """
 
     return np.sum(
@@ -373,24 +475,126 @@ def apply_discrete_Weyl_twirl(X, d, n):
     )
 
 
-def apply_Pauli_twirl(X, n):
+def apply_Pauli_twirl(X, n, m=1,alt=False):
     """
-    Applies a Pauli twirl to an operator X acting on a system of n-qubits.
-    So the operator X acts on the vector space (C^2)^{⊗ n}.
+    Applies a Pauli twirl to an operator X acting on a system of n*m-qubits.
+    So the operator X acts on the vector space (C^{2^m})^{⊗ n}.
 
     For example, if n=3, then the twirling channel is
 
         X -> \sum_{i=0}^4 (P_i ⊗ P_i ⊗ P_i) X (P_i ⊗ P_i ⊗ P_i)
     """
 
-    return np.sum(
-        [
-            generate_nQubit_Pauli([i] * n) @ X @ dag(generate_nQubit_Pauli([i] * n))
-            for i in range(4)
-        ],
-        0,
-    )
+    if alt:
+        x=list(itertools.product([0, 1], repeat=m))
+        z=list(itertools.product([0, 1], repeat=m))
 
+        return np.sum(
+            [
+                generate_nQubit_Pauli([z*n,x*n],alt=True) @ X @ dag(generate_nQubit_Pauli([z*n,x*n],alt=True))
+                for s in S
+            ],
+            0,
+        )
+    else:
+        S = list(itertools.product([0, 1, 2, 3], repeat=m))
+
+        return np.sum(
+            [
+                generate_nQubit_Pauli(s * n) @ X @ dag(generate_nQubit_Pauli(s * n))
+                for s in S
+            ],
+            0,
+        )
+
+
+def purification(rho,as_matrix=False,alt=False):
+    """
+    Returns the 'canonical purification' of a density operator rho, defined as
+
+        |psi_rho>=(I ⊗ sqrt(rho))*|Gamma>,
+    
+    where |Gamma> is the (unnormalized) maximally-entangled vector. Here, the
+    first tensor factor represents the 'purifying system'.
+    
+    If alt=True, then we take instead
+
+        |psi_rho>=(sqrt(rho) ⊗ I)*|Gamma>,
+    
+    such that the second tensor factor represents the purifying system.
+    """
+
+    d=rho.shape[0]
+
+    Gamma=max_ent(d,normalized=False,as_matrix=as_matrix)
+    rho_sq=Sqrtm(rho)
+
+    if alt:
+        R=tensor(rho_sq,eye(d))
+    else:
+        R=tensor(eye(d),rho_sq)
+
+    if as_matrix:
+        return R@Gamma@dag(R)
+    else:
+        return R@Gamma
+
+
+def occupation_number_state_sym(d,n,c):
+    """
+    Returns an occupation number state corresponding to the 
+    symmetric subspace of n tensor copies of C^d The variable
+    c is a list/tuple of d integers between 0 and d-1, which
+    should sum up to n.
+    """
+
+    if np.sum(c)!=n:
+        return "Sum of the occupation numbers should be equal to n."
+
+    v=1
+    
+    for i in range(d):
+        v=tensor(v,[ket(d,i),c[i]])
+
+    perms=list(itertools.permutations(list(range(1,n+1))))
+
+    out=np.zeros((d**n,1),dtype=np.complex128)
+
+    for perm in perms:
+        out=out+syspermute(v,perm,[d]*n)
+
+    N=(1/np.sqrt(factorial(n)))*(1/np.sqrt(np.prod([factorial(ci) for ci in c])))
+
+    return N*out
+
+
+def occupation_number_state_asym(d,n,c):
+    """
+    Returns an occupation number state corresponding to the 
+    anti-symmetric subspace of n tensor copies of C^d The variable
+    c is a list/tuple of d integers between 0 and d-1, which
+    should sum up to n.
+    """
+
+    if np.sum(c)!=n:
+        return "Sum of the occupation numbers should be equal to n."
+
+    v=1
+    
+    for i in range(d):
+        v=tensor(v,[ket(d,i),c[i]])
+
+    perms=list(itertools.permutations(list(range(1,n+1))))
+
+    out=np.zeros((d**n,1),dtype=np.complex128)
+
+    for perm in perms:
+        sign=Permutation([p-1 for p in perm]).signature()
+        out=out+sign*syspermute(v,perm,[d]*n)
+
+    N=(1/np.sqrt(factorial(n)))
+
+    return N*out
 
 ############################################################################
 
@@ -399,6 +603,85 @@ def apply_Pauli_twirl(X, n):
 import cvxpy as cvx
 
 from qutipy.general_functions import partial_trace, partial_transpose, trace_norm
+
+
+def density_matrix_basis(d,return_dual=False):
+    """
+    Returns an operator basis for d dimensions consisting of density operators.
+    Note that all the density operators in this construction are rank-one
+    projections.
+
+    If return_dual=True, then the function also returns a dual operator basis.
+    """
+
+    R=[]
+
+    for a in range(d):
+        for b in range(d):
+            if a==b:
+                R.append(ket(d,a)@dag(ket(d,a)))
+            elif a<b:
+                p=(1/np.sqrt(2))*(ket(d,a)+ket(d,b))
+                R.append(p@dag(p))
+            elif a>b:
+                p=(1/np.sqrt(2))*(ket(d,a)+1j*ket(d,b))
+                R.append(p@dag(p))
+    
+    if return_dual:
+        F=np.sum([vec(rho)@dag(vec(rho)) for rho in R],0)
+        O=[vec_inverse(inv(F)@vec(rho),d,d) for rho in R]
+        return R, O
+    else:
+        return R
+
+
+def density_matrix_POVM(d,return_dual=False):
+    """
+    Returns an information-complete POVM based on the basis of density
+    operators in the function density_matrix_basis.
+
+    If return_dual=True, then the function also returns a dual operator
+    basis.
+    """
+
+    R=density_matrix_basis(d)
+
+    Q=np.sum([r for r in R],0)
+
+    M=[Sqrtm(inv(Q))@r@Sqrtm(inv(Q)) for r in R]
+
+    if return_dual:
+        F=np.sum([vec(m)@dag(vec(m)) for m in M],0)
+        O=[vec_inverse(inv(F)@vec(m),d,d) for m in M]
+        return M, O
+    else:
+        return M
+    
+
+def discrete_Weyl_POVM(d,rho,return_dual=False):
+    """
+    Generates a POVM (positive operator-valued measure) in a d-dimensional
+    space using the discrete-Weyl operators. Here, rho can be an arbitrary 
+    quantum state.
+
+    This POVM is information-complete as long as Tr(rho * w) ≠ 0 for all
+    elements w of the discrete-Weyl basis.
+
+    If return_dual=True, then this returns the (unique) dual frame.
+
+    For more information, we refer to:
+        'Informationlly complete measurements and group representation',
+        G. M. D'Ariano et al., J. Opt. B: Quantum Semiclass. Opt. 6, S487 (2004).
+    """
+
+    M=[(1/d)*w@rho@dag(w) for w in discrete_Weyl_basis(d)]
+
+    if return_dual:
+        F=np.sum([vec(m)@dag(vec(m)) for m in M],0)
+        O=[vec_inverse(inv(F)@vec(m),d,d) for m in M]
+        return M,O
+    else:
+        return M
 
 
 def check_kext(rhoAB, dimA, dimB, k, display=False):
