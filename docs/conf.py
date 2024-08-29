@@ -10,15 +10,14 @@
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
-# import os
-# import sys
-# sys.path.insert(0, os.path.abspath('.'))
+import os
+import sys
+sys.path.insert(0, os.path.abspath('..'))
+from version import RELEASE, VERSION
 
 
 # -- Project information -----------------------------------------------------
 
-
-import qutipy
 import importlib
 from datetime import date
 
@@ -27,8 +26,8 @@ copyright = f'{date.today().year}, Sumeet Khatri'
 author = 'Sumeet Khatri'
 
 # The full version, including alpha/beta/rc tags
-release = '0.1'
-version = qutipy.__version__
+release = RELEASE
+version = VERSION
 language = 'en'
 
 # -- General configuration ---------------------------------------------------
