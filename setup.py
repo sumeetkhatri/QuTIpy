@@ -25,12 +25,14 @@ from setuptools import find_packages, setup
 
 # from sphinx.setup_command import BuildDoc
 
+from version import VERSION
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 setup(
     name="QuTIpy",
-    version="0.1.0a",
+    version=VERSION,
     description="A package to perform quantum information calculations",
     long_description=long_description,
     long_description_content_type="text/markdown",
