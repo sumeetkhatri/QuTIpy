@@ -358,6 +358,8 @@ def channel_discrimination(
 
     If err=True, then this function returns the optimal error probability instead.
     """
+
+    ##TODO: General comb optimization with multiple channel uses. 
     
     if len(C)==2:
         p_succ = (1 / 2) * (
@@ -403,9 +405,9 @@ def channel_discrimination(
             l = cvx.Variable()
             Y = cvx.Variable((dA * dB, dA * dB), hermitian=True)
 
-            YA = numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(Y), [2], [dA, dB]))
+            #YA = numpy_to_cvxpy(partial_trace(cvxpy_to_numpy(Y), [2], [dA, dB]))
 
-            c=[l>=0]+[Y>>P[i]*C[i] for i in range(n)]+[Y>>0,YA==l*eye(dA)]
+            c=[l>=0]+[Y>>P[i]*C[i] for i in range(n)]+[Y>>0,cvx.partial_trace(Y,[dA,dB],1)==l*eye(dA)]
 
             obj = cvx.Minimize(l)
             prob = cvx.Problem(obj, constraints=c)
@@ -557,6 +559,9 @@ def entanglement_distillation(
         
         if normalize:
             rho_out = rho_out / Tr(rho_out)
+
+    elif outcome==2:
+        rho_out=np.sum([K[(i,j)]@rho_in@dag(K[(i,j)]) for i in range(d) for j in range(d)],0)        
 
     if return_prob:
         return rho_out,prob

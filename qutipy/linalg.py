@@ -25,7 +25,7 @@ import math
 import numpy as np
 from numpy.linalg import eig, matrix_rank, norm
 
-from scipy.linalg import sqrtm
+from scipy.linalg import sqrtm, inv, pinv
 
 from qutipy.general_functions import dag, eye, tensor, ket
 from qutipy.pauli import nQubit_Pauli_basis
@@ -73,6 +73,20 @@ def gram_schmidt(vectors, dim, normalize=True):
         return e
     else:
         return u
+
+def symmetric_orthogonalization(vectors,dim):
+
+    R=np.sum([v@dag(v) for v in vectors],0)
+
+    R_sq_inv=pinv(Sqrtm(R))
+
+    B=[]
+
+    for v in vectors:
+        b=R_sq_inv@v
+        B.append(b/norm(b))
+
+    return B
 
 
 def proj(u, v):

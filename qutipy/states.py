@@ -148,7 +148,9 @@ def Bell_diagonal_state(d,p,n_qubit=False):
     Bell states defined by the n-qubit Pauli operators.
 
     The variable p is a dictionary of d^2 probabilities, specified
-    in the form p[(s1,s2)].
+    in the form p[(s1,s2)]. Note that they can be arbitrary real 
+    numbers -- they need not be probabilities, in case we want a 
+    Hermitian Bell-diagonal operator.
     """
 
     if n_qubit:
@@ -158,6 +160,23 @@ def Bell_diagonal_state(d,p,n_qubit=False):
         S=list(range(d))
 
     return np.sum([p[(s1,s2)]*bell(s1,s2,d,as_matrix=True,n_qubit=n_qubit) for s1 in S for s2 in S],0)
+
+
+def random_Bell_diagonal(d,PSD=True,normalized=True):
+
+    index_set=list(itertools.product(range(d),repeat=2))
+
+    if PSD==True and normalized==True:
+        p=random_probability_distribution(d**2,as_dict=True,index_set=index_set)
+        return Bell_diagonal_state(d,p)
+
+    elif PSD==True and normalized==False:
+        p=dict(zip(index_set,np.random.rand(d**2)))
+        return Bell_diagonal_state(d,p)
+    
+    else:
+        p=dict(zip(index_set,np.random.randn(d**2)))
+        return Bell_diagonal_state(d,p)
 
 
 def GHZ(dim, n, as_matrix=True):
@@ -463,7 +482,7 @@ def apply_discrete_Weyl_twirl(X, d, n):
     For d=2, this is the same as the Pauli twirl -- see the 'apply_Pauli_twirl' function.
     """
 
-    return np.sum(
+    return (1/d**2)*np.sum(
         [
             tensor([discrete_Weyl(d, z, x), n])
             @ X

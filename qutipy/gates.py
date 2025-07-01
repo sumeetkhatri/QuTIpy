@@ -256,3 +256,19 @@ def S_i(i, n):
     out = syspermute(out_temp, perm_rearrange, dims)
 
     return out
+
+def QFT(d):
+    """
+    Generate the (discrete) quantum Fourier transform unitary matrix
+    with size d x d.
+    """
+
+    p=np.exp(2*np.pi*1j/d)
+
+    Q=np.zeros((d,d),dtype=complex)
+
+    for i in range(d):
+        for j in range(d):
+            Q+=(1/np.sqrt(d))*p**(i*j)*ket(d,i)@dag(ket(d,j))
+
+    return Q

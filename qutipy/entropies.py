@@ -27,7 +27,8 @@ from scipy.linalg import fractional_matrix_power, logm
 from scipy.optimize import minimize
 
 from qutipy.channels import apply_channel, largest_inner_product_channels
-from qutipy.general_functions import Tr, dag, eye, ket, partial_trace, tensor
+from qutipy.general_functions import Tr, dag, eye, ket, partial_trace, tensor, spectral_norm
+from qutipy.linalg import Sqrtm,inv
 
 
 def relative_entropy_var(rho, sigma):
@@ -273,6 +274,43 @@ def relative_entropy(rho, sigma):
     """
 
     return np.real(Tr(rho @ (logm(rho) - logm(sigma)))) / np.log(2)
+
+
+def max_relative_entropy(P,Q,sdp=True,dual=False):
+    """
+    P and Q are arbitrary PSD operators. Support of P 
+    should be in the support of Q.
+    """
+
+    if sdp:
+        if dual:
+            d=P.shape[0]
+            X1=cvx.Variable((d,d),hermitian=True)
+            X2=cvx.Variable((d,d),hermitian=True)
+
+            c=[X1>>0,X2>>0,cvx.real(cvx.trace(Q@(X1+X2)))<=1]
+
+            obj=cvx.Maximize(cvx.real(cvx.trace(P@(X1-X2))))
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(solver=cvx.SCS,eps=1e-9)
+
+            return np.log2(prob.value)
+
+        else:
+            t=cvx.Variable()
+            c=[-t*Q<<P,P<<t*Q]
+
+            obj=cvx.Minimize(t)
+            prob=cvx.Problem(obj,constraints=c)
+
+            prob.solve(eps=1e-9)
+
+            return np.log2(prob.value)
+
+    else:
+        return np.log2(spectral_norm(Sqrtm(inv(Q))@P@Sqrtm(inv(Q))))
+
 
 
 def Holevo_inf_channel(K, dim, display=True):
