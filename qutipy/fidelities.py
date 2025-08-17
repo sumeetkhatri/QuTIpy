@@ -23,9 +23,11 @@
 import numpy as np
 from scipy.linalg import sqrtm
 
+import cvxpy as cvx
+
 from qutipy.linalg import Sqrtm
 from qutipy.channels import apply_channel, choi_representation
-from qutipy.general_functions import Tr, dag, ket, trace_norm
+from qutipy.general_functions import Tr, dag, ket, trace_norm, eye
 from qutipy.states import max_ent
 
 
@@ -97,3 +99,44 @@ def fidelity(rho, sigma):
     """
 
     return trace_norm(Sqrtm(rho) @ Sqrtm(sigma)) ** 2
+
+
+def fidelity_channel(N,M,dA,dB,dual=True,return_var=False):
+    """
+    Returns the fidelity between the channels specified by their Choi matrices
+    N and M. 
+    """
+
+    if not dual:
+    
+        t=cvx.Variable()
+        Q=cvx.Variable((dA*dB,dA*dB),complex=True)
+    
+        c=[t*eye(dA)<<cvx.partial_trace((1/2)*(Q+Q.conj().T),[dA,dB],1),cvx.bmat([[N,Q.conj().T],[Q,M]])>>0]
+    
+        obj=cvx.Maximize(t)
+        prob=cvx.Problem(obj,constraints=c)
+    
+        prob.solve(eps=1e-9,solver=cvx.MOSEK)
+
+        if return_var:
+            return prob.value,prob.value**2,Q.value
+        else:
+            return prob.value,prob.value**2
+
+    else:
+        W=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+        Z=cvx.Variable((dA*dB,dA*dB),hermitian=True)
+        rho=cvx.Variable((dA,dA),hermitian=True)
+
+        c=[rho>>0,cvx.trace(rho)==1,cvx.bmat([[W,cvx.kron(rho,eye(dB))],[cvx.kron(rho,eye(dB)),Z]])>>0]
+
+        obj=cvx.Minimize((1/2)*(cvx.real(cvx.trace(N@W))+cvx.real(cvx.trace(M@Z))))
+        prob=cvx.Problem(obj,constraints=c)
+
+        prob.solve(eps=1e-9,solver=cvx.MOSEK)
+
+        if return_var:
+            return prob.value,prob.value**2,rho.value,W.value,Z.value
+        else:
+            return prob.value,prob.value**2
